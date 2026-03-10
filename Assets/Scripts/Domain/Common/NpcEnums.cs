@@ -63,6 +63,68 @@ namespace Lifehandled.Domain.Common
     }
 
     [Serializable]
+    public enum VoiceType
+    {
+        Deep = 0,
+        Soft = 1,
+        Raspy = 2,
+        Energetic = 3,
+        Monotone = 4,
+        Cheerful = 5
+    }
+
+    [Serializable]
+    public enum SpeechStyleType
+    {
+        Formal = 0,
+        Casual = 1,
+        Sarcastic = 2,
+        Blunt = 3,
+        Shy = 4
+    }
+
+    [Serializable]
+    public enum EmotionalTraitType
+    {
+        Optimistic = 0,
+        Anxious = 1,
+        Jealous = 2,
+        Loyal = 3,
+        Stubborn = 4,
+        Forgiving = 5
+    }
+
+    [Serializable]
+    public enum SocialTraitType
+    {
+        Flirtatious = 0,
+        Introverted = 1,
+        Charismatic = 2,
+        Awkward = 3,
+        Manipulative = 4
+    }
+
+    [Serializable]
+    public enum EducationLevelType
+    {
+        NoFormalEducation = 0,
+        HighSchool = 1,
+        TradeSchool = 2,
+        College = 3,
+        Graduate = 4
+    }
+
+    [Serializable]
+    public enum OccupationCategoryType
+    {
+        Service = 0,
+        Labor = 1,
+        Professional = 2,
+        Creative = 3,
+        Criminal = 4
+    }
+
+    [Serializable]
     public enum NpcScheduleBlock
     {
         Home = 0,

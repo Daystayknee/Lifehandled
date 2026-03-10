@@ -56,6 +56,15 @@ namespace Lifehandled.Application.UseCases.Gameplay
                 context?.economy,
                 WaterBottleRarityMultiplier);
 
+            var negotiationLevel = context?.progression?.GetSkillLevel("negotiation") ?? 1;
+            var discountMultiplier = 1f - ((negotiationLevel - 1) * 0.02f);
+            if (discountMultiplier < 0.8f)
+            {
+                discountMultiplier = 0.8f;
+            }
+
+            multiplier *= discountMultiplier;
+
             return ResolvePrice(multiplier);
         }
 

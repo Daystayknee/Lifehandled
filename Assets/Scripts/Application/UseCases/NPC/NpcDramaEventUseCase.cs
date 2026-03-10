@@ -39,6 +39,8 @@ namespace Lifehandled.Application.UseCases.NPC
             npc.profile.drama ??= new NpcDramaState();
             var drama = npc.profile.drama;
             var rel = npc.profile.relationshipToPlayer;
+            var negotiationLevel = context.progression?.GetSkillLevel("negotiation") ?? 1;
+            var charismaLevel = context.progression?.GetSkillLevel("charisma") ?? 1;
 
             switch (eventType)
             {
@@ -92,6 +94,25 @@ namespace Lifehandled.Application.UseCases.NPC
                     message = "No drama event applied.";
                     return false;
             }
+
+            if (npc.profile.emotionalTraits.Contains(EmotionalTraitType.Jealous))
+            {
+                drama.rivalryWithPlayer = Clamp(drama.rivalryWithPlayer + 1f);
+            }
+
+            if (npc.profile.emotionalTraits.Contains(EmotionalTraitType.Forgiving))
+            {
+                rel.resentment = Clamp(rel.resentment - 0.8f);
+            }
+
+            if (npc.profile.socialTraits.Contains(SocialTraitType.Manipulative))
+            {
+                drama.gossipHeat = Clamp(drama.gossipHeat + 1f);
+            }
+
+            var deescalation = ((negotiationLevel - 1) * 0.25f) + ((charismaLevel - 1) * 0.2f);
+            drama.familyTensionWithPlayer = Clamp(drama.familyTensionWithPlayer - deescalation);
+            context.familyTension = Clamp(context.familyTension - (deescalation * 0.5f));
 
             npc.currentReactionHint = message;
             return true;

@@ -154,9 +154,58 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
                     npc.clothingStyleId = "casual_basic";
                 }
 
+                if (string.IsNullOrWhiteSpace(npc.occupationJobId))
+                {
+                    npc.occupationJobId = "barista";
+                }
+
+                if (string.IsNullOrWhiteSpace(npc.occupationSchedulePreset))
+                {
+                    npc.occupationSchedulePreset = "day_shift";
+                }
+
+                if (npc.occupationDailyIncome < 0)
+                {
+                    npc.occupationDailyIncome = 10;
+                }
+
+                if (npc.occupationReputationImpact <= 0f)
+                {
+                    npc.occupationReputationImpact = 1f;
+                }
+
+                if (npc.occupationSocialCircleRadius <= 0f)
+                {
+                    npc.occupationSocialCircleRadius = 1f;
+                }
+
+                if (string.IsNullOrWhiteSpace(npc.upbringing))
+                {
+                    npc.upbringing = "ordinary_town";
+                }
+
+                if (string.IsNullOrWhiteSpace(npc.hometown))
+                {
+                    npc.hometown = "founders_town";
+                }
+
+                npc.pastRelationshipNotes ??= new List<string>();
+                npc.previousJobs ??= new List<string>();
+                npc.traumaTags ??= new List<string>();
+
                 if (npc.lifestyleTraits == null)
                 {
                     npc.lifestyleTraits = new List<LifestyleTraitType>();
+                }
+
+                if (npc.emotionalTraits == null)
+                {
+                    npc.emotionalTraits = new List<EmotionalTraitType>();
+                }
+
+                if (npc.socialTraits == null)
+                {
+                    npc.socialTraits = new List<SocialTraitType>();
                 }
 
                 if (npc.survivalTraits == null)
@@ -188,6 +237,8 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
                     skill.xp = 0f;
                 }
             }
+
+            EnsureCoreSkills(envelope.vs01State.skills);
 
             if (envelope.geneticSchemaVersion <= 0)
             {
@@ -294,6 +345,33 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
             if (value < 0f) return 0f;
             if (value > 100f) return 100f;
             return value;
+        }
+
+        private static void EnsureCoreSkills(List<Vs01SkillState> skills)
+        {
+            EnsureSkill(skills, "cooking");
+            EnsureSkill(skills, "fishing");
+            EnsureSkill(skills, "crafting");
+            EnsureSkill(skills, "fitness");
+            EnsureSkill(skills, "charisma");
+            EnsureSkill(skills, "medicine");
+            EnsureSkill(skills, "survival");
+            EnsureSkill(skills, "negotiation");
+        }
+
+        private static void EnsureSkill(List<Vs01SkillState> skills, string skillId)
+        {
+            if (skills.Any(s => s.skillId == skillId))
+            {
+                return;
+            }
+
+            skills.Add(new Vs01SkillState
+            {
+                skillId = skillId,
+                level = 1,
+                xp = 0f
+            });
         }
 
         private static List<Vs01ZoneState> CreateDefaultZones()

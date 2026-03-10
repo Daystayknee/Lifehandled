@@ -84,8 +84,13 @@ namespace Lifehandled.Application.UseCases.NewGame
                     skills =
                     {
                         new Vs01SkillState { skillId = "cooking", level = 1, xp = 0f },
-                        new Vs01SkillState { skillId = "social", level = 1, xp = 0f },
-                        new Vs01SkillState { skillId = "survival", level = 1, xp = 0f }
+                        new Vs01SkillState { skillId = "fishing", level = 1, xp = 0f },
+                        new Vs01SkillState { skillId = "crafting", level = 1, xp = 0f },
+                        new Vs01SkillState { skillId = "fitness", level = 1, xp = 0f },
+                        new Vs01SkillState { skillId = "charisma", level = 1, xp = 0f },
+                        new Vs01SkillState { skillId = "medicine", level = 1, xp = 0f },
+                        new Vs01SkillState { skillId = "survival", level = 1, xp = 0f },
+                        new Vs01SkillState { skillId = "negotiation", level = 1, xp = 0f }
                     },
                     unlockedPerkIds = { },
                     collectibles = PrototypeWorldContentCatalog.CollectibleIds.ToList(),

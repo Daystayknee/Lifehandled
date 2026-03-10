@@ -170,8 +170,30 @@ namespace Lifehandled.Application.UseCases.Session
                         displayName = saved.displayName,
                         archetype = saved.archetype,
                         dialogueStyle = saved.dialogueStyle,
+                        voiceType = saved.voiceType,
+                        speechStyle = saved.speechStyle,
                         clothingStyleId = saved.clothingStyleId,
+                        occupation = new OccupationProfile
+                        {
+                            category = saved.occupationCategory,
+                            jobId = saved.occupationJobId,
+                            schedulePreset = saved.occupationSchedulePreset,
+                            dailyIncome = saved.occupationDailyIncome,
+                            reputationImpact = saved.occupationReputationImpact,
+                            socialCircleRadius = saved.occupationSocialCircleRadius
+                        },
+                        lifeHistory = new LifeHistoryProfile
+                        {
+                            upbringing = saved.upbringing,
+                            educationLevel = saved.educationLevel,
+                            hometown = saved.hometown,
+                            pastRelationshipNotes = saved.pastRelationshipNotes ?? new System.Collections.Generic.List<string>(),
+                            previousJobs = saved.previousJobs ?? new System.Collections.Generic.List<string>(),
+                            traumaTags = saved.traumaTags ?? new System.Collections.Generic.List<string>()
+                        },
                         personalityTraits = saved.personalityTraits ?? new System.Collections.Generic.List<PersonalityTraitType>(),
+                        emotionalTraits = saved.emotionalTraits ?? new System.Collections.Generic.List<EmotionalTraitType>(),
+                        socialTraits = saved.socialTraits ?? new System.Collections.Generic.List<SocialTraitType>(),
                         lifestyleTraits = saved.lifestyleTraits ?? new System.Collections.Generic.List<LifestyleTraitType>(),
                         survivalTraits = saved.survivalTraits ?? new System.Collections.Generic.List<SurvivalTraitType>(),
                         needs = new NpcNeeds

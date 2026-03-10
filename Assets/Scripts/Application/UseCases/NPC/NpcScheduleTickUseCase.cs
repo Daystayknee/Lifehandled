@@ -17,10 +17,16 @@ namespace Lifehandled.Application.UseCases.NPC
             {
                 var hour = context.hourOfDay;
                 var schedule = npc.profile.schedule;
+                var occupationPreset = npc.profile.occupation?.schedulePreset ?? "day_shift";
 
                 if (hour < 6f || hour >= 22f)
                 {
                     schedule.currentBlock = NpcScheduleBlock.Sleep;
+                    schedule.isAvailableForTalk = false;
+                }
+                else if (occupationPreset == "night_shift" && (hour >= 18f || hour < 2f))
+                {
+                    schedule.currentBlock = NpcScheduleBlock.Work;
                     schedule.isAvailableForTalk = false;
                 }
                 else if (hour < 9f)
@@ -44,6 +50,11 @@ namespace Lifehandled.Application.UseCases.NPC
                     schedule.isAvailableForTalk = true;
                 }
 
+                if (npc.profile.socialTraits.Contains(Domain.Common.SocialTraitType.Introverted) && schedule.currentBlock == NpcScheduleBlock.Social)
+                {
+                    schedule.isAvailableForTalk = false;
+                }
+
                 TickNpcNeedsAndMood(npc, context.weather);
             }
         }
@@ -62,6 +73,8 @@ namespace Lifehandled.Application.UseCases.NPC
 
             if (npc.profile.personalityTraits.Contains(PersonalityTraitType.Irritable)) moodDelta -= 0.1f;
             if (npc.profile.personalityTraits.Contains(PersonalityTraitType.Kind)) moodDelta += 0.05f;
+            if (npc.profile.emotionalTraits.Contains(Domain.Common.EmotionalTraitType.Optimistic)) moodDelta += 0.05f;
+            if (npc.profile.emotionalTraits.Contains(Domain.Common.EmotionalTraitType.Anxious)) moodDelta -= 0.08f;
 
             npc.profile.mood = Clamp(npc.profile.mood + moodDelta);
         }

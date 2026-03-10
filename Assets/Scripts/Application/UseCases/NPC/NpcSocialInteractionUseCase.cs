@@ -40,6 +40,8 @@ namespace Lifehandled.Application.UseCases.NPC
             var time = context.hourOfDay;
             npc.profile.drama ??= new NpcDramaState();
             var drama = npc.profile.drama;
+            var charismaLevel = context.progression?.GetSkillLevel("charisma") ?? 1;
+            var negotiationLevel = context.progression?.GetSkillLevel("negotiation") ?? 1;
 
             var remembersTheft = npc.profile.memory.Exists(m => m.outcome.Contains("stole from the store"));
             var remembersHelp = npc.profile.memory.Exists(m => m.outcome.Contains("helped"));
@@ -80,8 +82,29 @@ namespace Lifehandled.Application.UseCases.NPC
                 reaction = $"{npc.profile.displayName}: Hey.";
             }
 
-            rel.friendship = Clamp(rel.friendship + 2f);
-            rel.trust = Clamp(rel.trust + 1f);
+            var opener = BuildSpeechPrefix(npc.profile.voiceType, npc.profile.speechStyle);
+            if (!string.IsNullOrWhiteSpace(opener))
+            {
+                reaction = $"{npc.profile.displayName} ({opener}) {reaction}";
+            }
+
+            var friendshipDelta = 1.5f + ((charismaLevel - 1) * 0.4f);
+            var trustDelta = 1f + ((negotiationLevel - 1) * 0.35f);
+            if (npc.profile.socialTraits.Contains(Domain.Common.SocialTraitType.Introverted))
+            {
+                friendshipDelta -= 0.4f;
+            }
+            if (npc.profile.socialTraits.Contains(Domain.Common.SocialTraitType.Awkward))
+            {
+                trustDelta -= 0.2f;
+            }
+            if (npc.profile.emotionalTraits.Contains(Domain.Common.EmotionalTraitType.Forgiving))
+            {
+                friendshipDelta += 0.35f;
+            }
+
+            rel.friendship = Clamp(rel.friendship + friendshipDelta);
+            rel.trust = Clamp(rel.trust + trustDelta);
             npc.profile.mood = Clamp(npc.profile.mood + 1f);
             drama.gossipHeat = Clamp(drama.gossipHeat - 0.5f);
 
@@ -107,6 +130,11 @@ namespace Lifehandled.Application.UseCases.NPC
             if (value < 0f) return 0f;
             if (value > 100f) return 100f;
             return value;
+        }
+
+        private static string BuildSpeechPrefix(Domain.Common.VoiceType voice, Domain.Common.SpeechStyleType speech)
+        {
+            return $"{voice.ToString().ToLowerInvariant()} / {speech.ToString().ToLowerInvariant()}";
         }
     }
 }

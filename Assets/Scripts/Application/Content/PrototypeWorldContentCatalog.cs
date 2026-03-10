@@ -410,18 +410,18 @@ namespace Lifehandled.Application.Content
         {
             return new List<NpcArchetypeDefinition>
             {
-                new(NpcArchetypeType.ShopOwner, DialogueStyleType.Casual, "merchant_clean", new() { PersonalityTraitType.Practical, PersonalityTraitType.Ambitious }, new() { LifestyleTraitType.Frugal }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Work),
-                new(NpcArchetypeType.Bartender, DialogueStyleType.Warm, "service_smart", new() { PersonalityTraitType.Outgoing, PersonalityTraitType.Empathetic }, new() { LifestyleTraitType.Extravagant }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Social),
-                new(NpcArchetypeType.Mechanic, DialogueStyleType.Blunt, "work_oily", new() { PersonalityTraitType.Practical, PersonalityTraitType.Reserved }, new() { LifestyleTraitType.Frugal }, new() { SurvivalTraitType.StrongMetabolism }, NpcScheduleBlock.Work),
-                new(NpcArchetypeType.Nurse, DialogueStyleType.Formal, "clinic_clean", new() { PersonalityTraitType.Kind, PersonalityTraitType.Empathetic }, new() { LifestyleTraitType.Neat }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Work),
-                new(NpcArchetypeType.Teacher, DialogueStyleType.Formal, "smart_casual", new() { PersonalityTraitType.Kind, PersonalityTraitType.Introverted }, new() { LifestyleTraitType.Neat }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Work),
-                new(NpcArchetypeType.Neighbor, DialogueStyleType.Casual, "casual_basic", new() { PersonalityTraitType.Kind }, new() { LifestyleTraitType.Messy }, new() { SurvivalTraitType.StrongMetabolism }, NpcScheduleBlock.Home),
-                new(NpcArchetypeType.Friend, DialogueStyleType.Warm, "social_trendy", new() { PersonalityTraitType.Outgoing, PersonalityTraitType.Empathetic }, new() { LifestyleTraitType.Extravagant }, new() { SurvivalTraitType.StrongMetabolism }, NpcScheduleBlock.Social),
-                new(NpcArchetypeType.Rival, DialogueStyleType.Blunt, "competitive", new() { PersonalityTraitType.Ambitious, PersonalityTraitType.Irritable }, new() { LifestyleTraitType.Extravagant }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Errands),
-                new(NpcArchetypeType.RomanticInterest, DialogueStyleType.Flirty, "stylish", new() { PersonalityTraitType.Outgoing, PersonalityTraitType.Empathetic }, new() { LifestyleTraitType.Neat }, new() { SurvivalTraitType.StrongMetabolism }, NpcScheduleBlock.Social),
-                new(NpcArchetypeType.WealthyResident, DialogueStyleType.Formal, "luxury", new() { PersonalityTraitType.Reserved, PersonalityTraitType.Ambitious }, new() { LifestyleTraitType.Extravagant }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Errands),
-                new(NpcArchetypeType.MysteriousOutsider, DialogueStyleType.Cryptic, "traveler_dark", new() { PersonalityTraitType.Reserved, PersonalityTraitType.Anxious }, new() { LifestyleTraitType.Messy }, new() { SurvivalTraitType.FragileImmuneSystem }, NpcScheduleBlock.Commute),
-                new(NpcArchetypeType.TravelingMerchant, DialogueStyleType.Casual, "merchant_travel", new() { PersonalityTraitType.Practical, PersonalityTraitType.Outgoing }, new() { LifestyleTraitType.Frugal }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Commute)
+                new(NpcArchetypeType.ShopOwner, DialogueStyleType.Casual, "merchant_clean", new() { PersonalityTraitType.Practical, PersonalityTraitType.Ambitious }, new() { EmotionalTraitType.Stubborn, EmotionalTraitType.Loyal }, new() { SocialTraitType.Charismatic }, new() { LifestyleTraitType.Frugal }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Work, VoiceType.Deep, SpeechStyleType.Casual, OccupationCategoryType.Service, "shop_owner", "day_shift", 18),
+                new(NpcArchetypeType.Bartender, DialogueStyleType.Warm, "service_smart", new() { PersonalityTraitType.Outgoing, PersonalityTraitType.Empathetic }, new() { EmotionalTraitType.Optimistic, EmotionalTraitType.Forgiving }, new() { SocialTraitType.Flirtatious }, new() { LifestyleTraitType.Extravagant }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Social, VoiceType.Cheerful, SpeechStyleType.Casual, OccupationCategoryType.Service, "bartender", "night_shift", 14),
+                new(NpcArchetypeType.Mechanic, DialogueStyleType.Blunt, "work_oily", new() { PersonalityTraitType.Practical, PersonalityTraitType.Reserved }, new() { EmotionalTraitType.Stubborn }, new() { SocialTraitType.Awkward }, new() { LifestyleTraitType.Frugal }, new() { SurvivalTraitType.StrongMetabolism }, NpcScheduleBlock.Work, VoiceType.Raspy, SpeechStyleType.Blunt, OccupationCategoryType.Labor, "mechanic", "day_shift", 16),
+                new(NpcArchetypeType.Nurse, DialogueStyleType.Formal, "clinic_clean", new() { PersonalityTraitType.Kind, PersonalityTraitType.Empathetic }, new() { EmotionalTraitType.Loyal, EmotionalTraitType.Anxious }, new() { SocialTraitType.Charismatic }, new() { LifestyleTraitType.Neat }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Work, VoiceType.Soft, SpeechStyleType.Formal, OccupationCategoryType.Professional, "nurse", "day_shift", 20),
+                new(NpcArchetypeType.Teacher, DialogueStyleType.Formal, "smart_casual", new() { PersonalityTraitType.Kind, PersonalityTraitType.Introverted }, new() { EmotionalTraitType.Optimistic }, new() { SocialTraitType.Introverted }, new() { LifestyleTraitType.Neat }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Work, VoiceType.Soft, SpeechStyleType.Formal, OccupationCategoryType.Professional, "teacher", "day_shift", 19),
+                new(NpcArchetypeType.Neighbor, DialogueStyleType.Casual, "casual_basic", new() { PersonalityTraitType.Kind }, new() { EmotionalTraitType.Forgiving }, new() { SocialTraitType.Awkward }, new() { LifestyleTraitType.Messy }, new() { SurvivalTraitType.StrongMetabolism }, NpcScheduleBlock.Home, VoiceType.Cheerful, SpeechStyleType.Casual, OccupationCategoryType.Service, "waiter", "split_shift", 11),
+                new(NpcArchetypeType.Friend, DialogueStyleType.Warm, "social_trendy", new() { PersonalityTraitType.Outgoing, PersonalityTraitType.Empathetic }, new() { EmotionalTraitType.Optimistic, EmotionalTraitType.Loyal }, new() { SocialTraitType.Charismatic, SocialTraitType.Flirtatious }, new() { LifestyleTraitType.Extravagant }, new() { SurvivalTraitType.StrongMetabolism }, NpcScheduleBlock.Social, VoiceType.Energetic, SpeechStyleType.Casual, OccupationCategoryType.Creative, "musician", "night_shift", 13),
+                new(NpcArchetypeType.Rival, DialogueStyleType.Blunt, "competitive", new() { PersonalityTraitType.Ambitious, PersonalityTraitType.Irritable }, new() { EmotionalTraitType.Jealous, EmotionalTraitType.Stubborn }, new() { SocialTraitType.Manipulative }, new() { LifestyleTraitType.Extravagant }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Errands, VoiceType.Deep, SpeechStyleType.Sarcastic, OccupationCategoryType.Professional, "lawyer", "day_shift", 24),
+                new(NpcArchetypeType.RomanticInterest, DialogueStyleType.Flirty, "stylish", new() { PersonalityTraitType.Outgoing, PersonalityTraitType.Empathetic }, new() { EmotionalTraitType.Loyal, EmotionalTraitType.Anxious }, new() { SocialTraitType.Flirtatious, SocialTraitType.Charismatic }, new() { LifestyleTraitType.Neat }, new() { SurvivalTraitType.StrongMetabolism }, NpcScheduleBlock.Social, VoiceType.Soft, SpeechStyleType.Shy, OccupationCategoryType.Creative, "artist", "flex_shift", 15),
+                new(NpcArchetypeType.WealthyResident, DialogueStyleType.Formal, "luxury", new() { PersonalityTraitType.Reserved, PersonalityTraitType.Ambitious }, new() { EmotionalTraitType.Stubborn }, new() { SocialTraitType.Manipulative }, new() { LifestyleTraitType.Extravagant }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Errands, VoiceType.Monotone, SpeechStyleType.Formal, OccupationCategoryType.Professional, "investor", "flex_shift", 32),
+                new(NpcArchetypeType.MysteriousOutsider, DialogueStyleType.Cryptic, "traveler_dark", new() { PersonalityTraitType.Reserved, PersonalityTraitType.Anxious }, new() { EmotionalTraitType.Anxious, EmotionalTraitType.Jealous }, new() { SocialTraitType.Introverted, SocialTraitType.Awkward }, new() { LifestyleTraitType.Messy }, new() { SurvivalTraitType.FragileImmuneSystem }, NpcScheduleBlock.Commute, VoiceType.Raspy, SpeechStyleType.Shy, OccupationCategoryType.Criminal, "smuggler", "night_shift", 21),
+                new(NpcArchetypeType.TravelingMerchant, DialogueStyleType.Casual, "merchant_travel", new() { PersonalityTraitType.Practical, PersonalityTraitType.Outgoing }, new() { EmotionalTraitType.Optimistic, EmotionalTraitType.Stubborn }, new() { SocialTraitType.Charismatic }, new() { LifestyleTraitType.Frugal }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Commute, VoiceType.Energetic, SpeechStyleType.Casual, OccupationCategoryType.Service, "traveling_merchant", "split_shift", 17)
             };
         }
 
@@ -433,8 +433,24 @@ namespace Lifehandled.Application.Content
                 displayName = displayName,
                 archetype = archetype.archetype,
                 dialogueStyle = archetype.dialogueStyle,
+                voiceType = archetype.voiceType,
+                speechStyle = archetype.speechStyle,
                 clothingStyleId = archetype.clothingStyleId,
+                occupationCategory = archetype.occupationCategory,
+                occupationJobId = archetype.occupationJobId,
+                occupationSchedulePreset = archetype.occupationSchedulePreset,
+                occupationDailyIncome = archetype.occupationDailyIncome,
+                occupationReputationImpact = archetype.occupationReputationImpact,
+                occupationSocialCircleRadius = archetype.occupationSocialCircleRadius,
+                upbringing = archetype.upbringing,
+                educationLevel = archetype.educationLevel,
+                hometown = archetype.hometown,
+                pastRelationshipNotes = archetype.pastRelationshipNotes.ToList(),
+                previousJobs = archetype.previousJobs.ToList(),
+                traumaTags = archetype.traumaTags.ToList(),
                 personalityTraits = archetype.personalityTraits.ToList(),
+                emotionalTraits = archetype.emotionalTraits.ToList(),
+                socialTraits = archetype.socialTraits.ToList(),
                 lifestyleTraits = archetype.lifestyleTraits.ToList(),
                 survivalTraits = archetype.survivalTraits.ToList(),
                 currentScheduleBlock = archetype.defaultSchedule,
@@ -483,26 +499,74 @@ namespace Lifehandled.Application.Content
             DialogueStyleType dialogueStyle,
             string clothingStyleId,
             List<PersonalityTraitType> personalityTraits,
+            List<EmotionalTraitType> emotionalTraits,
+            List<SocialTraitType> socialTraits,
             List<LifestyleTraitType> lifestyleTraits,
             List<SurvivalTraitType> survivalTraits,
-            NpcScheduleBlock defaultSchedule)
+            NpcScheduleBlock defaultSchedule,
+            VoiceType voiceType = VoiceType.Soft,
+            SpeechStyleType speechStyle = SpeechStyleType.Casual,
+            OccupationCategoryType occupationCategory = OccupationCategoryType.Service,
+            string occupationJobId = "barista",
+            string occupationSchedulePreset = "day_shift",
+            int occupationDailyIncome = 10,
+            float occupationReputationImpact = 1f,
+            float occupationSocialCircleRadius = 1f,
+            string upbringing = "ordinary_town",
+            EducationLevelType educationLevel = EducationLevelType.HighSchool,
+            string hometown = "founders_town",
+            List<string> pastRelationshipNotes = null,
+            List<string> previousJobs = null,
+            List<string> traumaTags = null)
         {
             this.archetype = archetype;
             this.dialogueStyle = dialogueStyle;
             this.clothingStyleId = clothingStyleId;
             this.personalityTraits = personalityTraits ?? new List<PersonalityTraitType>();
+            this.emotionalTraits = emotionalTraits ?? new List<EmotionalTraitType>();
+            this.socialTraits = socialTraits ?? new List<SocialTraitType>();
             this.lifestyleTraits = lifestyleTraits ?? new List<LifestyleTraitType>();
             this.survivalTraits = survivalTraits ?? new List<SurvivalTraitType>();
             this.defaultSchedule = defaultSchedule;
+            this.voiceType = voiceType;
+            this.speechStyle = speechStyle;
+            this.occupationCategory = occupationCategory;
+            this.occupationJobId = occupationJobId;
+            this.occupationSchedulePreset = occupationSchedulePreset;
+            this.occupationDailyIncome = occupationDailyIncome;
+            this.occupationReputationImpact = occupationReputationImpact;
+            this.occupationSocialCircleRadius = occupationSocialCircleRadius;
+            this.upbringing = upbringing;
+            this.educationLevel = educationLevel;
+            this.hometown = hometown;
+            this.pastRelationshipNotes = pastRelationshipNotes ?? new List<string>();
+            this.previousJobs = previousJobs ?? new List<string>();
+            this.traumaTags = traumaTags ?? new List<string>();
         }
 
         public NpcArchetypeType archetype { get; }
         public DialogueStyleType dialogueStyle { get; }
         public string clothingStyleId { get; }
         public List<PersonalityTraitType> personalityTraits { get; }
+        public List<EmotionalTraitType> emotionalTraits { get; }
+        public List<SocialTraitType> socialTraits { get; }
         public List<LifestyleTraitType> lifestyleTraits { get; }
         public List<SurvivalTraitType> survivalTraits { get; }
         public NpcScheduleBlock defaultSchedule { get; }
+        public VoiceType voiceType { get; }
+        public SpeechStyleType speechStyle { get; }
+        public OccupationCategoryType occupationCategory { get; }
+        public string occupationJobId { get; }
+        public string occupationSchedulePreset { get; }
+        public int occupationDailyIncome { get; }
+        public float occupationReputationImpact { get; }
+        public float occupationSocialCircleRadius { get; }
+        public string upbringing { get; }
+        public EducationLevelType educationLevel { get; }
+        public string hometown { get; }
+        public List<string> pastRelationshipNotes { get; }
+        public List<string> previousJobs { get; }
+        public List<string> traumaTags { get; }
     }
 
     public class AnimalDefinition

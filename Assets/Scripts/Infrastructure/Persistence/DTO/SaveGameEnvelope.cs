@@ -100,8 +100,24 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
         public string displayName = "NPC";
         public NpcArchetypeType archetype = NpcArchetypeType.Neighbor;
         public DialogueStyleType dialogueStyle = DialogueStyleType.Casual;
+        public VoiceType voiceType = VoiceType.Soft;
+        public SpeechStyleType speechStyle = SpeechStyleType.Casual;
         public string clothingStyleId = "casual_basic";
+        public OccupationCategoryType occupationCategory = OccupationCategoryType.Service;
+        public string occupationJobId = "barista";
+        public string occupationSchedulePreset = "day_shift";
+        public int occupationDailyIncome = 10;
+        public float occupationReputationImpact = 1f;
+        public float occupationSocialCircleRadius = 1f;
+        public string upbringing = "ordinary_town";
+        public EducationLevelType educationLevel = EducationLevelType.HighSchool;
+        public string hometown = "founders_town";
+        public List<string> pastRelationshipNotes = new();
+        public List<string> previousJobs = new();
+        public List<string> traumaTags = new();
         public List<PersonalityTraitType> personalityTraits = new();
+        public List<EmotionalTraitType> emotionalTraits = new();
+        public List<SocialTraitType> socialTraits = new();
         public List<LifestyleTraitType> lifestyleTraits = new();
         public List<SurvivalTraitType> survivalTraits = new();
 
