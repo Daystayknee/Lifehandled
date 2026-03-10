@@ -21,16 +21,16 @@ namespace Lifehandled.Application.Session
             // Keep startup values conservative; just seed slight personality differences.
             var status = new NeedsStatus
             {
-                hunger = Clamp01To100(60f * modifiers.hungerDecayMultiplier),
-                thirst = Clamp01To100(60f * modifiers.thirstDecayMultiplier),
-                energy = Clamp01To100(75f * modifiers.sleepRecoveryMultiplier),
-                stress = Clamp01To100(25f * modifiers.stressGainMultiplier)
+                hunger = ClampToRange(60f * modifiers.hungerDecayMultiplier),
+                thirst = ClampToRange(60f * modifiers.thirstDecayMultiplier),
+                energy = ClampToRange(75f * modifiers.sleepRecoveryMultiplier),
+                stress = ClampToRange(25f * modifiers.stressGainMultiplier)
             };
 
             return status;
         }
 
-        private static float Clamp01To100(float value)
+        public static float ClampToRange(float value)
         {
             if (value < 0f) return 0f;
             if (value > 100f) return 100f;
