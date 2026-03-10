@@ -63,6 +63,8 @@ namespace Lifehandled.Presentation.Session
             context.familyLineage ??= new FamilyLineageState();
             var needs = player.needsStatus ?? new NeedsStatus();
             var modifiers = player.geneticModifiers ?? new Lifehandled.Domain.Character.GeneticModifierProfile();
+            var ageStage = player.data.ageStage;
+            var ageSubStage = player.data.ageSubStage;
             var activeZone = context.zones?.FirstOrDefault(z => z.zoneType == context.currentZone);
             var currentSocialEvent = ResolveSocialEventTag(activeZone?.events, context.currentDay);
             var interactableCount = activeZone?.resources?.Count(r => r == "bench" || r == "atm" || r == "vending_machine" || r == "cooking_station" || r == "trash_can") ?? 0;
@@ -73,7 +75,7 @@ namespace Lifehandled.Presentation.Session
             SetText(primaryStatusText,
                 $"Hunger {needs.hunger:0} | Thirst {needs.thirst:0} | Energy {needs.energy:0} | Warmth {needs.warmth:0} | Hygiene {needs.hygiene:0}");
             SetText(secondaryStatusText,
-                $"Stress {needs.stress:0} | Mood {needs.mood:0} | IllnessRisk {needs.illnessRisk:0} | Wetness {needs.wetness:0} | Perks {context.progression.unlockedPerkIds.Count} | Collect {context.collectibles.Count} | Gen {context.familyLineage.generationIndex}");
+                $"Age {player.data.ageYears} ({ageStage}-{ageSubStage}) | Stress {needs.stress:0} | Mood {needs.mood:0} | IllnessRisk {needs.illnessRisk:0} | Wetness {needs.wetness:0} | Perks {context.progression.unlockedPerkIds.Count} | Collect {context.collectibles.Count} | Gen {context.familyLineage.generationIndex}");
             SetText(worldStatusText,
                 $"Day {context.currentDay} {context.hourOfDay:00.0}h | Zone {context.currentZone} | Event {currentSocialEvent} | Interactables {interactableCount} | {context.season} | {context.weather} | Shop {(context.shopOpen ? "OPEN" : "CLOSED")} | NPCsOut {context.npcOutsideFactor:0.00} | Food x{context.foodPriceMultiplier:0.00} | HomeComfort {context.home.homeComfort:0} | HomeClean {context.home.cleanliness:0} | SocRep {context.socialReputation:0} | FamilyTension {context.familyTension:0}");
 

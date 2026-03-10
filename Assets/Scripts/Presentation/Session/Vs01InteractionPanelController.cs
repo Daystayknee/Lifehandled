@@ -163,7 +163,10 @@ namespace Lifehandled.Presentation.Session
             SetText(dayText, $"Day: {context.currentDay}");
 
             var playerName = context.playerCharacter?.data?.displayName ?? "(none)";
-            SetText(contextText, $"Player: {playerName} | HouseholdMembers: {context.householdMembers.Count} | TalksToday: {context.talkCountToday} | SocRep: {context.socialReputation:0} | FamilyTension: {context.familyTension:0}");
+            var playerAge = context.playerCharacter?.data?.ageYears ?? 0;
+            var ageStage = context.playerCharacter?.data?.ageStage.ToString() ?? "Unknown";
+            var ageSubStage = context.playerCharacter?.data?.ageSubStage.ToString() ?? "A";
+            SetText(contextText, $"Player: {playerName} | Age {playerAge} ({ageStage}-{ageSubStage}) | HouseholdMembers: {context.householdMembers.Count} | TalksToday: {context.talkCountToday} | SocRep: {context.socialReputation:0} | FamilyTension: {context.familyTension:0}");
 
             var price = BuyStarterItemUseCase.ResolvePrice(context);
             SetText(shopText,

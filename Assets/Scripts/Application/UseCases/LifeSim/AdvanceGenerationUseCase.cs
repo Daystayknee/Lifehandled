@@ -51,6 +51,7 @@ namespace Lifehandled.Application.UseCases.LifeSim
                 genetics = inheritedGenetics,
                 appearance = inheritedAppearance
             };
+            heir.RecalculateAgeClassification();
 
             parentA.isPlayerControlled = false;
             context.playerCharacter.data = heir;
@@ -61,7 +62,7 @@ namespace Lifehandled.Application.UseCases.LifeSim
             context.familyLineage.legacyReputation = NeedsStatus.ClampToRange(
                 (context.familyLineage.legacyReputation + context.socialReputation) * 0.5f);
 
-            message = $"Generation advanced to {context.familyLineage.generationIndex}.";
+            message = $"Generation advanced to {context.familyLineage.generationIndex}. Heir life stage: {heir.ageStage}-{heir.ageSubStage}.";
             return true;
         }
     }

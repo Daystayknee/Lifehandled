@@ -167,7 +167,7 @@ namespace Lifehandled.Application.UseCases.NewGame
             var appearance = PrototypeWorldContentCatalog.CreateAppearanceFromSeed(appearanceSeed, isNpc: role == CharacterRole.Npc);
             PrototypeWorldContentCatalog.ApplyGeneticInfluenceToAppearance(appearance, genetics);
 
-            return new CharacterData
+            var character = new CharacterData
             {
                 characterId = characterId,
                 displayName = string.IsNullOrWhiteSpace(name) ? "Character" : name,
@@ -176,6 +176,9 @@ namespace Lifehandled.Application.UseCases.NewGame
                 appearance = appearance,
                 genetics = genetics
             };
+
+            character.RecalculateAgeClassification();
+            return character;
         }
     }
 }

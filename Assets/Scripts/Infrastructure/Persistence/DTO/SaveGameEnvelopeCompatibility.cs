@@ -130,6 +130,8 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
                 {
                     character.appearance.hairlineShapeId = "rounded";
                 }
+
+                character.RecalculateAgeClassification();
             }
 
             if (envelope.vs01State.npcs.Count == 0)
@@ -403,7 +405,7 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
 
         private static CharacterData CreateDefaultPlayer()
         {
-            return new CharacterData
+            var character = new CharacterData
             {
                 characterId = Guid.NewGuid().ToString("N"),
                 isPlayerControlled = true,
@@ -413,6 +415,9 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
                 appearance = new AppearanceProfile(),
                 genetics = new GeneticProfile()
             };
+
+            character.RecalculateAgeClassification();
+            return character;
         }
     }
 

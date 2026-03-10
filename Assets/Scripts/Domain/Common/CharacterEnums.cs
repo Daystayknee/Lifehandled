@@ -46,6 +46,33 @@ namespace Lifehandled.Domain.Common
     }
 
     [Serializable]
+    public enum LifeAgeStage
+    {
+        BornBaby = 0,
+        Infant = 1,
+        Toddler = 2,
+        Child = 3,
+        Preteen = 4,
+        Teen = 5,
+        AdultTeen = 6,
+        YoungAdult = 7,
+        Adult = 8,
+        OlderAdult = 9,
+        Elder = 10,
+        Death = 11
+    }
+
+    [Serializable]
+    public enum LifeAgeSubStage
+    {
+        A = 0,
+        B = 1,
+        C = 2,
+        D = 3,
+        E = 4
+    }
+
+    [Serializable]
     public enum FaceShapeType { Oval = 0, Round = 1, Square = 2, Heart = 3, Diamond = 4, Triangular = 5, LongRectangular = 6 }
 
     [Serializable]

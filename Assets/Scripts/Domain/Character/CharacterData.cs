@@ -16,11 +16,18 @@ namespace Lifehandled.Domain.Character
 
         public string displayName = "New Character";
         public int ageYears = 18;
+        public LifeAgeStage ageStage = LifeAgeStage.YoungAdult;
+        public LifeAgeSubStage ageSubStage = LifeAgeSubStage.A;
 
         public AppearanceProfile appearance = new();
         public GeneticProfile genetics = new();
 
         public string householdId = string.Empty;
         public List<string> relationshipLinkIds = new();
+
+        public void RecalculateAgeClassification()
+        {
+            AgeStageClassifier.Resolve(ageYears, out ageStage, out ageSubStage);
+        }
     }
 }
