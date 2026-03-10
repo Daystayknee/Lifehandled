@@ -104,7 +104,7 @@ namespace Lifehandled.Application.UseCases.World
                 return;
             }
 
-            var eventTag = $"social_event_day:{context.currentDay}:{socialEvent.ToString().ToLowerInvariant()}";
+            var eventTag = $"social_event_day:{context.currentDay}:{ResolveSocialEventTag(socialEvent)}";
             foreach (var zone in context.zones)
             {
                 zone.events ??= new System.Collections.Generic.List<string>();
@@ -113,19 +113,57 @@ namespace Lifehandled.Application.UseCases.World
             }
         }
 
+
+        private static string ResolveSocialEventTag(SocialEventType socialEvent)
+        {
+            return socialEvent switch
+            {
+                SocialEventType.Party => "party",
+                SocialEventType.Festival => "festival",
+                SocialEventType.Market => "market",
+                SocialEventType.Wedding => "wedding",
+                SocialEventType.Funeral => "funeral",
+                SocialEventType.Protest => "protest",
+                SocialEventType.Emergency => "emergency",
+                SocialEventType.Concert => "concert",
+                SocialEventType.SportsTournament => "sports_tournament",
+                SocialEventType.BookFair => "book_fair",
+                SocialEventType.ArtShow => "art_show",
+                SocialEventType.HarvestFair => "harvest_fair",
+                SocialEventType.ScienceExpo => "science_expo",
+                SocialEventType.CharityDrive => "charity_drive",
+                SocialEventType.BlockParty => "block_party",
+                SocialEventType.TalentShow => "talent_show",
+                SocialEventType.NightMarket => "night_market",
+                _ => socialEvent.ToString().ToLowerInvariant()
+            };
+        }
+
         private static SocialEventType ResolveSocialEvent(int day)
         {
-            var idx = (day - 1) % 7;
-            return idx switch
+            var cycle = new[]
             {
-                0 => SocialEventType.Party,
-                1 => SocialEventType.Festival,
-                2 => SocialEventType.Market,
-                3 => SocialEventType.Wedding,
-                4 => SocialEventType.Funeral,
-                5 => SocialEventType.Protest,
-                _ => SocialEventType.Emergency
+                SocialEventType.Party,
+                SocialEventType.Festival,
+                SocialEventType.Market,
+                SocialEventType.Wedding,
+                SocialEventType.Funeral,
+                SocialEventType.Protest,
+                SocialEventType.Emergency,
+                SocialEventType.Concert,
+                SocialEventType.SportsTournament,
+                SocialEventType.BookFair,
+                SocialEventType.ArtShow,
+                SocialEventType.HarvestFair,
+                SocialEventType.ScienceExpo,
+                SocialEventType.CharityDrive,
+                SocialEventType.BlockParty,
+                SocialEventType.TalentShow,
+                SocialEventType.NightMarket
             };
+
+            var idx = (day - 1) % cycle.Length;
+            return cycle[idx];
         }
 
         private static void AdvanceTime(GameSessionContext context, float minutes)

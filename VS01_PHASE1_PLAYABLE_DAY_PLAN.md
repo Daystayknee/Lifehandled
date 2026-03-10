@@ -189,3 +189,8 @@ Pass condition: complete loop works end-to-end with no missing step.
 - 30 in-game days = 1 in-game year.
 - At each in-game year boundary, player and household members age up.
 - Stage/sub-stage transitions are announced in sleep/day-end feedback.
+
+### Extended social-event and hobby variety (content expansion)
+Added additional event/hobby breadth to keep days feeling different:
+- New social events: concert, sports tournament, book fair, art show, harvest fair, science expo, charity drive, block party, talent show, night market.
+- New hobbies: woodworking, photography, birdwatching, knitting, music production, dance, baking, chess, volunteering, writing, astronomy, hiking.

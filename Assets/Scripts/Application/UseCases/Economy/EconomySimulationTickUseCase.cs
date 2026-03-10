@@ -26,13 +26,18 @@ namespace Lifehandled.Application.UseCases.Economy
             var activeZone = context.zones?.FirstOrDefault(z => z.zoneType == context.currentZone);
             var socialEvent = ResolveTodaySocialEvent(activeZone?.events, context.currentDay);
             if (socialEvent == SocialEventType.Emergency) scarcity += 0.12f;
-            if (socialEvent == SocialEventType.Market) scarcity -= 0.06f;
+            if (socialEvent == SocialEventType.Market || socialEvent == SocialEventType.NightMarket) scarcity -= 0.06f;
+            if (socialEvent == SocialEventType.HarvestFair) scarcity -= 0.08f;
+            if (socialEvent == SocialEventType.BlockParty) scarcity += 0.03f;
 
             var supplyDemand = 1f;
             if (context.npcOutsideFactor < 0.4f) supplyDemand += 0.08f;
             if (!context.shopOpen) supplyDemand += 0.08f;
-            if (socialEvent == SocialEventType.Festival || socialEvent == SocialEventType.Party) supplyDemand += 0.05f;
+            if (socialEvent == SocialEventType.Festival || socialEvent == SocialEventType.Party || socialEvent == SocialEventType.BlockParty) supplyDemand += 0.05f;
             if (socialEvent == SocialEventType.Protest) supplyDemand += 0.07f;
+            if (socialEvent == SocialEventType.Concert || socialEvent == SocialEventType.SportsTournament) supplyDemand += 0.06f;
+            if (socialEvent == SocialEventType.BookFair || socialEvent == SocialEventType.ArtShow) supplyDemand += 0.03f;
+            if (socialEvent == SocialEventType.CharityDrive) supplyDemand += 0.02f;
 
             if (activeZone?.resources != null)
             {
@@ -74,6 +79,16 @@ namespace Lifehandled.Application.UseCases.Economy
                 "funeral" => SocialEventType.Funeral,
                 "protest" => SocialEventType.Protest,
                 "emergency" => SocialEventType.Emergency,
+                "concert" => SocialEventType.Concert,
+                "sports_tournament" => SocialEventType.SportsTournament,
+                "book_fair" => SocialEventType.BookFair,
+                "art_show" => SocialEventType.ArtShow,
+                "harvest_fair" => SocialEventType.HarvestFair,
+                "science_expo" => SocialEventType.ScienceExpo,
+                "charity_drive" => SocialEventType.CharityDrive,
+                "block_party" => SocialEventType.BlockParty,
+                "talent_show" => SocialEventType.TalentShow,
+                "night_market" => SocialEventType.NightMarket,
                 _ => null
             };
         }

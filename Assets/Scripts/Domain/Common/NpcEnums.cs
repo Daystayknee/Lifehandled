@@ -133,7 +133,17 @@ namespace Lifehandled.Domain.Common
         Wedding = 3,
         Funeral = 4,
         Protest = 5,
-        Emergency = 6
+        Emergency = 6,
+        Concert = 7,
+        SportsTournament = 8,
+        BookFair = 9,
+        ArtShow = 10,
+        HarvestFair = 11,
+        ScienceExpo = 12,
+        CharityDrive = 13,
+        BlockParty = 14,
+        TalentShow = 15,
+        NightMarket = 16
     }
 
     [Serializable]

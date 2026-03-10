@@ -166,6 +166,18 @@ namespace Lifehandled.Application.UseCases.NPC
             if (hobbies.Contains("working_out") && context.progression?.GetSkillLevel("fitness") > 1) bonus += 0.25f;
             if (hobbies.Contains("painting") && context.progression?.GetSkillLevel("crafting") > 1) bonus += 0.2f;
             if (hobbies.Contains("reading") && context.progression?.GetSkillLevel("medicine") > 1) bonus += 0.2f;
+            if (hobbies.Contains("woodworking") && context.progression?.GetSkillLevel("crafting") > 1) bonus += 0.25f;
+            if (hobbies.Contains("photography") && context.progression?.GetSkillLevel("charisma") > 1) bonus += 0.2f;
+            if (hobbies.Contains("birdwatching") && context.progression?.GetSkillLevel("survival") > 1) bonus += 0.2f;
+            if (hobbies.Contains("knitting") && context.progression?.GetSkillLevel("crafting") > 1) bonus += 0.2f;
+            if (hobbies.Contains("music_production") && context.progression?.GetSkillLevel("charisma") > 1) bonus += 0.25f;
+            if (hobbies.Contains("dance") && context.progression?.GetSkillLevel("fitness") > 1) bonus += 0.2f;
+            if (hobbies.Contains("baking") && context.progression?.GetSkillLevel("cooking") > 1) bonus += 0.25f;
+            if (hobbies.Contains("chess") && context.progression?.GetSkillLevel("negotiation") > 1) bonus += 0.2f;
+            if (hobbies.Contains("volunteering") && context.progression?.GetSkillLevel("charisma") > 1) bonus += 0.2f;
+            if (hobbies.Contains("writing") && context.progression?.GetSkillLevel("charisma") > 1) bonus += 0.2f;
+            if (hobbies.Contains("astronomy") && context.progression?.GetSkillLevel("medicine") > 1) bonus += 0.2f;
+            if (hobbies.Contains("hiking") && context.progression?.GetSkillLevel("survival") > 1) bonus += 0.2f;
             return bonus;
         }
 
@@ -193,17 +205,56 @@ namespace Lifehandled.Application.UseCases.NPC
                 return;
             }
 
-            if (socialEvent == "party" || socialEvent == "festival" || socialEvent == "wedding")
+            if (socialEvent == "party" || socialEvent == "festival" || socialEvent == "wedding" || socialEvent == "block_party" || socialEvent == "talent_show")
             {
                 friendshipDelta += 0.35f;
                 reaction += " The event atmosphere makes conversation easier.";
                 return;
             }
 
-            if (socialEvent == "market")
+            if (socialEvent == "market" || socialEvent == "night_market")
             {
                 trustDelta += 0.2f;
                 reaction += " You chat while browsing stalls.";
+                return;
+            }
+
+            if (socialEvent == "book_fair" || socialEvent == "science_expo")
+            {
+                trustDelta += 0.25f;
+                friendshipDelta += 0.15f;
+                reaction += " You connect over ideas and shared curiosity.";
+                return;
+            }
+
+            if (socialEvent == "concert" || socialEvent == "sports_tournament")
+            {
+                friendshipDelta += 0.25f;
+                reaction += " Shared excitement makes socializing smoother.";
+                return;
+            }
+
+            if (socialEvent == "art_show")
+            {
+                friendshipDelta += 0.2f;
+                trustDelta += 0.1f;
+                reaction += " The creative vibe opens up a warmer conversation.";
+                return;
+            }
+
+            if (socialEvent == "charity_drive")
+            {
+                friendshipDelta += 0.2f;
+                trustDelta += 0.25f;
+                reaction += " Helping others builds mutual trust.";
+                return;
+            }
+
+            if (socialEvent == "harvest_fair")
+            {
+                friendshipDelta += 0.3f;
+                trustDelta += 0.15f;
+                reaction += " Community spirit keeps the interaction positive.";
                 return;
             }
 

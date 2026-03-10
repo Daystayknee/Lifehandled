@@ -42,12 +42,16 @@ namespace Lifehandled.Application.Content
 
         public static readonly List<string> SocialEventIds = new()
         {
-            "party", "festival", "market", "wedding", "funeral", "protest", "emergency"
+            "party", "festival", "market", "wedding", "funeral", "protest", "emergency",
+            "concert", "sports_tournament", "book_fair", "art_show", "harvest_fair",
+            "science_expo", "charity_drive", "block_party", "talent_show", "night_market"
         };
 
         public static readonly List<string> HobbyIds = new()
         {
-            "painting", "gardening", "fishing", "gaming", "cooking", "reading", "working_out"
+            "painting", "gardening", "fishing", "gaming", "cooking", "reading", "working_out",
+            "woodworking", "photography", "birdwatching", "knitting", "music_production",
+            "dance", "baking", "chess", "volunteering", "writing", "astronomy", "hiking"
         };
 
         public static readonly List<string> BuildingIds = new()
