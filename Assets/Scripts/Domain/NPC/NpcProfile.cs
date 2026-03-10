@@ -11,7 +11,13 @@ namespace Lifehandled.Domain.NPC
         public string npcId = string.Empty;
         public string displayName = "NPC";
 
+        public NpcArchetypeType archetype = NpcArchetypeType.Neighbor;
+        public DialogueStyleType dialogueStyle = DialogueStyleType.Casual;
+        public string clothingStyleId = "casual_basic";
+
         public List<PersonalityTraitType> personalityTraits = new();
+        public List<LifestyleTraitType> lifestyleTraits = new();
+        public List<SurvivalTraitType> survivalTraits = new();
         public NpcNeeds needs = new();
         public float mood = 60f;
 

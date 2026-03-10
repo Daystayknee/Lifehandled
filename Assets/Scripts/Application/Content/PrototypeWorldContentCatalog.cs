@@ -15,7 +15,9 @@ namespace Lifehandled.Application.Content
             "potato", "carrot", "corn", "tomato", "lettuce", "mushroom", "egg", "milk", "yogurt", "sandwich",
             "jerky", "trail_mix", "oatmeal", "pasta", "meat_pie", "grilled_meat", "orange", "pear", "peach", "plum",
             "pumpkin_soup", "herb_salad", "fried_rice", "curry", "pancakes", "waffle", "pickles", "seaweed", "nuts", "honey",
-            "jam_toast", "noodle_bowl", "baked_potato", "fish_taco", "fruit_salad", "lentil_stew", "spiced_tea_snack", "wild_roots", "cabbage_roll", "tofu_bowl"
+            "jam_toast", "noodle_bowl", "baked_potato", "fish_taco", "fruit_salad", "lentil_stew", "spiced_tea_snack", "wild_roots", "cabbage_roll", "tofu_bowl",
+            "canned_beans", "canned_peaches", "canned_tuna", "dried_apricot", "granola_bar", "protein_biscuit", "herbal_broth", "tomato_bisque", "miso_soup", "beet_salad",
+            "chicken_wrap", "veggie_wrap", "beef_stew", "seafood_pasta", "cheese_platter", "roasted_veggies", "fruit_tart", "cream_cake", "spice_cookie", "restaurant_ramen",
         };
 
         public static readonly List<string> ToolItemIds = new()
@@ -38,6 +40,21 @@ namespace Lifehandled.Application.Content
             "storms", "rumors", "break_ins", "social_drama", "illness_outbreaks"
         };
 
+        public static readonly List<string> BuildingIds = new()
+        {
+            "apartments", "houses", "shops", "restaurants", "workplaces"
+        };
+
+        public static readonly List<string> NatureRegionIds = new()
+        {
+            "forests", "rivers", "mountains", "beaches"
+        };
+
+        public static readonly List<string> InteractableObjectIds = new()
+        {
+            "vending_machine", "bench", "trash_can", "atm", "cooking_station"
+        };
+
         public static readonly List<FoodDefinition> FoodDefinitions = BuildFoodDefinitions();
 
         public static readonly List<ClothingDefinition> ClothingDefinitions = new()
@@ -57,48 +74,51 @@ namespace Lifehandled.Application.Content
             new("watch_basic", ClothingCategoryType.Accessory, warmth: 0f, social: 1f, jobEligibility: 2f, attractiveness: 0.5f, weatherResistance: 0f)
         };
 
+        public static readonly List<AnimalDefinition> AnimalDefinitions = new()
+        {
+            new("deer", AnimalClassType.Wild, AnimalGameplayRoleType.HuntingResource, "forest", "meat_hide", 0.2f),
+            new("rabbit", AnimalClassType.Wild, AnimalGameplayRoleType.HuntingResource, "forest", "meat_fur", 0.35f),
+            new("bird", AnimalClassType.Wild, AnimalGameplayRoleType.EcosystemBehavior, "town_center", "feather", 0.65f),
+            new("fish", AnimalClassType.Wild, AnimalGameplayRoleType.HuntingResource, "lake", "fish_meat", 0.6f),
+            new("fox", AnimalClassType.Wild, AnimalGameplayRoleType.EcosystemBehavior, "forest", "rare_pelt", 0.12f),
+            new("dog", AnimalClassType.Domestic, AnimalGameplayRoleType.Companionship, "apartments", "companionship", 0.7f),
+            new("cat", AnimalClassType.Domestic, AnimalGameplayRoleType.Companionship, "apartments", "companionship", 0.72f),
+            new("chicken", AnimalClassType.Domestic, AnimalGameplayRoleType.FarmingProduct, "workplace", "eggs", 0.55f),
+            new("cow", AnimalClassType.Domestic, AnimalGameplayRoleType.FarmingProduct, "workplace", "milk", 0.45f),
+            new("horse", AnimalClassType.Domestic, AnimalGameplayRoleType.Companionship, "town_center", "travel_bonus", 0.3f)
+        };
+
+        public static readonly List<NpcArchetypeDefinition> NpcArchetypes = BuildNpcArchetypes();
+
         public static List<Vs01NpcState> CreateNpcRoster()
         {
             var roster = new List<Vs01NpcState>();
+            var archetypeCycle = NpcArchetypes.ToList();
 
             for (var i = 1; i <= 20; i++)
             {
-                roster.Add(new Vs01NpcState
-                {
-                    npcId = $"npc_citizen_{i:00}",
-                    displayName = $"Citizen {i:00}",
-                    personalityTraits = { i % 2 == 0 ? PersonalityTraitType.Kind : PersonalityTraitType.Practical },
-                    friendship = 25f,
-                    trust = 22f,
-                    respect = 24f
-                });
+                var archetype = archetypeCycle[(i - 1) % archetypeCycle.Count];
+                roster.Add(BuildNpcFromArchetype($"npc_citizen_{i:00}", $"Citizen {i:00}", archetype));
             }
 
+            var shopArchetypes = NpcArchetypes.Where(a =>
+                    a.archetype == NpcArchetypeType.ShopOwner || a.archetype == NpcArchetypeType.Bartender || a.archetype == NpcArchetypeType.Mechanic || a.archetype == NpcArchetypeType.TravelingMerchant)
+                .ToList();
             for (var i = 1; i <= 10; i++)
             {
-                roster.Add(new Vs01NpcState
-                {
-                    npcId = $"npc_shopkeeper_{i:00}",
-                    displayName = $"Shopkeeper {i:00}",
-                    personalityTraits = { PersonalityTraitType.Practical, PersonalityTraitType.Reserved },
-                    friendship = 20f,
-                    trust = 28f,
-                    respect = 35f
-                });
+                var archetype = shopArchetypes[(i - 1) % shopArchetypes.Count];
+                roster.Add(BuildNpcFromArchetype($"npc_shopkeeper_{i:00}", $"Shopkeeper {i:00}", archetype));
             }
 
+            var specialArchetypes = NpcArchetypes.Where(a =>
+                    a.archetype == NpcArchetypeType.WealthyResident || a.archetype == NpcArchetypeType.MysteriousOutsider || a.archetype == NpcArchetypeType.TravelingMerchant)
+                .ToList();
             for (var i = 1; i <= 5; i++)
             {
-                roster.Add(new Vs01NpcState
-                {
-                    npcId = $"npc_special_{i:00}",
-                    displayName = $"Special {i:00}",
-                    personalityTraits = { PersonalityTraitType.Outgoing, PersonalityTraitType.Anxious },
-                    friendship = 30f,
-                    trust = 30f,
-                    respect = 30f,
-                    attraction = 10f
-                });
+                var archetype = specialArchetypes[(i - 1) % specialArchetypes.Count];
+                var npc = BuildNpcFromArchetype($"npc_special_{i:00}", $"Special {i:00}", archetype);
+                npc.attraction = 10f;
+                roster.Add(npc);
             }
 
             return roster;
@@ -182,6 +202,96 @@ namespace Lifehandled.Application.Content
             return profile;
         }
 
+        public static GeneticProfile BlendGeneticsForOffspring(GeneticProfile parentA, GeneticProfile parentB, string parentAId, string parentBId, int generationIndex, int seed)
+        {
+            parentA ??= new GeneticProfile();
+            parentB ??= new GeneticProfile();
+            var random = new Random(seed);
+
+            float Read(GeneticProfile profile, string geneId)
+            {
+                var gene = profile.geneValues.FirstOrDefault(g => g.geneId == geneId);
+                return gene?.value ?? 0.5f;
+            }
+
+            float Blend(string geneId)
+            {
+                var a = Read(parentA, geneId);
+                var b = Read(parentB, geneId);
+                var mid = (a + b) * 0.5f;
+                var mutation = (float)(random.NextDouble() * 0.1 - 0.05);
+                var value = mid + mutation;
+                if (value < 0f) value = 0f;
+                if (value > 1f) value = 1f;
+                return value;
+            }
+
+            return new GeneticProfile
+            {
+                genomeVersion = 1,
+                inheritance = new InheritanceMetadata
+                {
+                    isFounder = false,
+                    generationIndex = generationIndex,
+                    geneSource = GeneSourceType.Inherited
+                },
+                lineage = new LineageProfile
+                {
+                    parentACharacterId = parentAId ?? string.Empty,
+                    parentBCharacterId = parentBId ?? string.Empty,
+                    ancestorCharacterIds = new List<string> { parentAId ?? string.Empty, parentBId ?? string.Empty }
+                },
+                geneValues =
+                {
+                    new GeneValue { geneId = GeneticGeneIds.MetabolismRate, value = Blend(GeneticGeneIds.MetabolismRate) },
+                    new GeneValue { geneId = GeneticGeneIds.StaminaEfficiency, value = Blend(GeneticGeneIds.StaminaEfficiency) },
+                    new GeneValue { geneId = GeneticGeneIds.SleepRecoveryEfficiency, value = Blend(GeneticGeneIds.SleepRecoveryEfficiency) },
+                    new GeneValue { geneId = GeneticGeneIds.StressSensitivity, value = Blend(GeneticGeneIds.StressSensitivity) },
+                    new GeneValue { geneId = GeneticGeneIds.IllnessVulnerability, value = Blend(GeneticGeneIds.IllnessVulnerability) }
+                }
+            };
+        }
+
+        public static AppearanceProfile CreateInheritedAppearance(AppearanceProfile parentA, AppearanceProfile parentB, int seed)
+        {
+            parentA ??= CreateAppearanceFromSeed(seed + 11, isNpc: false);
+            parentB ??= CreateAppearanceFromSeed(seed + 37, isNpc: false);
+            var random = new Random(seed);
+
+            var appearance = new AppearanceProfile
+            {
+                appearanceSeed = seed,
+                faceShape = random.NextDouble() < 0.5 ? parentA.faceShape : parentB.faceShape,
+                jawline = random.NextDouble() < 0.5 ? parentA.jawline : parentB.jawline,
+                chin = random.NextDouble() < 0.5 ? parentA.chin : parentB.chin,
+                eyeShape = random.NextDouble() < 0.5 ? parentA.eyeShape : parentB.eyeShape,
+                eyeColor = random.NextDouble() < 0.5 ? parentA.eyeColor : parentB.eyeColor,
+                hairType = random.NextDouble() < 0.5 ? parentA.hairType : parentB.hairType,
+                hairLength = random.NextDouble() < 0.5 ? parentA.hairLength : parentB.hairLength,
+                hairStyle = random.NextDouble() < 0.5 ? parentA.hairStyle : parentB.hairStyle,
+                hairColor = random.NextDouble() < 0.5 ? parentA.hairColor : parentB.hairColor,
+                noseShape = random.NextDouble() < 0.5 ? parentA.noseShape : parentB.noseShape,
+                lipShape = random.NextDouble() < 0.5 ? parentA.lipShape : parentB.lipShape,
+                frameSize01 = (parentA.frameSize01 + parentB.frameSize01) * 0.5f,
+                heightCm = (parentA.heightCm + parentB.heightCm) * 0.5f + (float)(random.NextDouble() * 6d - 3d),
+                upperWearId = parentA.upperWearId,
+                lowerWearId = parentB.lowerWearId,
+                footwearId = random.NextDouble() < 0.5 ? parentA.footwearId : parentB.footwearId,
+                hasHeterochromia = parentA.hasHeterochromia || parentB.hasHeterochromia && random.NextDouble() < 0.5,
+                hasDimples = parentA.hasDimples || parentB.hasDimples && random.NextDouble() < 0.55
+            };
+
+            appearance.skinFeatureIds = parentA.skinFeatureIds.Concat(parentB.skinFeatureIds).Distinct().Take(3).ToList();
+            appearance.distinctiveFeatureIds = appearance.skinFeatureIds.ToList();
+            appearance.bodyFrame = appearance.frameSize01 > 0.66f ? "Large" : appearance.frameSize01 < 0.33f ? "Slim" : "Average";
+            appearance.hairStyleId = appearance.hairStyle.ToString();
+            appearance.hairColorId = appearance.hairColor.ToString();
+            appearance.eyeColorId = appearance.eyeColor.ToString();
+            appearance.outfitPresetId = $"{appearance.upperWearId}_{appearance.lowerWearId}_{appearance.footwearId}";
+
+            return appearance;
+        }
+
         public static bool TryGetFoodDefinition(string itemId, out FoodDefinition definition)
         {
             definition = FoodDefinitions.FirstOrDefault(f => f.itemId == itemId);
@@ -192,6 +302,44 @@ namespace Lifehandled.Application.Content
         {
             var values = Enum.GetValues(typeof(T));
             return (T)values.GetValue(random.Next(values.Length));
+        }
+
+        private static List<NpcArchetypeDefinition> BuildNpcArchetypes()
+        {
+            return new List<NpcArchetypeDefinition>
+            {
+                new(NpcArchetypeType.ShopOwner, DialogueStyleType.Casual, "merchant_clean", new() { PersonalityTraitType.Practical, PersonalityTraitType.Ambitious }, new() { LifestyleTraitType.Frugal }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Work),
+                new(NpcArchetypeType.Bartender, DialogueStyleType.Warm, "service_smart", new() { PersonalityTraitType.Outgoing, PersonalityTraitType.Empathetic }, new() { LifestyleTraitType.Extravagant }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Social),
+                new(NpcArchetypeType.Mechanic, DialogueStyleType.Blunt, "work_oily", new() { PersonalityTraitType.Practical, PersonalityTraitType.Reserved }, new() { LifestyleTraitType.Frugal }, new() { SurvivalTraitType.StrongMetabolism }, NpcScheduleBlock.Work),
+                new(NpcArchetypeType.Nurse, DialogueStyleType.Formal, "clinic_clean", new() { PersonalityTraitType.Kind, PersonalityTraitType.Empathetic }, new() { LifestyleTraitType.Neat }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Work),
+                new(NpcArchetypeType.Teacher, DialogueStyleType.Formal, "smart_casual", new() { PersonalityTraitType.Kind, PersonalityTraitType.Introverted }, new() { LifestyleTraitType.Neat }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Work),
+                new(NpcArchetypeType.Neighbor, DialogueStyleType.Casual, "casual_basic", new() { PersonalityTraitType.Kind }, new() { LifestyleTraitType.Messy }, new() { SurvivalTraitType.StrongMetabolism }, NpcScheduleBlock.Home),
+                new(NpcArchetypeType.Friend, DialogueStyleType.Warm, "social_trendy", new() { PersonalityTraitType.Outgoing, PersonalityTraitType.Empathetic }, new() { LifestyleTraitType.Extravagant }, new() { SurvivalTraitType.StrongMetabolism }, NpcScheduleBlock.Social),
+                new(NpcArchetypeType.Rival, DialogueStyleType.Blunt, "competitive", new() { PersonalityTraitType.Ambitious, PersonalityTraitType.Irritable }, new() { LifestyleTraitType.Extravagant }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Errands),
+                new(NpcArchetypeType.RomanticInterest, DialogueStyleType.Flirty, "stylish", new() { PersonalityTraitType.Outgoing, PersonalityTraitType.Empathetic }, new() { LifestyleTraitType.Neat }, new() { SurvivalTraitType.StrongMetabolism }, NpcScheduleBlock.Social),
+                new(NpcArchetypeType.WealthyResident, DialogueStyleType.Formal, "luxury", new() { PersonalityTraitType.Reserved, PersonalityTraitType.Ambitious }, new() { LifestyleTraitType.Extravagant }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Errands),
+                new(NpcArchetypeType.MysteriousOutsider, DialogueStyleType.Cryptic, "traveler_dark", new() { PersonalityTraitType.Reserved, PersonalityTraitType.Anxious }, new() { LifestyleTraitType.Messy }, new() { SurvivalTraitType.FragileImmuneSystem }, NpcScheduleBlock.Commute),
+                new(NpcArchetypeType.TravelingMerchant, DialogueStyleType.Casual, "merchant_travel", new() { PersonalityTraitType.Practical, PersonalityTraitType.Outgoing }, new() { LifestyleTraitType.Frugal }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Commute)
+            };
+        }
+
+        private static Vs01NpcState BuildNpcFromArchetype(string npcId, string displayName, NpcArchetypeDefinition archetype)
+        {
+            return new Vs01NpcState
+            {
+                npcId = npcId,
+                displayName = displayName,
+                archetype = archetype.archetype,
+                dialogueStyle = archetype.dialogueStyle,
+                clothingStyleId = archetype.clothingStyleId,
+                personalityTraits = archetype.personalityTraits.ToList(),
+                lifestyleTraits = archetype.lifestyleTraits.ToList(),
+                survivalTraits = archetype.survivalTraits.ToList(),
+                currentScheduleBlock = archetype.defaultSchedule,
+                friendship = archetype.archetype == NpcArchetypeType.Rival ? 15f : 25f,
+                trust = archetype.archetype == NpcArchetypeType.MysteriousOutsider ? 18f : 24f,
+                respect = archetype.archetype == NpcArchetypeType.WealthyResident ? 38f : 26f
+            };
         }
 
         private static List<FoodDefinition> BuildFoodDefinitions()
@@ -211,12 +359,12 @@ namespace Lifehandled.Application.Content
                     continue;
                 }
 
-                var category = i < 20 ? FoodCategoryType.BasicSurvival : i < 38 ? FoodCategoryType.Prepared : FoodCategoryType.Luxury;
+                var category = i < 25 ? FoodCategoryType.BasicSurvival : i < 55 ? FoodCategoryType.Prepared : FoodCategoryType.Luxury;
                 var hunger = category == FoodCategoryType.BasicSurvival ? 11f : category == FoodCategoryType.Prepared ? 18f : 14f;
                 var hydration = category == FoodCategoryType.BasicSurvival ? 3f : 2f;
                 var mood = category == FoodCategoryType.Luxury ? 6f : category == FoodCategoryType.Prepared ? 3f : 1f;
-                var health = itemId.Contains("fried") ? -1f : 2f;
-                var illnessRisk = itemId.Contains("wild") ? 2f : -1f;
+                var health = itemId.Contains("fried") || itemId.Contains("cream") ? -1f : 2f;
+                var illnessRisk = itemId.Contains("wild") || itemId.Contains("canned") ? 2f : -1f;
                 var energy = category == FoodCategoryType.Prepared ? 4f : 2f;
 
                 defs.Add(new FoodDefinition(itemId, category, hunger, hydration, mood, health, illnessRisk, energy));
@@ -224,6 +372,55 @@ namespace Lifehandled.Application.Content
 
             return defs;
         }
+    }
+
+    public class NpcArchetypeDefinition
+    {
+        public NpcArchetypeDefinition(
+            NpcArchetypeType archetype,
+            DialogueStyleType dialogueStyle,
+            string clothingStyleId,
+            List<PersonalityTraitType> personalityTraits,
+            List<LifestyleTraitType> lifestyleTraits,
+            List<SurvivalTraitType> survivalTraits,
+            NpcScheduleBlock defaultSchedule)
+        {
+            this.archetype = archetype;
+            this.dialogueStyle = dialogueStyle;
+            this.clothingStyleId = clothingStyleId;
+            this.personalityTraits = personalityTraits ?? new List<PersonalityTraitType>();
+            this.lifestyleTraits = lifestyleTraits ?? new List<LifestyleTraitType>();
+            this.survivalTraits = survivalTraits ?? new List<SurvivalTraitType>();
+            this.defaultSchedule = defaultSchedule;
+        }
+
+        public NpcArchetypeType archetype { get; }
+        public DialogueStyleType dialogueStyle { get; }
+        public string clothingStyleId { get; }
+        public List<PersonalityTraitType> personalityTraits { get; }
+        public List<LifestyleTraitType> lifestyleTraits { get; }
+        public List<SurvivalTraitType> survivalTraits { get; }
+        public NpcScheduleBlock defaultSchedule { get; }
+    }
+
+    public class AnimalDefinition
+    {
+        public AnimalDefinition(string animalId, AnimalClassType animalClass, AnimalGameplayRoleType gameplayRole, string homeZoneId, string outputItemId, float encounterWeight)
+        {
+            this.animalId = animalId;
+            this.animalClass = animalClass;
+            this.gameplayRole = gameplayRole;
+            this.homeZoneId = homeZoneId;
+            this.outputItemId = outputItemId;
+            this.encounterWeight = encounterWeight;
+        }
+
+        public string animalId { get; }
+        public AnimalClassType animalClass { get; }
+        public AnimalGameplayRoleType gameplayRole { get; }
+        public string homeZoneId { get; }
+        public string outputItemId { get; }
+        public float encounterWeight { get; }
     }
 
     public class FoodDefinition

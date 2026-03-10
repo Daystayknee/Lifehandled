@@ -98,7 +98,12 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
     {
         public string npcId = string.Empty;
         public string displayName = "NPC";
+        public NpcArchetypeType archetype = NpcArchetypeType.Neighbor;
+        public DialogueStyleType dialogueStyle = DialogueStyleType.Casual;
+        public string clothingStyleId = "casual_basic";
         public List<PersonalityTraitType> personalityTraits = new();
+        public List<LifestyleTraitType> lifestyleTraits = new();
+        public List<SurvivalTraitType> survivalTraits = new();
 
         public float hunger = 40f;
         public float energy = 70f;

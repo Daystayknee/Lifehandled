@@ -110,7 +110,12 @@ namespace Lifehandled.Application.UseCases.Gameplay
             {
                 npcId = n.profile.npcId,
                 displayName = n.profile.displayName,
+                archetype = n.profile.archetype,
+                dialogueStyle = n.profile.dialogueStyle,
+                clothingStyleId = n.profile.clothingStyleId,
                 personalityTraits = n.profile.personalityTraits,
+                lifestyleTraits = n.profile.lifestyleTraits,
+                survivalTraits = n.profile.survivalTraits,
                 hunger = n.profile.needs.hunger,
                 energy = n.profile.needs.energy,
                 social = n.profile.needs.social,

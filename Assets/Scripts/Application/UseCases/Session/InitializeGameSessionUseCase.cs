@@ -3,6 +3,7 @@ using Lifehandled.Application.Ports;
 using Lifehandled.Application.Session;
 using Lifehandled.Application.Session.NPC;
 using Lifehandled.Domain.Character;
+using Lifehandled.Domain.Common;
 using Lifehandled.Domain.NPC;
 using Lifehandled.Domain.Social;
 using Lifehandled.Infrastructure.Persistence.DTO;
@@ -167,7 +168,12 @@ namespace Lifehandled.Application.UseCases.Session
                     {
                         npcId = saved.npcId,
                         displayName = saved.displayName,
-                        personalityTraits = saved.personalityTraits,
+                        archetype = saved.archetype,
+                        dialogueStyle = saved.dialogueStyle,
+                        clothingStyleId = saved.clothingStyleId,
+                        personalityTraits = saved.personalityTraits ?? new System.Collections.Generic.List<PersonalityTraitType>(),
+                        lifestyleTraits = saved.lifestyleTraits ?? new System.Collections.Generic.List<LifestyleTraitType>(),
+                        survivalTraits = saved.survivalTraits ?? new System.Collections.Generic.List<SurvivalTraitType>(),
                         needs = new NpcNeeds
                         {
                             hunger = saved.hunger,

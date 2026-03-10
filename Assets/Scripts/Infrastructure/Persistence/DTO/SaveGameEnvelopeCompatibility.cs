@@ -135,6 +135,21 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
                     npc.knownSecretsCount = 0;
                 }
 
+                if (string.IsNullOrWhiteSpace(npc.clothingStyleId))
+                {
+                    npc.clothingStyleId = "casual_basic";
+                }
+
+                if (npc.lifestyleTraits == null)
+                {
+                    npc.lifestyleTraits = new List<LifestyleTraitType>();
+                }
+
+                if (npc.survivalTraits == null)
+                {
+                    npc.survivalTraits = new List<SurvivalTraitType>();
+                }
+
                 npc.gossipHeat = Clamp01Range(npc.gossipHeat);
                 npc.rumorBelief = Clamp01Range(npc.rumorBelief);
                 npc.rivalryWithPlayer = Clamp01Range(npc.rivalryWithPlayer);

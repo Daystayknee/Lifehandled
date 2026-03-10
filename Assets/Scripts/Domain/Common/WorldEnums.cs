@@ -34,4 +34,20 @@ namespace Lifehandled.Domain.Common
         Town = 8,
         Workplace = 9
     }
+
+    [Serializable]
+    public enum AnimalClassType
+    {
+        Wild = 0,
+        Domestic = 1
+    }
+
+    [Serializable]
+    public enum AnimalGameplayRoleType
+    {
+        HuntingResource = 0,
+        Companionship = 1,
+        FarmingProduct = 2,
+        EcosystemBehavior = 3
+    }
 }
