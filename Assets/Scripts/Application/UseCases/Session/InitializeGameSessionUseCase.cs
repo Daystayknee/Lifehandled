@@ -57,10 +57,13 @@ namespace Lifehandled.Application.UseCases.Session
 
         private RuntimeCharacterState CreateRuntimeCharacter(CharacterData character, bool lightSim)
         {
+            var modifiers = _geneticModifierProvider.BuildModifiers(character.genetics);
+
             return new RuntimeCharacterState
             {
                 data = character,
-                geneticModifiers = _geneticModifierProvider.BuildModifiers(character.genetics),
+                geneticModifiers = modifiers,
+                needsStatus = NeedsStatus.CreateDefault(modifiers),
                 isLightSimulatedHouseholdMember = lightSim
             };
         }

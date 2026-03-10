@@ -11,6 +11,7 @@ namespace Lifehandled.Application.Session
     {
         public CharacterData data = new();
         public GeneticModifierProfile geneticModifiers = new();
+        public NeedsStatus needsStatus = new();
         public bool isLightSimulatedHouseholdMember;
     }
 }
