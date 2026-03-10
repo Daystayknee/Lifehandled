@@ -5,6 +5,8 @@ using Lifehandled.Domain.Character;
 using Lifehandled.Domain.Common;
 using Lifehandled.Domain.Household;
 using Lifehandled.Domain.Social;
+using Lifehandled.Application.Content;
+using Lifehandled.Application.UseCases.World;
 
 namespace Lifehandled.Infrastructure.Persistence.DTO
 {
@@ -118,15 +120,7 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
 
             if (envelope.vs01State.npcs.Count == 0)
             {
-                envelope.vs01State.npcs.Add(new Vs01NpcState
-                {
-                    npcId = "npc_vendor_01",
-                    displayName = "Mara",
-                    personalityTraits = new List<PersonalityTraitType> { PersonalityTraitType.Practical },
-                    friendship = 30f,
-                    trust = 30f,
-                    respect = 35f
-                });
+                envelope.vs01State.npcs = PrototypeWorldContentCatalog.CreateNpcRoster();
             }
 
             foreach (var npc in envelope.vs01State.npcs)
@@ -275,16 +269,16 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
 
         private static List<Vs01ZoneState> CreateDefaultZones()
         {
-            return new List<Vs01ZoneState>
+            return BuildZoneCatalogUseCase.CreateDefault().Select(z => new Vs01ZoneState
             {
-                new() { zoneType = ZoneType.Home, zoneId = "home", displayName = "Home", npcPool = new List<string> { "npc_neighbor_01" }, resources = new List<string> { "bed", "kitchen", "storage" }, events = new List<string> { "rest", "cleaning" }, dangerLevel = 0.05f },
-                new() { zoneType = ZoneType.Town, zoneId = "town", displayName = "Town", npcPool = new List<string> { "npc_vendor_01", "npc_neighbor_01" }, resources = new List<string> { "social_hub" }, events = new List<string> { "gossip", "street_event" }, dangerLevel = 0.2f },
-                new() { zoneType = ZoneType.Store, zoneId = "store", displayName = "Store", npcPool = new List<string> { "npc_vendor_01" }, resources = new List<string> { "water_bottle", "stale_food" }, events = new List<string> { "trade", "price_change" }, dangerLevel = 0.1f },
-                new() { zoneType = ZoneType.Forest, zoneId = "forest", displayName = "Forest", resources = new List<string> { "wood", "herbs" }, events = new List<string> { "gathering", "wild_encounter" }, dangerLevel = 0.65f },
-                new() { zoneType = ZoneType.Lake, zoneId = "lake", displayName = "Lake", resources = new List<string> { "fish", "water" }, events = new List<string> { "fishing", "rain_event" }, dangerLevel = 0.35f },
-                new() { zoneType = ZoneType.Clinic, zoneId = "clinic", displayName = "Clinic", resources = new List<string> { "medicine" }, events = new List<string> { "treatment" }, dangerLevel = 0.05f },
-                new() { zoneType = ZoneType.Workplace, zoneId = "workplace", displayName = "Workplace", npcPool = new List<string> { "npc_vendor_01" }, resources = new List<string> { "income" }, events = new List<string> { "shift", "work_conflict" }, dangerLevel = 0.25f }
-            };
+                zoneType = z.zoneType,
+                zoneId = z.zoneId,
+                displayName = z.displayName,
+                npcPool = z.npcPool,
+                resources = z.resources,
+                events = z.events,
+                dangerLevel = z.dangerLevel
+            }).ToList();
         }
 
         private static CharacterData CreateDefaultPlayer()

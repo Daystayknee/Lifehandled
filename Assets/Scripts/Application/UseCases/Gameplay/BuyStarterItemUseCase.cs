@@ -24,9 +24,9 @@ namespace Lifehandled.Application.UseCases.Gameplay
                 return false;
             }
 
-            if (context.currentZone != ZoneType.Store)
+            if (context.currentZone != ZoneType.Store && context.currentZone != ZoneType.GasStation)
             {
-                message = "You need to be at the store to buy items.";
+                message = "You need to be at the store or gas station to buy items.";
                 return false;
             }
 

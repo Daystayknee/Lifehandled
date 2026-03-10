@@ -24,11 +24,14 @@ namespace Lifehandled.Domain.Common
     public enum ZoneType
     {
         Home = 0,
-        Town = 1,
-        Store = 2,
-        Forest = 3,
-        Lake = 4,
-        Clinic = 5,
-        Workplace = 6
+        TownCenter = 1,
+        Forest = 2,
+        GasStation = 3,
+        Clinic = 4,
+        Apartments = 5,
+        Lake = 6,
+        Store = 7,
+        Town = 8,
+        Workplace = 9
     }
 }

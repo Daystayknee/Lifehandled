@@ -86,12 +86,12 @@ namespace Lifehandled.Presentation.Session
             if (stealFromShopButton != null) stealFromShopButton.onClick.AddListener(OnStealFromShopClicked);
             if (gossipButton != null) gossipButton.onClick.AddListener(OnGossipClicked);
             if (travelHomeButton != null) travelHomeButton.onClick.AddListener(() => OnTravelClicked(ZoneType.Home));
-            if (travelTownButton != null) travelTownButton.onClick.AddListener(() => OnTravelClicked(ZoneType.Town));
-            if (travelStoreButton != null) travelStoreButton.onClick.AddListener(() => OnTravelClicked(ZoneType.Store));
+            if (travelTownButton != null) travelTownButton.onClick.AddListener(() => OnTravelClicked(ZoneType.TownCenter));
+            if (travelStoreButton != null) travelStoreButton.onClick.AddListener(() => OnTravelClicked(ZoneType.GasStation));
             if (travelForestButton != null) travelForestButton.onClick.AddListener(() => OnTravelClicked(ZoneType.Forest));
             if (travelLakeButton != null) travelLakeButton.onClick.AddListener(() => OnTravelClicked(ZoneType.Lake));
             if (travelClinicButton != null) travelClinicButton.onClick.AddListener(() => OnTravelClicked(ZoneType.Clinic));
-            if (travelWorkplaceButton != null) travelWorkplaceButton.onClick.AddListener(() => OnTravelClicked(ZoneType.Workplace));
+            if (travelWorkplaceButton != null) travelWorkplaceButton.onClick.AddListener(() => OnTravelClicked(ZoneType.Apartments));
             if (gainCookingSkillButton != null) gainCookingSkillButton.onClick.AddListener(OnGainCookingSkillClicked);
             if (unlockPerkButton != null) unlockPerkButton.onClick.AddListener(OnUnlockPerkClicked);
             if (collectRelicButton != null) collectRelicButton.onClick.AddListener(OnCollectRelicClicked);

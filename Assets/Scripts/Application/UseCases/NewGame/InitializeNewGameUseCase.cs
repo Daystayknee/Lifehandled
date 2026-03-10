@@ -6,6 +6,8 @@ using Lifehandled.Domain.Household;
 using Lifehandled.Domain.Social;
 using Lifehandled.Infrastructure.Persistence.DTO;
 using Lifehandled.Application.UseCases.World;
+using Lifehandled.Application.Content;
+using System.Linq;
 
 namespace Lifehandled.Application.UseCases.NewGame
 {
@@ -86,7 +88,7 @@ namespace Lifehandled.Application.UseCases.NewGame
                         new Vs01SkillState { skillId = "survival", level = 1, xp = 0f }
                     },
                     unlockedPerkIds = { },
-                    collectibles = { },
+                    collectibles = PrototypeWorldContentCatalog.CollectibleIds.ToList(),
                     rareEventsSeen = { },
                     generationCharacterIds = { playerCharacter.characterId },
                     zones = BuildZoneCatalogUseCase.CreateDefault().ConvertAll(z => new Vs01ZoneState
@@ -104,27 +106,7 @@ namespace Lifehandled.Application.UseCases.NewGame
                         new Vs01ItemStack { itemId = "water_bottle", count = 1 },
                         new Vs01ItemStack { itemId = "stale_food", count = 1 }
                     },
-                    npcs =
-                    {
-                        new Vs01NpcState
-                        {
-                            npcId = "npc_vendor_01",
-                            displayName = "Mara",
-                            personalityTraits = { PersonalityTraitType.Practical, PersonalityTraitType.Reserved },
-                            friendship = 35f,
-                            trust = 30f,
-                            respect = 40f
-                        },
-                        new Vs01NpcState
-                        {
-                            npcId = "npc_neighbor_01",
-                            displayName = "Ivo",
-                            personalityTraits = { PersonalityTraitType.Outgoing },
-                            friendship = 28f,
-                            trust = 26f,
-                            respect = 30f
-                        }
-                    },
+                    npcs = PrototypeWorldContentCatalog.CreateNpcRoster(),
                 }
             };
 
