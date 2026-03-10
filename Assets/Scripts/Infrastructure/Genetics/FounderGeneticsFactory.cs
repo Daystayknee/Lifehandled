@@ -24,8 +24,10 @@ namespace Lifehandled.Infrastructure.Genetics
                 geneValues =
                 {
                     new GeneValue { geneId = GeneticGeneIds.MetabolismRate, value = 0.5f },
+                    new GeneValue { geneId = GeneticGeneIds.StaminaEfficiency, value = 0.5f },
                     new GeneValue { geneId = GeneticGeneIds.SleepRecoveryEfficiency, value = 0.5f },
-                    new GeneValue { geneId = GeneticGeneIds.StressSensitivity, value = 0.5f }
+                    new GeneValue { geneId = GeneticGeneIds.StressSensitivity, value = 0.5f },
+                    new GeneValue { geneId = GeneticGeneIds.IllnessVulnerability, value = 0.5f }
                 }
             };
         }

@@ -33,12 +33,12 @@ namespace Lifehandled.Application.Session
             {
                 hunger = ClampToRange(60f * modifiers.hungerDecayMultiplier),
                 thirst = ClampToRange(60f * modifiers.thirstDecayMultiplier),
-                energy = ClampToRange(75f * modifiers.sleepRecoveryMultiplier),
+                energy = ClampToRange(75f * modifiers.staminaRecoveryMultiplier),
                 warmth = 70f,
                 hygiene = 70f,
                 stress = ClampToRange(25f * modifiers.stressGainMultiplier),
                 mood = 70f,
-                illnessRisk = 5f,
+                illnessRisk = ClampToRange(5f * modifiers.illnessRiskGainMultiplier),
                 wetness = 0f
             };
         }

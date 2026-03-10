@@ -13,12 +13,24 @@ namespace Lifehandled.Infrastructure.Genetics
         {
             profile ??= new GeneticProfile();
 
+            var metabolismGene = ReadGene(profile, GeneticGeneIds.MetabolismRate);
+            var staminaGene = ReadGene(profile, GeneticGeneIds.StaminaEfficiency);
+            var sleepGene = ReadGene(profile, GeneticGeneIds.SleepRecoveryEfficiency);
+            var stressGene = ReadGene(profile, GeneticGeneIds.StressSensitivity);
+            var illnessGene = ReadGene(profile, GeneticGeneIds.IllnessVulnerability);
+
             var modifiers = new GeneticModifierProfile
             {
-                hungerDecayMultiplier = ConvertGeneToMultiplier(ReadGene(profile, GeneticGeneIds.MetabolismRate)),
-                thirstDecayMultiplier = ConvertGeneToMultiplier(ReadGene(profile, GeneticGeneIds.MetabolismRate)),
-                sleepRecoveryMultiplier = ConvertGeneToMultiplier(ReadGene(profile, GeneticGeneIds.SleepRecoveryEfficiency)),
-                stressGainMultiplier = ConvertGeneToMultiplier(ReadGene(profile, GeneticGeneIds.StressSensitivity))
+                metabolismMultiplier = ConvertGeneToMultiplier(metabolismGene),
+                hungerDecayMultiplier = ConvertGeneToMultiplier(metabolismGene),
+                thirstDecayMultiplier = ConvertGeneToMultiplier(metabolismGene),
+                energyDecayMultiplier = ConvertInverseGeneToMultiplier(staminaGene),
+                staminaRecoveryMultiplier = ConvertGeneToMultiplier(staminaGene),
+                sleepRecoveryMultiplier = ConvertGeneToMultiplier(sleepGene),
+                sleepQualityMultiplier = ConvertGeneToMultiplier(sleepGene),
+                stressGainMultiplier = ConvertGeneToMultiplier(stressGene),
+                moodDropMultiplier = ConvertGeneToMultiplier(stressGene),
+                illnessRiskGainMultiplier = ConvertGeneToMultiplier(illnessGene)
             };
 
             return modifiers;
@@ -35,6 +47,13 @@ namespace Lifehandled.Infrastructure.Genetics
             // 0..1 -> 0.9..1.1 (prototype-safe range)
             var clamped = normalizedGene < 0f ? 0f : (normalizedGene > 1f ? 1f : normalizedGene);
             return 0.9f + (0.2f * clamped);
+        }
+
+        private static float ConvertInverseGeneToMultiplier(float normalizedGene)
+        {
+            // Higher stamina gene should reduce drain.
+            var clamped = normalizedGene < 0f ? 0f : (normalizedGene > 1f ? 1f : normalizedGene);
+            return 1.1f - (0.2f * clamped);
         }
     }
 }

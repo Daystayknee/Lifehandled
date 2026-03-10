@@ -22,11 +22,12 @@ namespace Lifehandled.Application.UseCases.Gameplay
             context.currentDay += 1;
             context.hourOfDay = 7f;
             var needs = context.playerCharacter.needsStatus;
+            var modifiers = context.playerCharacter.geneticModifiers ?? new Domain.Character.GeneticModifierProfile();
 
-            var sleepQuality = ComputeSleepQuality(needs, context.home);
+            var sleepQuality = ComputeSleepQuality(needs, context.home, modifiers);
 
             // Energy recovery depends on sleep quality.
-            needs.energy = NeedsStatus.ClampToRange(needs.energy + (20f + (20f * sleepQuality)));
+            needs.energy = NeedsStatus.ClampToRange(needs.energy + ((20f + (20f * sleepQuality)) * modifiers.staminaRecoveryMultiplier * modifiers.sleepRecoveryMultiplier));
 
             // Overnight baseline changes.
             needs.hunger = NeedsStatus.ClampToRange(needs.hunger + 10f);
@@ -51,7 +52,7 @@ namespace Lifehandled.Application.UseCases.Gameplay
             return true;
         }
 
-        private static float ComputeSleepQuality(NeedsStatus needs, HomeLifeState home)
+        private static float ComputeSleepQuality(NeedsStatus needs, HomeLifeState home, Domain.Character.GeneticModifierProfile modifiers)
         {
             // 0..1 composite from warmth, hygiene, home comfort, cleanliness, and inverse stress.
             var warmthScore = needs.warmth / 100f;
@@ -65,6 +66,7 @@ namespace Lifehandled.Application.UseCases.Gameplay
                       + (stressScore * 0.25f)
                       + (comfortScore * 0.2f)
                       + (cleanlinessScore * 0.1f);
+            raw *= modifiers?.sleepQualityMultiplier ?? 1f;
             if (raw < 0f) return 0f;
             if (raw > 1f) return 1f;
             return raw;
