@@ -24,7 +24,7 @@ namespace Lifehandled.Application.UseCases.Gameplay
             var needs = context.playerCharacter.needsStatus;
             var modifiers = context.playerCharacter.geneticModifiers ?? new Domain.Character.GeneticModifierProfile();
 
-            var sleepQuality = ComputeSleepQuality(needs, context.home, modifiers);
+            var sleepQuality = ComputeSleepQuality(needs, context.home, modifiers, context.playerCharacter.data?.appearance);
 
             // Energy recovery depends on sleep quality.
             needs.energy = NeedsStatus.ClampToRange(needs.energy + ((20f + (20f * sleepQuality)) * modifiers.staminaRecoveryMultiplier * modifiers.sleepRecoveryMultiplier));
@@ -49,10 +49,22 @@ namespace Lifehandled.Application.UseCases.Gameplay
                 message = $"Slept well. Day is now {context.currentDay}. {economyResult}";
             }
 
+
+            var appearance = context.playerCharacter.data?.appearance;
+            if (appearance != null)
+            {
+                appearance.fatigue01 = appearance.fatigue01 > 0.1f ? appearance.fatigue01 - 0.18f : 0f;
+                appearance.dehydration01 = appearance.dehydration01 > 0.08f ? appearance.dehydration01 - 0.12f : 0f;
+                appearance.injury01 = appearance.injury01 > 0.03f ? appearance.injury01 - 0.03f * modifiers.painToleranceMultiplier : 0f;
+                if (appearance.fatigue01 < 0f) appearance.fatigue01 = 0f;
+                if (appearance.dehydration01 < 0f) appearance.dehydration01 = 0f;
+                if (appearance.injury01 < 0f) appearance.injury01 = 0f;
+            }
+
             return true;
         }
 
-        private static float ComputeSleepQuality(NeedsStatus needs, HomeLifeState home, Domain.Character.GeneticModifierProfile modifiers)
+        private static float ComputeSleepQuality(NeedsStatus needs, HomeLifeState home, Domain.Character.GeneticModifierProfile modifiers, Domain.Character.AppearanceProfile appearance)
         {
             // 0..1 composite from warmth, hygiene, home comfort, cleanliness, and inverse stress.
             var warmthScore = needs.warmth / 100f;
@@ -61,11 +73,13 @@ namespace Lifehandled.Application.UseCases.Gameplay
             var comfortScore = (home?.homeComfort ?? 50f) / 100f;
             var cleanlinessScore = (home?.cleanliness ?? 50f) / 100f;
 
+            var tendency = appearance?.sleepQualityTendency01 ?? 0.5f;
             var raw = (warmthScore * 0.25f)
                       + (hygieneScore * 0.2f)
                       + (stressScore * 0.25f)
                       + (comfortScore * 0.2f)
-                      + (cleanlinessScore * 0.1f);
+                      + (cleanlinessScore * 0.1f)
+                      + (tendency * 0.08f);
             raw *= modifiers?.sleepQualityMultiplier ?? 1f;
             if (raw < 0f) return 0f;
             if (raw > 1f) return 1f;

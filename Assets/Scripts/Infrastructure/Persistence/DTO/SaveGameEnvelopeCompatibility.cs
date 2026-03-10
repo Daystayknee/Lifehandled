@@ -118,6 +118,20 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
                 envelope.vs01State.legacyFamilyName = "Founders";
             }
 
+            foreach (var character in envelope.characters)
+            {
+                character.appearance ??= new AppearanceProfile();
+                if (string.IsNullOrWhiteSpace(character.appearance.skinUndertone))
+                {
+                    character.appearance.skinUndertone = "neutral";
+                }
+
+                if (string.IsNullOrWhiteSpace(character.appearance.hairlineShapeId))
+                {
+                    character.appearance.hairlineShapeId = "rounded";
+                }
+            }
+
             if (envelope.vs01State.npcs.Count == 0)
             {
                 envelope.vs01State.npcs = PrototypeWorldContentCatalog.CreateNpcRoster();

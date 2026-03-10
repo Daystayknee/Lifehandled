@@ -141,6 +141,42 @@ namespace Lifehandled.Application.Content
                 hairLength = PickEnum<HairLengthType>(random),
                 hairStyle = PickEnum<HairStyleType>(random),
                 hairColor = PickEnum<HairColorType>(random),
+                skinUndertone = random.NextDouble() < 0.33 ? "cool" : random.NextDouble() < 0.5 ? "warm" : "neutral",
+                skinTexture01 = (float)random.NextDouble(),
+                poreVisibility01 = (float)random.NextDouble(),
+                wrinkleIntensity01 = (float)random.NextDouble() * 0.4f,
+                sunDamage01 = (float)random.NextDouble() * 0.35f,
+                tanLevel01 = (float)random.NextDouble() * 0.5f,
+                scarVisibility01 = (float)random.NextDouble() * 0.3f,
+                stretchMarks01 = (float)random.NextDouble() * 0.3f,
+                acne01 = (float)random.NextDouble() * 0.3f,
+                rashes01 = (float)random.NextDouble() * 0.15f,
+                dryness01 = (float)random.NextDouble() * 0.4f,
+                sunburn01 = 0f,
+                hairThickness01 = (float)random.NextDouble(),
+                hairDensity01 = (float)random.NextDouble(),
+                hairGrowthSpeed01 = (float)random.NextDouble(),
+                hairlineShapeId = random.NextDouble() < 0.5 ? "rounded" : "m_shape",
+                baldingPattern01 = (float)random.NextDouble() * 0.25f,
+                grayingRate01 = (float)random.NextDouble() * 0.4f,
+                armHair01 = (float)random.NextDouble(),
+                legHair01 = (float)random.NextDouble(),
+                facialHair01 = (float)random.NextDouble(),
+                chestHair01 = (float)random.NextDouble(),
+                backHair01 = (float)random.NextDouble(),
+                weightShift01 = 0.5f,
+                muscleGrowth01 = 0.5f,
+                fatigue01 = 0.2f,
+                dehydration01 = 0.2f,
+                illness01 = 0.05f,
+                injury01 = 0f,
+                metabolismSpeed01 = (float)random.NextDouble(),
+                staminaCapacity01 = (float)random.NextDouble(),
+                immuneStrength01 = (float)random.NextDouble(),
+                painTolerance01 = (float)random.NextDouble(),
+                sleepQualityTendency01 = (float)random.NextDouble(),
+                stressTolerance01 = (float)random.NextDouble(),
+                agingRate01 = (float)random.NextDouble(),
                 hasHeterochromia = random.NextDouble() < 0.03,
                 hasEpicanthicFold = random.NextDouble() < 0.2,
                 hasHeavyLids = random.NextDouble() < 0.35,
@@ -247,7 +283,13 @@ namespace Lifehandled.Application.Content
                     new GeneValue { geneId = GeneticGeneIds.StaminaEfficiency, value = Blend(GeneticGeneIds.StaminaEfficiency) },
                     new GeneValue { geneId = GeneticGeneIds.SleepRecoveryEfficiency, value = Blend(GeneticGeneIds.SleepRecoveryEfficiency) },
                     new GeneValue { geneId = GeneticGeneIds.StressSensitivity, value = Blend(GeneticGeneIds.StressSensitivity) },
-                    new GeneValue { geneId = GeneticGeneIds.IllnessVulnerability, value = Blend(GeneticGeneIds.IllnessVulnerability) }
+                    new GeneValue { geneId = GeneticGeneIds.IllnessVulnerability, value = Blend(GeneticGeneIds.IllnessVulnerability) },
+                    new GeneValue { geneId = GeneticGeneIds.ImmuneSystemStrength, value = Blend(GeneticGeneIds.ImmuneSystemStrength) },
+                    new GeneValue { geneId = GeneticGeneIds.PainTolerance, value = Blend(GeneticGeneIds.PainTolerance) },
+                    new GeneValue { geneId = GeneticGeneIds.SleepQualityTendency, value = Blend(GeneticGeneIds.SleepQualityTendency) },
+                    new GeneValue { geneId = GeneticGeneIds.StressTolerance, value = Blend(GeneticGeneIds.StressTolerance) },
+                    new GeneValue { geneId = GeneticGeneIds.AgingRate, value = Blend(GeneticGeneIds.AgingRate) },
+                    new GeneValue { geneId = GeneticGeneIds.HairGrowthSpeed, value = Blend(GeneticGeneIds.HairGrowthSpeed) }
                 }
             };
         }
@@ -278,7 +320,37 @@ namespace Lifehandled.Application.Content
                 lowerWearId = parentB.lowerWearId,
                 footwearId = random.NextDouble() < 0.5 ? parentA.footwearId : parentB.footwearId,
                 hasHeterochromia = parentA.hasHeterochromia || parentB.hasHeterochromia && random.NextDouble() < 0.5,
-                hasDimples = parentA.hasDimples || parentB.hasDimples && random.NextDouble() < 0.55
+                hasDimples = parentA.hasDimples || parentB.hasDimples && random.NextDouble() < 0.55,
+                skinUndertone = random.NextDouble() < 0.5 ? parentA.skinUndertone : parentB.skinUndertone,
+                skinTexture01 = (parentA.skinTexture01 + parentB.skinTexture01) * 0.5f,
+                poreVisibility01 = (parentA.poreVisibility01 + parentB.poreVisibility01) * 0.5f,
+                wrinkleIntensity01 = (parentA.wrinkleIntensity01 + parentB.wrinkleIntensity01) * 0.5f,
+                sunDamage01 = (parentA.sunDamage01 + parentB.sunDamage01) * 0.5f,
+                tanLevel01 = (parentA.tanLevel01 + parentB.tanLevel01) * 0.5f,
+                scarVisibility01 = (parentA.scarVisibility01 + parentB.scarVisibility01) * 0.5f,
+                stretchMarks01 = (parentA.stretchMarks01 + parentB.stretchMarks01) * 0.5f,
+                acne01 = (parentA.acne01 + parentB.acne01) * 0.5f,
+                rashes01 = (parentA.rashes01 + parentB.rashes01) * 0.5f,
+                dryness01 = (parentA.dryness01 + parentB.dryness01) * 0.5f,
+                sunburn01 = 0f,
+                hairThickness01 = (parentA.hairThickness01 + parentB.hairThickness01) * 0.5f,
+                hairDensity01 = (parentA.hairDensity01 + parentB.hairDensity01) * 0.5f,
+                hairGrowthSpeed01 = (parentA.hairGrowthSpeed01 + parentB.hairGrowthSpeed01) * 0.5f,
+                hairlineShapeId = random.NextDouble() < 0.5 ? parentA.hairlineShapeId : parentB.hairlineShapeId,
+                baldingPattern01 = (parentA.baldingPattern01 + parentB.baldingPattern01) * 0.5f,
+                grayingRate01 = (parentA.grayingRate01 + parentB.grayingRate01) * 0.5f,
+                armHair01 = (parentA.armHair01 + parentB.armHair01) * 0.5f,
+                legHair01 = (parentA.legHair01 + parentB.legHair01) * 0.5f,
+                facialHair01 = (parentA.facialHair01 + parentB.facialHair01) * 0.5f,
+                chestHair01 = (parentA.chestHair01 + parentB.chestHair01) * 0.5f,
+                backHair01 = (parentA.backHair01 + parentB.backHair01) * 0.5f,
+                metabolismSpeed01 = (parentA.metabolismSpeed01 + parentB.metabolismSpeed01) * 0.5f,
+                staminaCapacity01 = (parentA.staminaCapacity01 + parentB.staminaCapacity01) * 0.5f,
+                immuneStrength01 = (parentA.immuneStrength01 + parentB.immuneStrength01) * 0.5f,
+                painTolerance01 = (parentA.painTolerance01 + parentB.painTolerance01) * 0.5f,
+                sleepQualityTendency01 = (parentA.sleepQualityTendency01 + parentB.sleepQualityTendency01) * 0.5f,
+                stressTolerance01 = (parentA.stressTolerance01 + parentB.stressTolerance01) * 0.5f,
+                agingRate01 = (parentA.agingRate01 + parentB.agingRate01) * 0.5f
             };
 
             appearance.skinFeatureIds = parentA.skinFeatureIds.Concat(parentB.skinFeatureIds).Distinct().Take(3).ToList();
@@ -290,6 +362,36 @@ namespace Lifehandled.Application.Content
             appearance.outfitPresetId = $"{appearance.upperWearId}_{appearance.lowerWearId}_{appearance.footwearId}";
 
             return appearance;
+        }
+
+
+        public static void ApplyGeneticInfluenceToAppearance(AppearanceProfile appearance, GeneticProfile genetics)
+        {
+            if (appearance == null || genetics == null)
+            {
+                return;
+            }
+
+            float Read(string geneId)
+            {
+                if (genetics.geneValues == null)
+                {
+                    return 0.5f;
+                }
+
+                var gene = genetics.geneValues.FirstOrDefault(g => g.geneId == geneId);
+                return gene?.value ?? 0.5f;
+            }
+
+            appearance.metabolismSpeed01 = Read(GeneticGeneIds.MetabolismRate);
+            appearance.staminaCapacity01 = Read(GeneticGeneIds.StaminaEfficiency);
+            appearance.sleepQualityTendency01 = Read(GeneticGeneIds.SleepQualityTendency);
+            appearance.stressTolerance01 = Read(GeneticGeneIds.StressTolerance);
+            appearance.immuneStrength01 = Read(GeneticGeneIds.ImmuneSystemStrength);
+            appearance.painTolerance01 = Read(GeneticGeneIds.PainTolerance);
+            appearance.agingRate01 = Read(GeneticGeneIds.AgingRate);
+            appearance.hairGrowthSpeed01 = Read(GeneticGeneIds.HairGrowthSpeed);
+            appearance.bodyFrame = appearance.frameSize01 > 0.66f ? "Large" : appearance.frameSize01 < 0.33f ? "Slim" : "Average";
         }
 
         public static bool TryGetFoodDefinition(string itemId, out FoodDefinition definition)

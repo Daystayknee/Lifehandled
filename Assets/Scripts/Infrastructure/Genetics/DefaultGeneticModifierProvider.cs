@@ -18,6 +18,12 @@ namespace Lifehandled.Infrastructure.Genetics
             var sleepGene = ReadGene(profile, GeneticGeneIds.SleepRecoveryEfficiency);
             var stressGene = ReadGene(profile, GeneticGeneIds.StressSensitivity);
             var illnessGene = ReadGene(profile, GeneticGeneIds.IllnessVulnerability);
+            var immuneGene = ReadGene(profile, GeneticGeneIds.ImmuneSystemStrength);
+            var painGene = ReadGene(profile, GeneticGeneIds.PainTolerance);
+            var sleepQualityGene = ReadGene(profile, GeneticGeneIds.SleepQualityTendency);
+            var stressToleranceGene = ReadGene(profile, GeneticGeneIds.StressTolerance);
+            var agingGene = ReadGene(profile, GeneticGeneIds.AgingRate);
+            var hairGrowthGene = ReadGene(profile, GeneticGeneIds.HairGrowthSpeed);
 
             var modifiers = new GeneticModifierProfile
             {
@@ -26,11 +32,17 @@ namespace Lifehandled.Infrastructure.Genetics
                 thirstDecayMultiplier = ConvertGeneToMultiplier(metabolismGene),
                 energyDecayMultiplier = ConvertInverseGeneToMultiplier(staminaGene),
                 staminaRecoveryMultiplier = ConvertGeneToMultiplier(staminaGene),
+                staminaCapacityMultiplier = ConvertGeneToMultiplier(staminaGene),
                 sleepRecoveryMultiplier = ConvertGeneToMultiplier(sleepGene),
-                sleepQualityMultiplier = ConvertGeneToMultiplier(sleepGene),
-                stressGainMultiplier = ConvertGeneToMultiplier(stressGene),
+                sleepQualityMultiplier = ConvertGeneToMultiplier((sleepGene + sleepQualityGene) * 0.5f),
+                stressGainMultiplier = ConvertInverseGeneToMultiplier((stressGene + stressToleranceGene) * 0.5f),
+                stressToleranceMultiplier = ConvertInverseGeneToMultiplier(stressToleranceGene),
                 moodDropMultiplier = ConvertGeneToMultiplier(stressGene),
-                illnessRiskGainMultiplier = ConvertGeneToMultiplier(illnessGene)
+                immuneStrengthMultiplier = ConvertGeneToMultiplier(immuneGene),
+                illnessRiskGainMultiplier = ConvertGeneToMultiplier(illnessGene) * ConvertInverseGeneToMultiplier(immuneGene),
+                painToleranceMultiplier = ConvertGeneToMultiplier(painGene),
+                agingRateMultiplier = ConvertInverseGeneToMultiplier(agingGene),
+                hairGrowthSpeedMultiplier = ConvertGeneToMultiplier(hairGrowthGene)
             };
 
             return modifiers;
@@ -38,22 +50,37 @@ namespace Lifehandled.Infrastructure.Genetics
 
         private static float ReadGene(GeneticProfile profile, string geneId)
         {
-            var gene = profile.geneValues.FirstOrDefault(x => x.geneId == geneId);
-            return gene?.value ?? 0.5f;
+            if (profile.geneValues == null || profile.geneValues.Count == 0)
+            {
+                return 0.5f;
+            }
+
+            var match = profile.geneValues.FirstOrDefault(g => g.geneId == geneId);
+            if (match == null)
+            {
+                return 0.5f;
+            }
+
+            return Clamp01(match.value);
         }
 
-        private static float ConvertGeneToMultiplier(float normalizedGene)
+        private static float ConvertGeneToMultiplier(float gene)
         {
-            // 0..1 -> 0.9..1.1 (prototype-safe range)
-            var clamped = normalizedGene < 0f ? 0f : (normalizedGene > 1f ? 1f : normalizedGene);
-            return 0.9f + (0.2f * clamped);
+            // 0 -> 0.8, 0.5 -> 1.0, 1 -> 1.2
+            return 0.8f + (Clamp01(gene) * 0.4f);
         }
 
-        private static float ConvertInverseGeneToMultiplier(float normalizedGene)
+        private static float ConvertInverseGeneToMultiplier(float gene)
         {
-            // Higher stamina gene should reduce drain.
-            var clamped = normalizedGene < 0f ? 0f : (normalizedGene > 1f ? 1f : normalizedGene);
-            return 1.1f - (0.2f * clamped);
+            // 0 -> 1.2, 0.5 -> 1.0, 1 -> 0.8
+            return 1.2f - (Clamp01(gene) * 0.4f);
+        }
+
+        private static float Clamp01(float value)
+        {
+            if (value < 0f) return 0f;
+            if (value > 1f) return 1f;
+            return value;
         }
     }
 }

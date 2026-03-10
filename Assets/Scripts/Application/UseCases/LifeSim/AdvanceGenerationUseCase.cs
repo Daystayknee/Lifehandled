@@ -38,6 +38,7 @@ namespace Lifehandled.Application.UseCases.LifeSim
                 parentA.appearance,
                 parentB.appearance,
                 seed);
+            PrototypeWorldContentCatalog.ApplyGeneticInfluenceToAppearance(inheritedAppearance, inheritedGenetics);
 
             var heir = new CharacterData
             {

@@ -158,14 +158,18 @@ namespace Lifehandled.Application.UseCases.NewGame
             var characterId = Guid.NewGuid().ToString("N");
             var appearanceSeed = characterId.GetHashCode();
 
+            var genetics = _founderGeneticsFactory.CreateFounderGenetics();
+            var appearance = PrototypeWorldContentCatalog.CreateAppearanceFromSeed(appearanceSeed, isNpc: role == CharacterRole.Npc);
+            PrototypeWorldContentCatalog.ApplyGeneticInfluenceToAppearance(appearance, genetics);
+
             return new CharacterData
             {
                 characterId = characterId,
                 displayName = string.IsNullOrWhiteSpace(name) ? "Character" : name,
                 role = role,
                 isPlayerControlled = isPlayerControlled,
-                appearance = PrototypeWorldContentCatalog.CreateAppearanceFromSeed(appearanceSeed, isNpc: role == CharacterRole.Npc),
-                genetics = _founderGeneticsFactory.CreateFounderGenetics()
+                appearance = appearance,
+                genetics = genetics
             };
         }
     }

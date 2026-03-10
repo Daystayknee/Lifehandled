@@ -4,10 +4,6 @@ using Lifehandled.Domain.Common;
 
 namespace Lifehandled.Infrastructure.Genetics
 {
-    /// <summary>
-    /// Minimal founder genetics stub for early new-game flow.
-    /// Uses neutral defaults that are safe for prototype balancing.
-    /// </summary>
     public class FounderGeneticsFactory : IFounderGeneticsFactory
     {
         public GeneticProfile CreateFounderGenetics()
@@ -27,7 +23,13 @@ namespace Lifehandled.Infrastructure.Genetics
                     new GeneValue { geneId = GeneticGeneIds.StaminaEfficiency, value = 0.5f },
                     new GeneValue { geneId = GeneticGeneIds.SleepRecoveryEfficiency, value = 0.5f },
                     new GeneValue { geneId = GeneticGeneIds.StressSensitivity, value = 0.5f },
-                    new GeneValue { geneId = GeneticGeneIds.IllnessVulnerability, value = 0.5f }
+                    new GeneValue { geneId = GeneticGeneIds.IllnessVulnerability, value = 0.5f },
+                    new GeneValue { geneId = GeneticGeneIds.ImmuneSystemStrength, value = 0.5f },
+                    new GeneValue { geneId = GeneticGeneIds.PainTolerance, value = 0.5f },
+                    new GeneValue { geneId = GeneticGeneIds.SleepQualityTendency, value = 0.5f },
+                    new GeneValue { geneId = GeneticGeneIds.StressTolerance, value = 0.5f },
+                    new GeneValue { geneId = GeneticGeneIds.AgingRate, value = 0.5f },
+                    new GeneValue { geneId = GeneticGeneIds.HairGrowthSpeed, value = 0.5f }
                 }
             };
         }
