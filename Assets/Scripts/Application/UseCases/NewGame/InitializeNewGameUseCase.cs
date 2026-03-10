@@ -1,0 +1,114 @@
+using System;
+using Lifehandled.Application.Ports;
+using Lifehandled.Domain.Character;
+using Lifehandled.Domain.Common;
+using Lifehandled.Domain.Household;
+using Lifehandled.Domain.Social;
+using Lifehandled.Infrastructure.Persistence.DTO;
+
+namespace Lifehandled.Application.UseCases.NewGame
+{
+    /// <summary>
+    /// Minimal new game bootstrap:
+    /// - create main character
+    /// - optionally add one household member
+    /// - save those records
+    /// - assign player-controlled character
+    /// - apply basic genetics stubs
+    /// </summary>
+    public class InitializeNewGameUseCase
+    {
+        private readonly INewGameSaveStore _saveStore;
+        private readonly IFounderGeneticsFactory _founderGeneticsFactory;
+
+        public InitializeNewGameUseCase(
+            INewGameSaveStore saveStore,
+            IFounderGeneticsFactory founderGeneticsFactory)
+        {
+            _saveStore = saveStore;
+            _founderGeneticsFactory = founderGeneticsFactory;
+        }
+
+        public NewGameSetupResult Execute(NewGameSetupRequest request)
+        {
+            request ??= new NewGameSetupRequest();
+
+            var playerCharacter = CreateCharacter(
+                name: request.mainCharacterName,
+                role: CharacterRole.PlayerMain,
+                isPlayerControlled: true);
+
+            var household = new HouseholdData
+            {
+                householdId = Guid.NewGuid().ToString("N"),
+                householdName = "Starter Household",
+                householdType = request.includeHouseholdMember ? HouseholdType.Roommates : HouseholdType.Solo
+            };
+
+            household.memberCharacterIds.Add(playerCharacter.characterId);
+            playerCharacter.householdId = household.householdId;
+
+            var envelope = new SaveGameEnvelope
+            {
+                saveVersion = 1,
+                geneticSchemaVersion = 1,
+                playerCharacterId = playerCharacter.characterId
+            };
+
+            envelope.characters.Add(playerCharacter);
+            envelope.households.Add(household);
+
+            var hasMember = false;
+
+            if (request.includeHouseholdMember)
+            {
+                var member = CreateCharacter(
+                    name: request.householdMemberName,
+                    role: CharacterRole.HouseholdMember,
+                    isPlayerControlled: false);
+
+                member.householdId = household.householdId;
+                household.memberCharacterIds.Add(member.characterId);
+                envelope.characters.Add(member);
+
+                var relationship = new RelationshipLink
+                {
+                    relationshipLinkId = Guid.NewGuid().ToString("N"),
+                    characterAId = playerCharacter.characterId,
+                    characterBId = member.characterId,
+                    linkType = request.optionalMemberRelationshipType,
+                    isHouseholdBond = true
+                };
+
+                envelope.relationshipLinks.Add(relationship);
+                playerCharacter.relationshipLinkIds.Add(relationship.relationshipLinkId);
+                member.relationshipLinkIds.Add(relationship.relationshipLinkId);
+
+                hasMember = true;
+            }
+
+            _saveStore.Save(envelope);
+
+            return new NewGameSetupResult
+            {
+                Envelope = envelope,
+                PlayerCharacterId = playerCharacter.characterId,
+                HouseholdId = household.householdId,
+                HasOptionalHouseholdMember = hasMember
+            };
+        }
+
+        private CharacterData CreateCharacter(string name, CharacterRole role, bool isPlayerControlled)
+        {
+            return new CharacterData
+            {
+                characterId = Guid.NewGuid().ToString("N"),
+                displayName = string.IsNullOrWhiteSpace(name) ? "Character" : name,
+                role = role,
+                isPlayerControlled = isPlayerControlled,
+                appearance = new AppearanceProfile(),
+                genetics = _founderGeneticsFactory.CreateFounderGenetics()
+            };
+        }
+    }
+}
