@@ -6,6 +6,7 @@ namespace Lifehandled.Application.UseCases.Gameplay
     {
         public const string WaterBottleId = "water_bottle";
         public const string BadFoodId = "stale_food";
+        public const string SimpleMealId = "simple_meal";
 
         private readonly SurvivalNeedsTickUseCase _survivalNeedsTickUseCase = new();
 
@@ -17,7 +18,18 @@ namespace Lifehandled.Application.UseCases.Gameplay
                 return false;
             }
 
-            // Prefer safe item first.
+            // Prefer cooked meal first.
+            if (context.inventory.TryRemove(SimpleMealId, 1))
+            {
+                var needs = context.playerCharacter.needsStatus;
+                needs.hunger = NeedsStatus.ClampToRange(needs.hunger - 28f);
+                needs.mood = NeedsStatus.ClampToRange(needs.mood + 4f);
+                needs.illnessRisk = NeedsStatus.ClampToRange(needs.illnessRisk - 4f);
+                message = "Ate a simple meal.";
+                return true;
+            }
+
+            // Prefer safe item next.
             if (context.inventory.TryRemove(WaterBottleId, 1))
             {
                 var needs = context.playerCharacter.needsStatus;

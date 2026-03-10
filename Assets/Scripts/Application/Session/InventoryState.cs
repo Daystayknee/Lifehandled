@@ -29,6 +29,36 @@ namespace Lifehandled.Application.Session
             stack.count += amount;
         }
 
+        public int GetTotalItemCount()
+        {
+            var total = 0;
+            foreach (var item in items)
+            {
+                if (item.count > 0)
+                {
+                    total += item.count;
+                }
+            }
+
+            return total;
+        }
+
+        public bool TryAddWithCapacity(string itemId, int amount, int capacity)
+        {
+            if (amount <= 0)
+            {
+                return false;
+            }
+
+            if (GetTotalItemCount() + amount > capacity)
+            {
+                return false;
+            }
+
+            Add(itemId, amount);
+            return true;
+        }
+
         public bool TryRemove(string itemId, int amount)
         {
             var stack = items.Find(i => i.itemId == itemId);

@@ -61,6 +61,30 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
             {
                 envelope.vs01State.supplyDemandMultiplier = 1f;
             }
+            if (envelope.vs01State.furnitureCount < 0)
+            {
+                envelope.vs01State.furnitureCount = 0;
+            }
+            if (envelope.vs01State.homeComfort <= 0f)
+            {
+                envelope.vs01State.homeComfort = 55f;
+            }
+            if (envelope.vs01State.homeCleanliness <= 0f)
+            {
+                envelope.vs01State.homeCleanliness = 65f;
+            }
+            if (envelope.vs01State.storageCapacityBase <= 0)
+            {
+                envelope.vs01State.storageCapacityBase = 6;
+            }
+            if (envelope.vs01State.storageCapacityBonus < 0)
+            {
+                envelope.vs01State.storageCapacityBonus = 0;
+            }
+            if (envelope.vs01State.neighborhoodReputation < 0f || envelope.vs01State.neighborhoodReputation > 100f)
+            {
+                envelope.vs01State.neighborhoodReputation = 50f;
+            }
             if (envelope.vs01State.npcOutsideFactor < 0f)
             {
                 envelope.vs01State.npcOutsideFactor = 0.8f;

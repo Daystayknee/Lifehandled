@@ -52,6 +52,14 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
         public int lastIncomePaidDay;
         public int lastRentPaidDay;
 
+        public bool isHomeOwned = true;
+        public int furnitureCount = 1;
+        public float homeComfort = 55f;
+        public float homeCleanliness = 65f;
+        public int storageCapacityBase = 6;
+        public int storageCapacityBonus;
+        public float neighborhoodReputation = 50f;
+
         public List<Vs01ItemStack> inventory = new();
         public List<Vs01NpcState> npcs = new();
 

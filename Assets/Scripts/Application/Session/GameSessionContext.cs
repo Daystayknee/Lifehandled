@@ -28,6 +28,7 @@ namespace Lifehandled.Application.Session
         public float foodPriceMultiplier = 1f;
 
         public EconomyState economy = new();
+        public HomeLifeState home = new();
         public InventoryState inventory = new();
 
         public RuntimeCharacterState playerCharacter = new();

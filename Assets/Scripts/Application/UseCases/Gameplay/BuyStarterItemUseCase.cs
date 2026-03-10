@@ -23,6 +23,13 @@ namespace Lifehandled.Application.UseCases.Gameplay
                 return false;
             }
 
+            var capacity = context.home?.GetStorageCapacity() ?? 6;
+            if (context.inventory.GetTotalItemCount() >= capacity)
+            {
+                message = "Storage full at home. Expand storage first.";
+                return false;
+            }
+
             var price = ResolvePrice(context);
             if (context.wallet < price)
             {
@@ -31,7 +38,7 @@ namespace Lifehandled.Application.UseCases.Gameplay
             }
 
             context.wallet -= price;
-            context.inventory.Add(WaterBottleId, 1);
+            context.inventory.TryAddWithCapacity(WaterBottleId, 1, capacity);
             message = $"Bought water bottle for ${price}.";
             return true;
         }

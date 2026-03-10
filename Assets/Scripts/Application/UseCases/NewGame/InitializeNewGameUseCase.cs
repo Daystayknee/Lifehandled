@@ -64,6 +64,13 @@ namespace Lifehandled.Application.UseCases.NewGame
                     weeklyRentCost = 18,
                     regionWealthMultiplier = 1f,
                     reputationMultiplier = 1f,
+                    isHomeOwned = true,
+                    furnitureCount = 1,
+                    homeComfort = 55f,
+                    homeCleanliness = 65f,
+                    storageCapacityBase = 6,
+                    storageCapacityBonus = 0,
+                    neighborhoodReputation = 50f,
                     currentLocationId = "home",
                     inventory =
                     {

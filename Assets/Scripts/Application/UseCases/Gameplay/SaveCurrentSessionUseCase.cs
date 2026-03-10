@@ -18,6 +18,7 @@ namespace Lifehandled.Application.UseCases.Gameplay
         public void Execute(GameSessionContext context)
         {
             context.economy ??= new EconomyState();
+            context.home ??= new HomeLifeState();
 
             var envelope = _saveStore.Load();
             envelope.vs01State.currentDay = context.currentDay;
@@ -43,6 +44,14 @@ namespace Lifehandled.Application.UseCases.Gameplay
             envelope.vs01State.supplyDemandMultiplier = context.economy.supplyDemandMultiplier;
             envelope.vs01State.lastIncomePaidDay = context.economy.lastIncomePaidDay;
             envelope.vs01State.lastRentPaidDay = context.economy.lastRentPaidDay;
+
+            envelope.vs01State.isHomeOwned = context.home.isHomeOwned;
+            envelope.vs01State.furnitureCount = context.home.furnitureCount;
+            envelope.vs01State.homeComfort = context.home.homeComfort;
+            envelope.vs01State.homeCleanliness = context.home.cleanliness;
+            envelope.vs01State.storageCapacityBase = context.home.storageCapacityBase;
+            envelope.vs01State.storageCapacityBonus = context.home.storageCapacityBonus;
+            envelope.vs01State.neighborhoodReputation = context.home.neighborhoodReputation;
 
             var needs = context.playerCharacter.needsStatus;
             envelope.vs01State.hunger = needs.hunger;

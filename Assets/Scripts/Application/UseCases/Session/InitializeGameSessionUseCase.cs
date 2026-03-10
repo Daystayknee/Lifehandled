@@ -58,6 +58,16 @@ namespace Lifehandled.Application.UseCases.Session
                     lastIncomePaidDay = envelope.vs01State.lastIncomePaidDay,
                     lastRentPaidDay = envelope.vs01State.lastRentPaidDay
                 },
+                home = new HomeLifeState
+                {
+                    isHomeOwned = envelope.vs01State.isHomeOwned,
+                    furnitureCount = envelope.vs01State.furnitureCount,
+                    homeComfort = envelope.vs01State.homeComfort,
+                    cleanliness = envelope.vs01State.homeCleanliness,
+                    storageCapacityBase = envelope.vs01State.storageCapacityBase,
+                    storageCapacityBonus = envelope.vs01State.storageCapacityBonus,
+                    neighborhoodReputation = envelope.vs01State.neighborhoodReputation
+                },
                 inventory = LoadInventory(envelope.vs01State),
                 npcs = LoadNpcs(envelope.vs01State),
                 playerCharacter = CreateRuntimeCharacter(playerData, false, envelope.vs01State)

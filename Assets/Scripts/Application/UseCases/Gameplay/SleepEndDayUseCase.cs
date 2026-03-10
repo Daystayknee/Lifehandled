@@ -23,7 +23,7 @@ namespace Lifehandled.Application.UseCases.Gameplay
             context.hourOfDay = 7f;
             var needs = context.playerCharacter.needsStatus;
 
-            var sleepQuality = ComputeSleepQuality(needs);
+            var sleepQuality = ComputeSleepQuality(needs, context.home);
 
             // Energy recovery depends on sleep quality.
             needs.energy = NeedsStatus.ClampToRange(needs.energy + (20f + (20f * sleepQuality)));
@@ -51,14 +51,20 @@ namespace Lifehandled.Application.UseCases.Gameplay
             return true;
         }
 
-        private static float ComputeSleepQuality(NeedsStatus needs)
+        private static float ComputeSleepQuality(NeedsStatus needs, HomeLifeState home)
         {
-            // 0..1 composite from warmth, hygiene and inverse stress.
+            // 0..1 composite from warmth, hygiene, home comfort, cleanliness, and inverse stress.
             var warmthScore = needs.warmth / 100f;
             var hygieneScore = needs.hygiene / 100f;
             var stressScore = 1f - (needs.stress / 100f);
+            var comfortScore = (home?.homeComfort ?? 50f) / 100f;
+            var cleanlinessScore = (home?.cleanliness ?? 50f) / 100f;
 
-            var raw = (warmthScore * 0.4f) + (hygieneScore * 0.3f) + (stressScore * 0.3f);
+            var raw = (warmthScore * 0.25f)
+                      + (hygieneScore * 0.2f)
+                      + (stressScore * 0.25f)
+                      + (comfortScore * 0.2f)
+                      + (cleanlinessScore * 0.1f);
             if (raw < 0f) return 0f;
             if (raw > 1f) return 1f;
             return raw;
