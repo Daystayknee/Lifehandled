@@ -177,3 +177,15 @@ Pass condition: complete loop works end-to-end with no missing step.
 - Keep session state in `GameSessionContext` and `SessionContextRegistry`.
 - Add only minimal new fields for location/social persistence.
 - Avoid introducing manager singletons or cross-layer shortcuts.
+
+## Age Timeline Journey (Incremental, No Major Architecture)
+
+- **Now (implemented):** life stages + sub-stages are visible in VS01 HUD/interaction panel and automatically progress on a prototype in-game year cadence.
+- **Next:** add small age-milestone gameplay nudges (e.g., mood/stress modifiers and social flavor text) without changing data architecture.
+- **Then:** attach age-stage hints to NPC interactions to improve roleplay readability.
+- **Later:** tune year length and milestone rewards based on playtest pacing feedback.
+
+### Prototype cadence
+- 30 in-game days = 1 in-game year.
+- At each in-game year boundary, player and household members age up.
+- Stage/sub-stage transitions are announced in sleep/day-end feedback.

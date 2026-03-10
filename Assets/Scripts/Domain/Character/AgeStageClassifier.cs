@@ -4,6 +4,8 @@ namespace Lifehandled.Domain.Character
 {
     public static class AgeStageClassifier
     {
+        public const int PrototypeDaysPerYear = 30;
+
         public static void Resolve(int ageYears, out LifeAgeStage stage, out LifeAgeSubStage subStage)
         {
             if (ageYears < 0)
@@ -27,6 +29,24 @@ namespace Lifehandled.Domain.Character
 
             stage = LifeAgeStage.Death;
             subStage = LifeAgeSubStage.E;
+        }
+
+        public static bool TryGetNextMajorStage(LifeAgeStage current, out LifeAgeStage next)
+        {
+            if (current == LifeAgeStage.Death)
+            {
+                next = LifeAgeStage.Death;
+                return false;
+            }
+
+            next = (LifeAgeStage)((int)current + 1);
+            return true;
+        }
+
+        public static int ResolveDaysUntilNextBirthday(int currentDay)
+        {
+            var remainder = currentDay % PrototypeDaysPerYear;
+            return remainder == 0 ? PrototypeDaysPerYear : PrototypeDaysPerYear - remainder;
         }
 
         private static LifeAgeSubStage ResolveSubStage(float ageYears, float min, float max)

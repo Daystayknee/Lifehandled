@@ -4,6 +4,7 @@ using Lifehandled.Application.UseCases.LifeSim;
 using Lifehandled.Application.UseCases.NPC;
 using Lifehandled.Application.UseCases.World;
 using Lifehandled.Domain.Common;
+using Lifehandled.Domain.Character;
 using Lifehandled.Infrastructure.Persistence.Stores;
 using UnityEngine;
 using UnityEngine.UI;
@@ -166,7 +167,12 @@ namespace Lifehandled.Presentation.Session
             var playerAge = context.playerCharacter?.data?.ageYears ?? 0;
             var ageStage = context.playerCharacter?.data?.ageStage.ToString() ?? "Unknown";
             var ageSubStage = context.playerCharacter?.data?.ageSubStage.ToString() ?? "A";
-            SetText(contextText, $"Player: {playerName} | Age {playerAge} ({ageStage}-{ageSubStage}) | HouseholdMembers: {context.householdMembers.Count} | TalksToday: {context.talkCountToday} | SocRep: {context.socialReputation:0} | FamilyTension: {context.familyTension:0}");
+            var nextStageLabel = context.playerCharacter?.data != null
+                && AgeStageClassifier.TryGetNextMajorStage(context.playerCharacter.data.ageStage, out var nextStage)
+                ? nextStage.ToString()
+                : "none";
+            var daysToBirthday = AgeStageClassifier.ResolveDaysUntilNextBirthday(context.currentDay);
+            SetText(contextText, $"Player: {playerName} | Age {playerAge} ({ageStage}-{ageSubStage}) | Next {nextStageLabel} ~{daysToBirthday}d | HouseholdMembers: {context.householdMembers.Count} | TalksToday: {context.talkCountToday} | SocRep: {context.socialReputation:0} | FamilyTension: {context.familyTension:0}");
 
             var price = BuyStarterItemUseCase.ResolvePrice(context);
             SetText(shopText,

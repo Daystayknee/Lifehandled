@@ -1,5 +1,6 @@
 using Lifehandled.Application.Session;
 using Lifehandled.Application.UseCases.Economy;
+using Lifehandled.Application.UseCases.LifeSim;
 
 namespace Lifehandled.Application.UseCases.Gameplay
 {
@@ -10,6 +11,7 @@ namespace Lifehandled.Application.UseCases.Gameplay
     public class SleepEndDayUseCase
     {
         private readonly DailyEconomySettlementUseCase _dailyEconomySettlementUseCase = new();
+        private readonly AgeTimelineProgressionUseCase _ageTimelineProgressionUseCase = new();
 
         public bool Execute(GameSessionContext context, out string message)
         {
@@ -49,6 +51,11 @@ namespace Lifehandled.Application.UseCases.Gameplay
                 message = $"Slept well. Day is now {context.currentDay}. {economyResult}";
             }
 
+            var timelineEvents = _ageTimelineProgressionUseCase.ApplyEndOfDayAging(context);
+            if (timelineEvents.Count > 0)
+            {
+                message += $" Timeline: {string.Join(" ", timelineEvents)}";
+            }
 
             var appearance = context.playerCharacter.data?.appearance;
             if (appearance != null)
