@@ -18,6 +18,7 @@ namespace Lifehandled.Domain.NPC
         public NpcSchedule schedule = new();
         public RelationshipStats relationshipToPlayer = new();
         public List<NpcMemoryEntry> memory = new();
+        public NpcDramaState drama = new();
     }
 
     [Serializable]
@@ -42,5 +43,17 @@ namespace Lifehandled.Domain.NPC
         public float hour;
         public string interactionType = string.Empty;
         public string outcome = string.Empty;
+    }
+
+    [Serializable]
+    public class NpcDramaState
+    {
+        public int knownSecretsCount;
+        public float gossipHeat;
+        public float rumorBelief;
+        public float rivalryWithPlayer;
+        public float romanceInterest;
+        public float familyTensionWithPlayer;
+        public float socialReputationOfPlayer = 50f;
     }
 }

@@ -23,4 +23,13 @@ namespace Lifehandled.Domain.Common
         Social = 4,
         Sleep = 5
     }
+
+    [Serializable]
+    public enum DramaEventType
+    {
+        HelpedNpc = 0,
+        InsultedNpc = 1,
+        StoleFromShop = 2,
+        Gossiped = 3
+    }
 }

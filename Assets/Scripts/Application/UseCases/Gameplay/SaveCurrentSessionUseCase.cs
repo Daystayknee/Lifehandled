@@ -26,6 +26,8 @@ namespace Lifehandled.Application.UseCases.Gameplay
             envelope.vs01State.wallet = context.wallet;
             envelope.vs01State.currentLocationId = context.currentLocationId;
             envelope.vs01State.talkCountToday = context.talkCountToday;
+            envelope.vs01State.socialReputation = context.socialReputation;
+            envelope.vs01State.familyTension = context.familyTension;
 
             envelope.vs01State.season = context.season;
             envelope.vs01State.weather = context.weather;
@@ -90,6 +92,13 @@ namespace Lifehandled.Application.UseCases.Gameplay
                 respect = n.profile.relationshipToPlayer.respect,
                 fear = n.profile.relationshipToPlayer.fear,
                 resentment = n.profile.relationshipToPlayer.resentment,
+                knownSecretsCount = n.profile.drama?.knownSecretsCount ?? 0,
+                gossipHeat = n.profile.drama?.gossipHeat ?? 0f,
+                rumorBelief = n.profile.drama?.rumorBelief ?? 0f,
+                rivalryWithPlayer = n.profile.drama?.rivalryWithPlayer ?? 0f,
+                romanceInterest = n.profile.drama?.romanceInterest ?? 0f,
+                familyTensionWithPlayer = n.profile.drama?.familyTensionWithPlayer ?? 0f,
+                socialReputationOfPlayer = n.profile.drama?.socialReputationOfPlayer ?? 50f,
                 memory = n.profile.memory.Select(m => new Vs01NpcMemoryEntry
                 {
                     day = m.day,

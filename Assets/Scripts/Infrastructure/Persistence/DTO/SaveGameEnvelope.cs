@@ -33,6 +33,8 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
         public int wallet = 20;
         public string currentLocationId = "home";
         public int talkCountToday;
+        public float socialReputation = 50f;
+        public float familyTension = 15f;
 
         public SeasonType season = SeasonType.Spring;
         public WeatherType weather = WeatherType.Clear;
@@ -102,6 +104,14 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
         public float respect = 30f;
         public float fear;
         public float resentment;
+
+        public int knownSecretsCount;
+        public float gossipHeat;
+        public float rumorBelief;
+        public float rivalryWithPlayer;
+        public float romanceInterest;
+        public float familyTensionWithPlayer;
+        public float socialReputationOfPlayer = 50f;
 
         public List<Vs01NpcMemoryEntry> memory = new();
     }

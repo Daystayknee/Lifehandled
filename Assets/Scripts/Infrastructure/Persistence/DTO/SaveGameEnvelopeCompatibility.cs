@@ -89,6 +89,14 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
             {
                 envelope.vs01State.npcOutsideFactor = 0.8f;
             }
+            if (envelope.vs01State.socialReputation < 0f || envelope.vs01State.socialReputation > 100f)
+            {
+                envelope.vs01State.socialReputation = 50f;
+            }
+            if (envelope.vs01State.familyTension < 0f || envelope.vs01State.familyTension > 100f)
+            {
+                envelope.vs01State.familyTension = 15f;
+            }
 
             if (envelope.vs01State.npcs.Count == 0)
             {
@@ -101,6 +109,25 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
                     trust = 30f,
                     respect = 35f
                 });
+            }
+
+            foreach (var npc in envelope.vs01State.npcs)
+            {
+                if (npc.socialReputationOfPlayer < 0f || npc.socialReputationOfPlayer > 100f)
+                {
+                    npc.socialReputationOfPlayer = 50f;
+                }
+
+                if (npc.knownSecretsCount < 0)
+                {
+                    npc.knownSecretsCount = 0;
+                }
+
+                npc.gossipHeat = Clamp01Range(npc.gossipHeat);
+                npc.rumorBelief = Clamp01Range(npc.rumorBelief);
+                npc.rivalryWithPlayer = Clamp01Range(npc.rivalryWithPlayer);
+                npc.romanceInterest = Clamp01Range(npc.romanceInterest);
+                npc.familyTensionWithPlayer = Clamp01Range(npc.familyTensionWithPlayer);
             }
 
             if (envelope.geneticSchemaVersion <= 0)
@@ -201,6 +228,13 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
             {
                 warnings.Add($"Removed {removed} invalid relationship link(s) with missing character references.");
             }
+        }
+
+        private static float Clamp01Range(float value)
+        {
+            if (value < 0f) return 0f;
+            if (value > 100f) return 100f;
+            return value;
         }
 
         private static CharacterData CreateDefaultPlayer()

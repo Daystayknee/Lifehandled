@@ -72,6 +72,8 @@ namespace Lifehandled.Application.UseCases.NewGame
                     storageCapacityBonus = 0,
                     neighborhoodReputation = 50f,
                     currentLocationId = "home",
+                    socialReputation = 50f,
+                    familyTension = 15f,
                     inventory =
                     {
                         new Vs01ItemStack { itemId = "water_bottle", count = 1 },
@@ -87,6 +89,15 @@ namespace Lifehandled.Application.UseCases.NewGame
                             friendship = 35f,
                             trust = 30f,
                             respect = 40f
+                        },
+                        new Vs01NpcState
+                        {
+                            npcId = "npc_neighbor_01",
+                            displayName = "Ivo",
+                            personalityTraits = { PersonalityTraitType.Outgoing },
+                            friendship = 28f,
+                            trust = 26f,
+                            respect = 30f
                         }
                     },
                 }

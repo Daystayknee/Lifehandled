@@ -39,6 +39,8 @@ namespace Lifehandled.Application.UseCases.Session
                 wallet = envelope.vs01State.wallet,
                 currentLocationId = envelope.vs01State.currentLocationId,
                 talkCountToday = envelope.vs01State.talkCountToday,
+                socialReputation = envelope.vs01State.socialReputation,
+                familyTension = envelope.vs01State.familyTension,
                 season = envelope.vs01State.season,
                 weather = envelope.vs01State.weather,
                 isDaytime = envelope.vs01State.isDaytime,
@@ -139,6 +141,16 @@ namespace Lifehandled.Application.UseCases.Session
                             respect = saved.respect,
                             fear = saved.fear,
                             resentment = saved.resentment
+                        },
+                        drama = new NpcDramaState
+                        {
+                            knownSecretsCount = saved.knownSecretsCount,
+                            gossipHeat = saved.gossipHeat,
+                            rumorBelief = saved.rumorBelief,
+                            rivalryWithPlayer = saved.rivalryWithPlayer,
+                            romanceInterest = saved.romanceInterest,
+                            familyTensionWithPlayer = saved.familyTensionWithPlayer,
+                            socialReputationOfPlayer = saved.socialReputationOfPlayer
                         },
                         memory = saved.memory.Select(m => new NpcMemoryEntry
                         {

@@ -2,6 +2,7 @@ using Lifehandled.Application.Session;
 using Lifehandled.Application.UseCases.Gameplay;
 using Lifehandled.Application.UseCases.LifeSim;
 using Lifehandled.Application.UseCases.NPC;
+using Lifehandled.Domain.Common;
 using Lifehandled.Infrastructure.Persistence.Stores;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,6 +18,10 @@ namespace Lifehandled.Presentation.Session
         [SerializeField] private Button consumeButton;
         [SerializeField] private Button buyButton;
         [SerializeField] private Button talkButton;
+        [SerializeField] private Button helpNpcButton;
+        [SerializeField] private Button insultNpcButton;
+        [SerializeField] private Button stealFromShopButton;
+        [SerializeField] private Button gossipButton;
         [SerializeField] private Button cookButton;
         [SerializeField] private Button cleanButton;
         [SerializeField] private Button buyFurnitureButton;
@@ -36,6 +41,7 @@ namespace Lifehandled.Presentation.Session
         private readonly ConsumeStarterItemUseCase _consumeUseCase = new();
         private readonly BuyStarterItemUseCase _buyUseCase = new();
         private readonly NpcSocialInteractionUseCase _talkUseCase = new();
+        private readonly NpcDramaEventUseCase _dramaUseCase = new();
         private readonly CookSimpleMealUseCase _cookUseCase = new();
         private readonly CleanHomeUseCase _cleanHomeUseCase = new();
         private readonly BuyFurnitureUseCase _buyFurnitureUseCase = new();
@@ -52,6 +58,10 @@ namespace Lifehandled.Presentation.Session
             if (consumeButton != null) consumeButton.onClick.AddListener(OnConsumeClicked);
             if (buyButton != null) buyButton.onClick.AddListener(OnBuyClicked);
             if (talkButton != null) talkButton.onClick.AddListener(OnTalkClicked);
+            if (helpNpcButton != null) helpNpcButton.onClick.AddListener(OnHelpNpcClicked);
+            if (insultNpcButton != null) insultNpcButton.onClick.AddListener(OnInsultNpcClicked);
+            if (stealFromShopButton != null) stealFromShopButton.onClick.AddListener(OnStealFromShopClicked);
+            if (gossipButton != null) gossipButton.onClick.AddListener(OnGossipClicked);
             if (cookButton != null) cookButton.onClick.AddListener(OnCookClicked);
             if (cleanButton != null) cleanButton.onClick.AddListener(OnCleanClicked);
             if (buyFurnitureButton != null) buyFurnitureButton.onClick.AddListener(OnBuyFurnitureClicked);
@@ -65,6 +75,10 @@ namespace Lifehandled.Presentation.Session
             if (consumeButton != null) consumeButton.onClick.RemoveListener(OnConsumeClicked);
             if (buyButton != null) buyButton.onClick.RemoveListener(OnBuyClicked);
             if (talkButton != null) talkButton.onClick.RemoveListener(OnTalkClicked);
+            if (helpNpcButton != null) helpNpcButton.onClick.RemoveListener(OnHelpNpcClicked);
+            if (insultNpcButton != null) insultNpcButton.onClick.RemoveListener(OnInsultNpcClicked);
+            if (stealFromShopButton != null) stealFromShopButton.onClick.RemoveListener(OnStealFromShopClicked);
+            if (gossipButton != null) gossipButton.onClick.RemoveListener(OnGossipClicked);
             if (cookButton != null) cookButton.onClick.RemoveListener(OnCookClicked);
             if (cleanButton != null) cleanButton.onClick.RemoveListener(OnCleanClicked);
             if (buyFurnitureButton != null) buyFurnitureButton.onClick.RemoveListener(OnBuyFurnitureClicked);
@@ -97,7 +111,7 @@ namespace Lifehandled.Presentation.Session
             SetText(dayText, $"Day: {context.currentDay}");
 
             var playerName = context.playerCharacter?.data?.displayName ?? "(none)";
-            SetText(contextText, $"Player: {playerName} | HouseholdMembers: {context.householdMembers.Count} | TalksToday: {context.talkCountToday}");
+            SetText(contextText, $"Player: {playerName} | HouseholdMembers: {context.householdMembers.Count} | TalksToday: {context.talkCountToday} | SocRep: {context.socialReputation:0} | FamilyTension: {context.familyTension:0}");
 
             var price = BuyStarterItemUseCase.ResolvePrice(context);
             SetText(shopText,
@@ -111,7 +125,8 @@ namespace Lifehandled.Presentation.Session
             var npcCount = context.npcs?.Count ?? 0;
             var npcName = npcCount > 0 ? context.npcs[0].profile.displayName : "none";
             var npcMood = npcCount > 0 ? context.npcs[0].profile.mood.ToString("0") : "-";
-            SetText(npcText, $"NPC: {npcName} | Mood: {npcMood} | Time: {context.hourOfDay:00.0}");
+            var npcDrama = npcCount > 0 ? context.npcs[0].profile.drama : null;
+            SetText(npcText, $"NPC: {npcName} | Mood: {npcMood} | Rivalry: {(npcDrama?.rivalryWithPlayer ?? 0f):0} | Romance: {(npcDrama?.romanceInterest ?? 0f):0} | Gossip: {(npcDrama?.gossipHeat ?? 0f):0} | Time: {context.hourOfDay:00.0}");
         }
 
         private void OnConsumeClicked()
@@ -132,6 +147,33 @@ namespace Lifehandled.Presentation.Session
         {
             var context = SessionContextRegistry.Current;
             var ok = _talkUseCase.TalkToNpc(context, string.Empty, out var message);
+            SetFeedback(ok, message);
+        }
+
+        private void OnHelpNpcClicked()
+        {
+            TriggerDrama(DramaEventType.HelpedNpc);
+        }
+
+        private void OnInsultNpcClicked()
+        {
+            TriggerDrama(DramaEventType.InsultedNpc);
+        }
+
+        private void OnStealFromShopClicked()
+        {
+            TriggerDrama(DramaEventType.StoleFromShop);
+        }
+
+        private void OnGossipClicked()
+        {
+            TriggerDrama(DramaEventType.Gossiped);
+        }
+
+        private void TriggerDrama(DramaEventType type)
+        {
+            var context = SessionContextRegistry.Current;
+            var ok = _dramaUseCase.Execute(context, string.Empty, type, out var message);
             SetFeedback(ok, message);
         }
 

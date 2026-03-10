@@ -68,7 +68,7 @@ namespace Lifehandled.Presentation.Session
             SetText(secondaryStatusText,
                 $"Stress {needs.stress:0} | Mood {needs.mood:0} | IllnessRisk {needs.illnessRisk:0} | Wetness {needs.wetness:0}");
             SetText(worldStatusText,
-                $"Day {context.currentDay} {context.hourOfDay:00.0}h | {context.season} | {context.weather} | Shop {(context.shopOpen ? "OPEN" : "CLOSED")} | NPCsOut {context.npcOutsideFactor:0.00} | Food x{context.foodPriceMultiplier:0.00} | HomeComfort {context.home.homeComfort:0} | HomeClean {context.home.cleanliness:0}");
+                $"Day {context.currentDay} {context.hourOfDay:00.0}h | {context.season} | {context.weather} | Shop {(context.shopOpen ? "OPEN" : "CLOSED")} | NPCsOut {context.npcOutsideFactor:0.00} | Food x{context.foodPriceMultiplier:0.00} | HomeComfort {context.home.homeComfort:0} | HomeClean {context.home.cleanliness:0} | SocRep {context.socialReputation:0} | FamilyTension {context.familyTension:0}");
 
             SetNeedsBars(
                 needs.hunger, needs.thirst, needs.energy, needs.warmth, needs.hygiene,

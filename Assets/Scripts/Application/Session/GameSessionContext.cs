@@ -19,6 +19,8 @@ namespace Lifehandled.Application.Session
         public int wallet = 20;
         public string currentLocationId = "home";
         public int talkCountToday;
+        public float socialReputation = 50f;
+        public float familyTension = 15f;
 
         public SeasonType season = SeasonType.Spring;
         public WeatherType weather = WeatherType.Clear;
