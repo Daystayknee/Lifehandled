@@ -1,3 +1,4 @@
+using System;
 using Lifehandled.Application.Session;
 using Lifehandled.Domain.Common;
 using System.Linq;
@@ -61,21 +62,39 @@ namespace Lifehandled.Application.UseCases.World
             }
 
             activeZone.events ??= new System.Collections.Generic.List<string>();
-            activeZone.events.RemoveAll(e => e.StartsWith("social_event:"));
+            var todayEventTagPrefix = $"social_event_day:{context.currentDay}:";
+            var existingTodayEvent = activeZone.events.FirstOrDefault(e => e.StartsWith(todayEventTagPrefix));
+            if (!string.IsNullOrWhiteSpace(existingTodayEvent))
+            {
+                return;
+            }
+
+            activeZone.events.RemoveAll(e => e.StartsWith("social_event_day:"));
 
             var socialEvent = ResolveSocialEvent(context.currentDay);
+            var npcMoodDelta = 0f;
             if (socialEvent == SocialEventType.Emergency)
             {
                 context.npcOutsideFactor = Clamp01(context.npcOutsideFactor - 0.25f);
                 activeZone.dangerLevel = Clamp01(activeZone.dangerLevel + 0.15f);
+                npcMoodDelta = -2f;
             }
             else
             {
                 context.npcOutsideFactor = Clamp01(context.npcOutsideFactor + 0.12f);
                 context.socialReputation = Clamp100(context.socialReputation + 0.35f);
+                npcMoodDelta = socialEvent == SocialEventType.Funeral ? -0.8f : 1.2f;
             }
 
-            activeZone.events.Add($"social_event:{socialEvent.ToString().ToLowerInvariant()}");
+            if (context.npcs != null && context.npcs.Count > 0)
+            {
+                foreach (var npc in context.npcs.Where(n => activeZone.npcPool == null || activeZone.npcPool.Count == 0 || activeZone.npcPool.Contains(n.profile.npcId)))
+                {
+                    npc.profile.mood = Clamp100(npc.profile.mood + npcMoodDelta);
+                }
+            }
+
+            activeZone.events.Add($"social_event_day:{context.currentDay}:{socialEvent.ToString().ToLowerInvariant()}");
         }
 
         private static SocialEventType ResolveSocialEvent(int day)

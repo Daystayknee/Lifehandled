@@ -57,7 +57,7 @@ namespace Lifehandled.Application.UseCases.LifeSim
                 return;
             }
 
-            needsStressReduce(context, hours, skill.level);
+            ReduceStressFromHobby(context, hours, skill.level);
             skill.xp += 1.5f * hours;
             while (skill.xp >= (20f + (skill.level * 10f)))
             {
@@ -66,7 +66,7 @@ namespace Lifehandled.Application.UseCases.LifeSim
             }
         }
 
-        private static void needsStressReduce(GameSessionContext context, float hours, int level)
+        private static void ReduceStressFromHobby(GameSessionContext context, float hours, int level)
         {
             var reduction = (0.6f + (level * 0.08f)) * hours;
             context.playerCharacter.needsStatus.stress = NeedsStatus.ClampToRange(context.playerCharacter.needsStatus.stress - reduction);
