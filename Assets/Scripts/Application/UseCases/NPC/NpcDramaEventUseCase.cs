@@ -27,6 +27,13 @@ namespace Lifehandled.Application.UseCases.NPC
                 return false;
             }
 
+            var activeZone = context.zones?.FirstOrDefault(z => z.zoneType == context.currentZone);
+            if (activeZone != null && activeZone.npcPool.Count > 0 && !activeZone.npcPool.Contains(npc.profile.npcId))
+            {
+                message = $"{npc.profile.displayName} is not in this zone right now.";
+                return false;
+            }
+
             context.socialReputation = Clamp(context.socialReputation);
             context.familyTension = Clamp(context.familyTension);
             npc.profile.drama ??= new NpcDramaState();

@@ -5,6 +5,7 @@ using Lifehandled.Domain.Common;
 using Lifehandled.Domain.Household;
 using Lifehandled.Domain.Social;
 using Lifehandled.Infrastructure.Persistence.DTO;
+using Lifehandled.Application.UseCases.World;
 
 namespace Lifehandled.Application.UseCases.NewGame
 {
@@ -72,8 +73,19 @@ namespace Lifehandled.Application.UseCases.NewGame
                     storageCapacityBonus = 0,
                     neighborhoodReputation = 50f,
                     currentLocationId = "home",
+                    currentZone = ZoneType.Home,
                     socialReputation = 50f,
                     familyTension = 15f,
+                    zones = BuildZoneCatalogUseCase.CreateDefault().ConvertAll(z => new Vs01ZoneState
+                    {
+                        zoneType = z.zoneType,
+                        zoneId = z.zoneId,
+                        displayName = z.displayName,
+                        npcPool = z.npcPool,
+                        resources = z.resources,
+                        events = z.events,
+                        dangerLevel = z.dangerLevel
+                    }),
                     inventory =
                     {
                         new Vs01ItemStack { itemId = "water_bottle", count = 1 },

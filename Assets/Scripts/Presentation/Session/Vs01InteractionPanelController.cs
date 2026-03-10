@@ -2,6 +2,7 @@ using Lifehandled.Application.Session;
 using Lifehandled.Application.UseCases.Gameplay;
 using Lifehandled.Application.UseCases.LifeSim;
 using Lifehandled.Application.UseCases.NPC;
+using Lifehandled.Application.UseCases.World;
 using Lifehandled.Domain.Common;
 using Lifehandled.Infrastructure.Persistence.Stores;
 using UnityEngine;
@@ -22,6 +23,13 @@ namespace Lifehandled.Presentation.Session
         [SerializeField] private Button insultNpcButton;
         [SerializeField] private Button stealFromShopButton;
         [SerializeField] private Button gossipButton;
+        [SerializeField] private Button travelHomeButton;
+        [SerializeField] private Button travelTownButton;
+        [SerializeField] private Button travelStoreButton;
+        [SerializeField] private Button travelForestButton;
+        [SerializeField] private Button travelLakeButton;
+        [SerializeField] private Button travelClinicButton;
+        [SerializeField] private Button travelWorkplaceButton;
         [SerializeField] private Button cookButton;
         [SerializeField] private Button cleanButton;
         [SerializeField] private Button buyFurnitureButton;
@@ -36,6 +44,7 @@ namespace Lifehandled.Presentation.Session
         [SerializeField] private Text shopText;
         [SerializeField] private Text homeText;
         [SerializeField] private Text npcText;
+        [SerializeField] private Text zoneText;
         [SerializeField] private Text feedbackText;
 
         private readonly ConsumeStarterItemUseCase _consumeUseCase = new();
@@ -45,6 +54,7 @@ namespace Lifehandled.Presentation.Session
         private readonly CookSimpleMealUseCase _cookUseCase = new();
         private readonly CleanHomeUseCase _cleanHomeUseCase = new();
         private readonly BuyFurnitureUseCase _buyFurnitureUseCase = new();
+        private readonly TravelToZoneUseCase _travelToZoneUseCase = new();
         private readonly SleepEndDayUseCase _sleepUseCase = new();
         private SaveCurrentSessionUseCase _saveUseCase;
         private ReloadSessionValidationUseCase _reloadValidationUseCase;
@@ -62,6 +72,13 @@ namespace Lifehandled.Presentation.Session
             if (insultNpcButton != null) insultNpcButton.onClick.AddListener(OnInsultNpcClicked);
             if (stealFromShopButton != null) stealFromShopButton.onClick.AddListener(OnStealFromShopClicked);
             if (gossipButton != null) gossipButton.onClick.AddListener(OnGossipClicked);
+            if (travelHomeButton != null) travelHomeButton.onClick.AddListener(() => OnTravelClicked(ZoneType.Home));
+            if (travelTownButton != null) travelTownButton.onClick.AddListener(() => OnTravelClicked(ZoneType.Town));
+            if (travelStoreButton != null) travelStoreButton.onClick.AddListener(() => OnTravelClicked(ZoneType.Store));
+            if (travelForestButton != null) travelForestButton.onClick.AddListener(() => OnTravelClicked(ZoneType.Forest));
+            if (travelLakeButton != null) travelLakeButton.onClick.AddListener(() => OnTravelClicked(ZoneType.Lake));
+            if (travelClinicButton != null) travelClinicButton.onClick.AddListener(() => OnTravelClicked(ZoneType.Clinic));
+            if (travelWorkplaceButton != null) travelWorkplaceButton.onClick.AddListener(() => OnTravelClicked(ZoneType.Workplace));
             if (cookButton != null) cookButton.onClick.AddListener(OnCookClicked);
             if (cleanButton != null) cleanButton.onClick.AddListener(OnCleanClicked);
             if (buyFurnitureButton != null) buyFurnitureButton.onClick.AddListener(OnBuyFurnitureClicked);
@@ -79,6 +96,13 @@ namespace Lifehandled.Presentation.Session
             if (insultNpcButton != null) insultNpcButton.onClick.RemoveListener(OnInsultNpcClicked);
             if (stealFromShopButton != null) stealFromShopButton.onClick.RemoveListener(OnStealFromShopClicked);
             if (gossipButton != null) gossipButton.onClick.RemoveListener(OnGossipClicked);
+            if (travelHomeButton != null) travelHomeButton.onClick.RemoveAllListeners();
+            if (travelTownButton != null) travelTownButton.onClick.RemoveAllListeners();
+            if (travelStoreButton != null) travelStoreButton.onClick.RemoveAllListeners();
+            if (travelForestButton != null) travelForestButton.onClick.RemoveAllListeners();
+            if (travelLakeButton != null) travelLakeButton.onClick.RemoveAllListeners();
+            if (travelClinicButton != null) travelClinicButton.onClick.RemoveAllListeners();
+            if (travelWorkplaceButton != null) travelWorkplaceButton.onClick.RemoveAllListeners();
             if (cookButton != null) cookButton.onClick.RemoveListener(OnCookClicked);
             if (cleanButton != null) cleanButton.onClick.RemoveListener(OnCleanClicked);
             if (buyFurnitureButton != null) buyFurnitureButton.onClick.RemoveListener(OnBuyFurnitureClicked);
@@ -99,11 +123,13 @@ namespace Lifehandled.Presentation.Session
                 SetText(shopText, "Shop: -");
                 SetText(homeText, "Home: -");
                 SetText(npcText, "NPC: -");
+                SetText(zoneText, "Zone: -");
                 return;
             }
 
             context.economy ??= new EconomyState();
             context.home ??= new HomeLifeState();
+            context.zones ??= BuildZoneCatalogUseCase.CreateDefault();
 
             SetText(inventoryText,
                 $"Water: {context.inventory.GetCount(ConsumeStarterItemUseCase.WaterBottleId)} | StaleFood: {context.inventory.GetCount(ConsumeStarterItemUseCase.BadFoodId)}");
@@ -127,6 +153,13 @@ namespace Lifehandled.Presentation.Session
             var npcMood = npcCount > 0 ? context.npcs[0].profile.mood.ToString("0") : "-";
             var npcDrama = npcCount > 0 ? context.npcs[0].profile.drama : null;
             SetText(npcText, $"NPC: {npcName} | Mood: {npcMood} | Rivalry: {(npcDrama?.rivalryWithPlayer ?? 0f):0} | Romance: {(npcDrama?.romanceInterest ?? 0f):0} | Gossip: {(npcDrama?.gossipHeat ?? 0f):0} | Time: {context.hourOfDay:00.0}");
+
+            var activeZone = context.zones?.Find(z => z.zoneType == context.currentZone);
+            var npcPoolCount = activeZone?.npcPool?.Count ?? 0;
+            var resourceCount = activeZone?.resources?.Count ?? 0;
+            var eventCount = activeZone?.events?.Count ?? 0;
+            SetText(zoneText,
+                $"Zone: {context.currentZone} | NPC Pool {npcPoolCount} | Resources {resourceCount} | Events {eventCount} | Danger {(activeZone?.dangerLevel ?? 0f):0.00}");
         }
 
         private void OnConsumeClicked()
@@ -174,6 +207,13 @@ namespace Lifehandled.Presentation.Session
         {
             var context = SessionContextRegistry.Current;
             var ok = _dramaUseCase.Execute(context, string.Empty, type, out var message);
+            SetFeedback(ok, message);
+        }
+
+        private void OnTravelClicked(ZoneType zoneType)
+        {
+            var context = SessionContextRegistry.Current;
+            var ok = _travelToZoneUseCase.Execute(context, zoneType, out var message);
             SetFeedback(ok, message);
         }
 

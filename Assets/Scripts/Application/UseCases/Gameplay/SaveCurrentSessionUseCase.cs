@@ -19,12 +19,14 @@ namespace Lifehandled.Application.UseCases.Gameplay
         {
             context.economy ??= new EconomyState();
             context.home ??= new HomeLifeState();
+            context.zones ??= Application.UseCases.World.BuildZoneCatalogUseCase.CreateDefault();
 
             var envelope = _saveStore.Load();
             envelope.vs01State.currentDay = context.currentDay;
             envelope.vs01State.hourOfDay = context.hourOfDay;
             envelope.vs01State.wallet = context.wallet;
             envelope.vs01State.currentLocationId = context.currentLocationId;
+            envelope.vs01State.currentZone = context.currentZone;
             envelope.vs01State.talkCountToday = context.talkCountToday;
             envelope.vs01State.socialReputation = context.socialReputation;
             envelope.vs01State.familyTension = context.familyTension;
@@ -74,6 +76,17 @@ namespace Lifehandled.Application.UseCases.Gameplay
                     envelope.vs01State.inventory.Add(new Vs01ItemStack { itemId = item.itemId, count = item.count });
                 }
             }
+
+            envelope.vs01State.zones = context.zones.Select(z => new Vs01ZoneState
+            {
+                zoneType = z.zoneType,
+                zoneId = z.zoneId,
+                displayName = z.displayName,
+                npcPool = z.npcPool,
+                resources = z.resources,
+                events = z.events,
+                dangerLevel = z.dangerLevel
+            }).ToList();
 
             envelope.vs01State.npcs = context.npcs.Select(n => new Vs01NpcState
             {

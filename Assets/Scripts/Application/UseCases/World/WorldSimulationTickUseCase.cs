@@ -1,5 +1,6 @@
 using Lifehandled.Application.Session;
 using Lifehandled.Domain.Common;
+using System.Linq;
 
 namespace Lifehandled.Application.UseCases.World
 {
@@ -23,6 +24,26 @@ namespace Lifehandled.Application.UseCases.World
             context.isDaytime = context.hourOfDay >= 6f && context.hourOfDay < 19f;
             context.npcOutsideFactor = ResolveNpcOutsideFactor(context.hourOfDay, context.weather);
             context.shopOpen = ResolveShopOpen(context.hourOfDay, context.weather);
+
+            ApplyZoneContext(context);
+        }
+
+        private static void ApplyZoneContext(GameSessionContext context)
+        {
+            if (context.zones == null || context.zones.Count == 0)
+            {
+                return;
+            }
+
+            var activeZone = context.zones.FirstOrDefault(z => z.zoneType == context.currentZone);
+            if (activeZone == null)
+            {
+                return;
+            }
+
+            // Weather raises danger outdoors.
+            var weatherDanger = context.weather == WeatherType.Storm ? 0.2f : (context.weather == WeatherType.Rain ? 0.1f : 0f);
+            activeZone.dangerLevel = Clamp01(activeZone.dangerLevel + weatherDanger);
         }
 
         private static void AdvanceTime(GameSessionContext context, float minutes)

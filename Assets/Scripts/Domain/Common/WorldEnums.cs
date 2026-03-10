@@ -19,4 +19,16 @@ namespace Lifehandled.Domain.Common
         Rain = 2,
         Storm = 3
     }
+
+    [Serializable]
+    public enum ZoneType
+    {
+        Home = 0,
+        Town = 1,
+        Store = 2,
+        Forest = 3,
+        Lake = 4,
+        Clinic = 5,
+        Workplace = 6
+    }
 }

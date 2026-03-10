@@ -18,6 +18,7 @@ namespace Lifehandled.Application.Session
         public float hourOfDay = 8f;
         public int wallet = 20;
         public string currentLocationId = "home";
+        public ZoneType currentZone = ZoneType.Home;
         public int talkCountToday;
         public float socialReputation = 50f;
         public float familyTension = 15f;
@@ -32,6 +33,7 @@ namespace Lifehandled.Application.Session
         public EconomyState economy = new();
         public HomeLifeState home = new();
         public InventoryState inventory = new();
+        public List<ZoneState> zones = new();
 
         public RuntimeCharacterState playerCharacter = new();
         public List<RuntimeCharacterState> householdMembers = new();

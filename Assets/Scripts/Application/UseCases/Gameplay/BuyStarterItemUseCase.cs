@@ -1,5 +1,6 @@
 using Lifehandled.Application.Session;
 using Lifehandled.Application.UseCases.Economy;
+using Lifehandled.Domain.Common;
 
 namespace Lifehandled.Application.UseCases.Gameplay
 {
@@ -20,6 +21,12 @@ namespace Lifehandled.Application.UseCases.Gameplay
             if (!context.shopOpen)
             {
                 message = "Shop is closed right now.";
+                return false;
+            }
+
+            if (context.currentZone != ZoneType.Store)
+            {
+                message = "You need to be at the store to buy items.";
                 return false;
             }
 

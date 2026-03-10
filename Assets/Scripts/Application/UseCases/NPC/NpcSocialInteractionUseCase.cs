@@ -22,6 +22,13 @@ namespace Lifehandled.Application.UseCases.NPC
                 return false;
             }
 
+            var activeZone = context.zones?.Find(z => z.zoneType == context.currentZone);
+            if (activeZone != null && activeZone.npcPool.Count > 0 && !activeZone.npcPool.Contains(npc.profile.npcId))
+            {
+                reaction = $"{npc.profile.displayName} is not in this zone right now.";
+                return false;
+            }
+
             if (!npc.profile.schedule.isAvailableForTalk)
             {
                 reaction = $"{npc.profile.displayName} is busy right now.";

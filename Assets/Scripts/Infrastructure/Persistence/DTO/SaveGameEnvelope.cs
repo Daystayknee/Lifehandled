@@ -32,6 +32,7 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
         public float hourOfDay = 8f;
         public int wallet = 20;
         public string currentLocationId = "home";
+        public ZoneType currentZone = ZoneType.Home;
         public int talkCountToday;
         public float socialReputation = 50f;
         public float familyTension = 15f;
@@ -64,6 +65,7 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
 
         public List<Vs01ItemStack> inventory = new();
         public List<Vs01NpcState> npcs = new();
+        public List<Vs01ZoneState> zones = new();
 
         public float hunger = -1f;
         public float thirst = -1f;
@@ -123,5 +125,17 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
         public float hour;
         public string interactionType = string.Empty;
         public string outcome = string.Empty;
+    }
+
+    [Serializable]
+    public class Vs01ZoneState
+    {
+        public ZoneType zoneType;
+        public string zoneId = string.Empty;
+        public string displayName = string.Empty;
+        public List<string> npcPool = new();
+        public List<string> resources = new();
+        public List<string> events = new();
+        public float dangerLevel;
     }
 }

@@ -38,6 +38,7 @@ namespace Lifehandled.Application.UseCases.Session
                 hourOfDay = envelope.vs01State.hourOfDay,
                 wallet = envelope.vs01State.wallet,
                 currentLocationId = envelope.vs01State.currentLocationId,
+                currentZone = envelope.vs01State.currentZone,
                 talkCountToday = envelope.vs01State.talkCountToday,
                 socialReputation = envelope.vs01State.socialReputation,
                 familyTension = envelope.vs01State.familyTension,
@@ -70,6 +71,7 @@ namespace Lifehandled.Application.UseCases.Session
                     storageCapacityBonus = envelope.vs01State.storageCapacityBonus,
                     neighborhoodReputation = envelope.vs01State.neighborhoodReputation
                 },
+                zones = LoadZones(envelope.vs01State),
                 inventory = LoadInventory(envelope.vs01State),
                 npcs = LoadNpcs(envelope.vs01State),
                 playerCharacter = CreateRuntimeCharacter(playerData, false, envelope.vs01State)
@@ -106,6 +108,25 @@ namespace Lifehandled.Application.UseCases.Session
             }
 
             return inventory;
+        }
+
+        private static System.Collections.Generic.List<ZoneState> LoadZones(Vs01RuntimeState state)
+        {
+            if (state.zones == null || state.zones.Count == 0)
+            {
+                return World.BuildZoneCatalogUseCase.CreateDefault();
+            }
+
+            return state.zones.Select(z => new ZoneState
+            {
+                zoneType = z.zoneType,
+                zoneId = z.zoneId,
+                displayName = z.displayName,
+                npcPool = z.npcPool,
+                resources = z.resources,
+                events = z.events,
+                dangerLevel = z.dangerLevel
+            }).ToList();
         }
 
         private static System.Collections.Generic.List<NpcRuntimeState> LoadNpcs(Vs01RuntimeState state)
