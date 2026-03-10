@@ -1,13 +1,11 @@
+using System.Linq;
+using Lifehandled.Application.Content;
 using Lifehandled.Application.Session;
 
 namespace Lifehandled.Application.UseCases.Gameplay
 {
     public class ConsumeStarterItemUseCase
     {
-        public const string WaterBottleId = "water_bottle";
-        public const string BadFoodId = "stale_food";
-        public const string SimpleMealId = "simple_meal";
-
         private readonly SurvivalNeedsTickUseCase _survivalNeedsTickUseCase = new();
 
         public bool Execute(GameSessionContext context, out string message)
@@ -18,39 +16,55 @@ namespace Lifehandled.Application.UseCases.Gameplay
                 return false;
             }
 
-            // Prefer cooked meal first.
-            if (context.inventory.TryRemove(SimpleMealId, 1))
+            var candidateItemId = ResolveBestConsumableItem(context);
+            if (string.IsNullOrWhiteSpace(candidateItemId))
             {
-                var needs = context.playerCharacter.needsStatus;
-                needs.hunger = NeedsStatus.ClampToRange(needs.hunger - 28f);
-                needs.mood = NeedsStatus.ClampToRange(needs.mood + 4f);
-                needs.illnessRisk = NeedsStatus.ClampToRange(needs.illnessRisk - 4f);
-                message = "Ate a simple meal.";
+                message = "No consumable item available.";
+                return false;
+            }
+
+            if (!context.inventory.TryRemove(candidateItemId, 1))
+            {
+                message = "No consumable item available.";
+                return false;
+            }
+
+            var needs = context.playerCharacter.needsStatus;
+            if (!PrototypeWorldContentCatalog.TryGetFoodDefinition(candidateItemId, out var foodDef))
+            {
+                message = "Consumed item, but no food definition exists.";
                 return true;
             }
 
-            // Prefer safe item next.
-            if (context.inventory.TryRemove(WaterBottleId, 1))
-            {
-                var needs = context.playerCharacter.needsStatus;
-                needs.thirst = NeedsStatus.ClampToRange(needs.thirst - 20f);
-                needs.hunger = NeedsStatus.ClampToRange(needs.hunger - 4f);
-                message = "Consumed water bottle.";
-                return true;
-            }
+            needs.hunger = NeedsStatus.ClampToRange(needs.hunger - foodDef.hungerRestore);
+            needs.thirst = NeedsStatus.ClampToRange(needs.thirst - foodDef.hydrationRestore);
+            needs.mood = NeedsStatus.ClampToRange(needs.mood + foodDef.moodDelta);
+            needs.energy = NeedsStatus.ClampToRange(needs.energy + foodDef.energyDelta);
+            needs.illnessRisk = NeedsStatus.ClampToRange(needs.illnessRisk + foodDef.illnessRiskDelta);
 
-            // Fallback bad food demonstrates illness risk interaction.
-            if (context.inventory.TryRemove(BadFoodId, 1))
+            if (foodDef.illnessRiskDelta > 0f)
             {
-                var needs = context.playerCharacter.needsStatus;
-                needs.hunger = NeedsStatus.ClampToRange(needs.hunger - 15f);
                 _survivalNeedsTickUseCase.ApplyBadFoodEffect(context);
-                message = "Ate stale food. Illness risk increased.";
-                return true;
             }
 
-            message = "No consumable item available.";
-            return false;
+            message = $"Consumed {candidateItemId}.";
+            return true;
+        }
+
+        private static string ResolveBestConsumableItem(GameSessionContext context)
+        {
+            var preferred = new[] { "simple_meal", "water_bottle", "stale_food" };
+            foreach (var itemId in preferred)
+            {
+                if (context.inventory.GetCount(itemId) > 0)
+                {
+                    return itemId;
+                }
+            }
+
+            return PrototypeWorldContentCatalog.FoodDefinitions
+                .Select(fd => fd.itemId)
+                .FirstOrDefault(itemId => context.inventory.GetCount(itemId) > 0);
         }
     }
 }

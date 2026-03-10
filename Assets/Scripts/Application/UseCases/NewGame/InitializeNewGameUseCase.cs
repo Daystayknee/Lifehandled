@@ -155,13 +155,16 @@ namespace Lifehandled.Application.UseCases.NewGame
 
         private CharacterData CreateCharacter(string name, CharacterRole role, bool isPlayerControlled)
         {
+            var characterId = Guid.NewGuid().ToString("N");
+            var appearanceSeed = characterId.GetHashCode();
+
             return new CharacterData
             {
-                characterId = Guid.NewGuid().ToString("N"),
+                characterId = characterId,
                 displayName = string.IsNullOrWhiteSpace(name) ? "Character" : name,
                 role = role,
                 isPlayerControlled = isPlayerControlled,
-                appearance = new AppearanceProfile(),
+                appearance = PrototypeWorldContentCatalog.CreateAppearanceFromSeed(appearanceSeed, isNpc: role == CharacterRole.Npc),
                 genetics = _founderGeneticsFactory.CreateFounderGenetics()
             };
         }
