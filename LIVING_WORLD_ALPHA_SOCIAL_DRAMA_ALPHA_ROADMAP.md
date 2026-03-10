@@ -174,3 +174,137 @@ The goal is to make VS01 feel **truly alive** without major architecture rewrite
 - End-of-day summary with reputation + social climate + household tension
 
 These slices deliver immediate “alive world” feel with minimal architectural risk.
+
+---
+
+## Implementation order (dependency-safe)
+
+1. **Weather + environment state first**
+   - Add environmental state outputs before consuming them in NPC/reputation systems.
+2. **Calendar/event layer second**
+   - Add deterministic event schedule + event phase tags.
+3. **Wildlife behavior third**
+   - Plug weather/time/event state into wildlife encounters.
+4. **NPC routine + social response fourth**
+   - Use weather/calendar/wildlife context in schedule and conversation outcomes.
+5. **Relationship/memory/gossip/drama fifth**
+   - Deepen social persistence and propagation once routine inputs are stable.
+6. **Reputation effects sixth**
+   - Apply mature social outputs to shops/jobs/NPC gating and pricing.
+7. **Household tension/social-life seventh**
+   - Fold household climate into daily outcomes and social modifiers.
+8. **Feedback and summary pass every batch**
+   - Never ship hidden mechanics: every new rule gets player-facing explanation.
+
+This order minimizes circular dependencies and keeps each layer testable before the next one consumes it.
+
+---
+
+## Batch / PR sequence (small, mergeable)
+
+### PR Batch 1 — Weather Reactivity Core
+- **Systems:** weather intensity + zone condition flags.
+- **Content/Data:** zone weather profiles and hazard tables.
+- **UI/Feedback:** HUD weather impact line.
+- **Tuning:** basic penalty ranges for stress/travel.
+
+### PR Batch 2 — Calendar + Cultural Event Baseline
+- **Systems:** daily event phase state + event forecast helper.
+- **Content/Data:** initial holiday/cultural event templates.
+- **UI/Feedback:** “Today / Tomorrow” event indicator.
+- **Tuning:** cadence and event frequency sanity pass.
+
+### PR Batch 3 — Wildlife Zone/Time/Weather Behavior v1
+- **Systems:** wildlife encounter weighting by zone/time/weather.
+- **Content/Data:** behavior tags for species.
+- **UI/Feedback:** zone wildlife activity hints.
+- **Tuning:** encounter floor/ceiling clamp.
+
+### PR Batch 4 — NPC Routine Reactivity v1
+- **Systems:** schedule modifiers by weather/event/time.
+- **Content/Data:** routine presets by archetype.
+- **UI/Feedback:** NPC current mood/routine driver text.
+- **Tuning:** availability windows and routine variance.
+
+### PR Batch 5 — Social Memory + Gossip Propagation v1
+- **Systems:** short-term memory weight + gossip spread pass.
+- **Content/Data:** rumor/drama topic templates.
+- **UI/Feedback:** social feed headlines + cause tags.
+- **Tuning:** rumor decay and spread caps.
+
+### PR Batch 6 — Reputation Consequences v1
+- **Systems:** rep tiers drive shop/job/NPC modifiers.
+- **Content/Data:** tier policy tables + reaction text.
+- **UI/Feedback:** price/job preview and rep trend arrow.
+- **Tuning:** modifier bounds and recovery paths.
+
+### PR Batch 7 — Household Tension + Social Life v1
+- **Systems:** household tension effects on needs/social/sleep.
+- **Content/Data:** argument/reconciliation/home event templates.
+- **UI/Feedback:** household climate meter and day-end causes.
+- **Tuning:** avoid repetitive punishment loops.
+
+### PR Batch 8 — Cohesion + Stability Pass
+- **Systems:** chain integration and save compatibility defaults.
+- **Content/Data:** living-world combined event packs.
+- **UI/Feedback:** “Why this happened” breakdown panel.
+- **Tuning:** full-day and multi-day pacing pass.
+
+---
+
+## Smallest testable checkpoints (by batch)
+
+- **Checkpoint 1 (Batch 1):**
+  - In one play session, changing weather visibly changes at least one need/travel impact string and one numeric outcome.
+- **Checkpoint 2 (Batch 2):**
+  - HUD reliably shows today + tomorrow event labels across day transition.
+- **Checkpoint 3 (Batch 3):**
+  - Wildlife encounter chance differs between two weather states in same zone/time window.
+- **Checkpoint 4 (Batch 4):**
+  - Same NPC has different availability/mood driver between calm weather vs severe weather.
+- **Checkpoint 5 (Batch 5):**
+  - A social action creates a rumor tag that influences at least one later NPC reaction.
+- **Checkpoint 6 (Batch 6):**
+  - Shop price preview and final transaction both reflect current reputation tier.
+- **Checkpoint 7 (Batch 7):**
+  - Household tension change affects at least one sleep/social outcome and is visible in UI.
+- **Checkpoint 8 (Batch 8):**
+  - End-to-end 3-day simulation runs with no broken state and clear causality feedback.
+
+Each checkpoint should be validated with:
+1. one deterministic setup,
+2. one before/after comparison,
+3. one save/reload continuity check.
+
+---
+
+## Risks to avoid (and mitigations)
+
+1. **Runaway modifier stacking**
+   - Mitigation: clamp multipliers and apply diminishing returns.
+2. **Unreadable “black box” outcomes**
+   - Mitigation: add explicit cause text to every major reaction/economy shift.
+3. **Feature islands that don’t connect**
+   - Mitigation: every PR must consume at least one prior system output.
+4. **Over-randomized behavior**
+   - Mitigation: deterministic base + bounded variance; preserve player planning.
+5. **Save compatibility regressions**
+   - Mitigation: add default backfills in compatibility on every new field.
+6. **UI overload/noise**
+   - Mitigation: prioritize top 1–2 causes in HUD, move detail to logs.
+7. **Punishment-heavy loops**
+   - Mitigation: maintain visible recovery routes for rep, tension, and social trust.
+8. **Unbalanced economy due to rep/weather/event overlap**
+   - Mitigation: test min/max scenarios and cap final price/job modifiers.
+
+---
+
+## Definition of done for this milestone
+
+- Weather, calendar, wildlife, NPC routine, social memory/gossip, reputation, and household tension all have:
+  1. runtime effect,
+  2. content definitions,
+  3. player-facing explanation,
+  4. tuning bounds.
+- Core day loop remains playable end-to-end.
+- Save/load works with compatibility defaults for all newly introduced fields.
