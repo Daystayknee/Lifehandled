@@ -19,11 +19,19 @@ namespace Lifehandled.Application.UseCases.Gameplay
             var envelope = _saveStore.Load();
             envelope.vs01State.currentDay = context.currentDay;
             envelope.vs01State.wallet = context.wallet;
+            envelope.vs01State.currentLocationId = context.currentLocationId;
+            envelope.vs01State.talkCountToday = context.talkCountToday;
 
-            envelope.vs01State.hunger = context.playerCharacter.needsStatus.hunger;
-            envelope.vs01State.thirst = context.playerCharacter.needsStatus.thirst;
-            envelope.vs01State.energy = context.playerCharacter.needsStatus.energy;
-            envelope.vs01State.stress = context.playerCharacter.needsStatus.stress;
+            var needs = context.playerCharacter.needsStatus;
+            envelope.vs01State.hunger = needs.hunger;
+            envelope.vs01State.thirst = needs.thirst;
+            envelope.vs01State.energy = needs.energy;
+            envelope.vs01State.warmth = needs.warmth;
+            envelope.vs01State.hygiene = needs.hygiene;
+            envelope.vs01State.stress = needs.stress;
+            envelope.vs01State.mood = needs.mood;
+            envelope.vs01State.illnessRisk = needs.illnessRisk;
+            envelope.vs01State.wetness = needs.wetness;
 
             envelope.vs01State.inventory = new List<Vs01ItemStack>();
             foreach (var item in context.inventory.items)

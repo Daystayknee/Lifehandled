@@ -14,6 +14,9 @@ namespace Lifehandled.Application.Session
 
         public int currentDay = 1;
         public int wallet = 20;
+        public string currentLocationId = "home";
+        public int talkCountToday;
+
         public InventoryState inventory = new();
 
         public RuntimeCharacterState playerCharacter = new();

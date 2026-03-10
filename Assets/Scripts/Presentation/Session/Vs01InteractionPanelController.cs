@@ -64,7 +64,7 @@ namespace Lifehandled.Presentation.Session
                 return;
             }
 
-            SetText(inventoryText, $"Water: {context.inventory.GetCount(ConsumeStarterItemUseCase.WaterBottleId)}");
+            SetText(inventoryText, $"Water: {context.inventory.GetCount(ConsumeStarterItemUseCase.WaterBottleId)} | StaleFood: {context.inventory.GetCount(ConsumeStarterItemUseCase.BadFoodId)}");
             SetText(walletText, $"Wallet: ${context.wallet}");
             SetText(dayText, $"Day: {context.currentDay}");
 

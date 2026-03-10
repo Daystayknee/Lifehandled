@@ -24,6 +24,10 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
             envelope.relationshipLinks ??= new List<RelationshipLink>();
             envelope.vs01State ??= new Vs01RuntimeState();
             envelope.vs01State.inventory ??= new List<Vs01ItemStack>();
+            if (string.IsNullOrWhiteSpace(envelope.vs01State.currentLocationId))
+            {
+                envelope.vs01State.currentLocationId = "home";
+            }
 
             if (envelope.geneticSchemaVersion <= 0)
             {

@@ -5,20 +5,25 @@ using UnityEngine.UI;
 namespace Lifehandled.Presentation.Session
 {
     /// <summary>
-    /// Minimal HUD for VS01 Batch 1/2 startup + runtime needs visibility.
+    /// Minimal HUD for VS01 startup + survival runtime visibility.
     /// </summary>
     public class Vs01SessionHudController : MonoBehaviour
     {
         [Header("UI References")]
         [SerializeField] private Text playerNameText;
-        [SerializeField] private Text statusText;
+        [SerializeField] private Text primaryStatusText;
+        [SerializeField] private Text secondaryStatusText;
         [SerializeField] private Text sessionStateText;
 
         [Header("Needs Bars (Optional)")]
         [SerializeField] private Slider hungerSlider;
         [SerializeField] private Slider thirstSlider;
         [SerializeField] private Slider energySlider;
+        [SerializeField] private Slider warmthSlider;
+        [SerializeField] private Slider hygieneSlider;
         [SerializeField] private Slider stressSlider;
+        [SerializeField] private Slider moodSlider;
+        [SerializeField] private Slider illnessRiskSlider;
 
         [Header("Optional Placeholder Anchors")]
         [SerializeField] private Transform[] placeholderInteractableAnchors;
@@ -41,28 +46,37 @@ namespace Lifehandled.Presentation.Session
             {
                 SetText(sessionStateText, "Session context: MISSING");
                 SetText(playerNameText, "Player: (none)");
-                SetText(statusText, "No runtime status available");
-                SetNeedsBars(0f, 0f, 0f, 0f);
+                SetText(primaryStatusText, "No runtime status available");
+                SetText(secondaryStatusText, string.Empty);
+                SetNeedsBars(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
                 return;
             }
 
             var player = context.playerCharacter;
             var needs = player.needsStatus ?? new NeedsStatus();
 
-            SetText(sessionStateText, $"Session context: READY | PlayerId={context.playerCharacterId}");
+            SetText(sessionStateText, $"Session: READY | PlayerId={context.playerCharacterId} | Location={context.currentLocationId}");
             SetText(playerNameText, $"Player: {player.data.displayName}");
-            SetText(statusText,
-                $"Hunger {needs.hunger:0} | Thirst {needs.thirst:0} | Energy {needs.energy:0} | Stress {needs.stress:0}");
+            SetText(primaryStatusText,
+                $"Hunger {needs.hunger:0} | Thirst {needs.thirst:0} | Energy {needs.energy:0} | Warmth {needs.warmth:0} | Hygiene {needs.hygiene:0}");
+            SetText(secondaryStatusText,
+                $"Stress {needs.stress:0} | Mood {needs.mood:0} | IllnessRisk {needs.illnessRisk:0} | Wetness {needs.wetness:0}");
 
-            SetNeedsBars(needs.hunger, needs.thirst, needs.energy, needs.stress);
+            SetNeedsBars(
+                needs.hunger, needs.thirst, needs.energy, needs.warmth, needs.hygiene,
+                needs.stress, needs.mood, needs.illnessRisk);
         }
 
-        private void SetNeedsBars(float hunger, float thirst, float energy, float stress)
+        private void SetNeedsBars(float hunger, float thirst, float energy, float warmth, float hygiene, float stress, float mood, float illnessRisk)
         {
             SetSlider(hungerSlider, hunger);
             SetSlider(thirstSlider, thirst);
             SetSlider(energySlider, energy);
+            SetSlider(warmthSlider, warmth);
+            SetSlider(hygieneSlider, hygiene);
             SetSlider(stressSlider, stress);
+            SetSlider(moodSlider, mood);
+            SetSlider(illnessRiskSlider, illnessRisk);
         }
 
         private static void SetSlider(Slider slider, float value)

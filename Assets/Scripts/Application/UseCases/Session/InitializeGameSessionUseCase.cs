@@ -33,6 +33,8 @@ namespace Lifehandled.Application.UseCases.Session
                 activeHouseholdId = activeHousehold?.householdId ?? string.Empty,
                 currentDay = envelope.vs01State.currentDay,
                 wallet = envelope.vs01State.wallet,
+                currentLocationId = envelope.vs01State.currentLocationId,
+                talkCountToday = envelope.vs01State.talkCountToday,
                 inventory = LoadInventory(envelope.vs01State),
                 playerCharacter = CreateRuntimeCharacter(playerData, false, envelope.vs01State)
             };
@@ -73,7 +75,7 @@ namespace Lifehandled.Application.UseCases.Session
         private RuntimeCharacterState CreateRuntimeCharacter(CharacterData character, bool lightSim, Vs01RuntimeState state)
         {
             var modifiers = _geneticModifierProvider.BuildModifiers(character.genetics);
-            var defaultNeeds = NeedsStatus.CreateDefault(modifiers);
+            var defaults = NeedsStatus.CreateDefault(modifiers);
 
             return new RuntimeCharacterState
             {
@@ -81,10 +83,15 @@ namespace Lifehandled.Application.UseCases.Session
                 geneticModifiers = modifiers,
                 needsStatus = new NeedsStatus
                 {
-                    hunger = state.hunger >= 0 ? state.hunger : defaultNeeds.hunger,
-                    thirst = state.thirst >= 0 ? state.thirst : defaultNeeds.thirst,
-                    energy = state.energy >= 0 ? state.energy : defaultNeeds.energy,
-                    stress = state.stress >= 0 ? state.stress : defaultNeeds.stress
+                    hunger = state.hunger >= 0 ? state.hunger : defaults.hunger,
+                    thirst = state.thirst >= 0 ? state.thirst : defaults.thirst,
+                    energy = state.energy >= 0 ? state.energy : defaults.energy,
+                    warmth = state.warmth >= 0 ? state.warmth : defaults.warmth,
+                    hygiene = state.hygiene >= 0 ? state.hygiene : defaults.hygiene,
+                    stress = state.stress >= 0 ? state.stress : defaults.stress,
+                    mood = state.mood >= 0 ? state.mood : defaults.mood,
+                    illnessRisk = state.illnessRisk >= 0 ? state.illnessRisk : defaults.illnessRisk,
+                    wetness = state.wetness >= 0 ? state.wetness : defaults.wetness
                 },
                 isLightSimulatedHouseholdMember = lightSim
             };

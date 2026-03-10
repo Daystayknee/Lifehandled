@@ -29,12 +29,20 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
     {
         public int currentDay = 1;
         public int wallet = 20;
+        public string currentLocationId = "home";
+        public int talkCountToday;
+
         public List<Vs01ItemStack> inventory = new();
 
         public float hunger = -1f;
         public float thirst = -1f;
         public float energy = -1f;
+        public float warmth = -1f;
+        public float hygiene = -1f;
         public float stress = -1f;
+        public float mood = -1f;
+        public float illnessRisk = -1f;
+        public float wetness = -1f;
     }
 
     [Serializable]

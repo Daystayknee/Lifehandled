@@ -59,7 +59,8 @@ namespace Lifehandled.Application.UseCases.NewGame
                     wallet = 20,
                     inventory =
                     {
-                        new Vs01ItemStack { itemId = "water_bottle", count = 1 }
+                        new Vs01ItemStack { itemId = "water_bottle", count = 1 },
+                        new Vs01ItemStack { itemId = "stale_food", count = 1 }
                     }
                 }
             };
