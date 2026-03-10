@@ -56,6 +56,7 @@ namespace Lifehandled.Application.UseCases.NPC
                 }
 
                 TickNpcNeedsAndMood(npc, context.weather);
+                ApplyHobbyTick(npc);
             }
         }
 
@@ -84,6 +85,31 @@ namespace Lifehandled.Application.UseCases.NPC
             if (value < 0f) return 0f;
             if (value > 100f) return 100f;
             return value;
+        }
+
+        private static void ApplyHobbyTick(NpcRuntimeState npc)
+        {
+            var hobbies = npc.profile.preferences?.hobbyIds;
+            if (hobbies == null || hobbies.Count == 0)
+            {
+                return;
+            }
+
+            if (hobbies.Contains("working_out"))
+            {
+                npc.profile.needs.energy = Clamp(npc.profile.needs.energy - 0.05f);
+                npc.profile.mood = Clamp(npc.profile.mood + 0.08f);
+            }
+
+            if (hobbies.Contains("reading") || hobbies.Contains("painting") || hobbies.Contains("gaming"))
+            {
+                npc.profile.mood = Clamp(npc.profile.mood + 0.05f);
+            }
+
+            if (hobbies.Contains("fishing") || hobbies.Contains("gardening") || hobbies.Contains("cooking"))
+            {
+                npc.profile.needs.social = Clamp(npc.profile.needs.social + 0.04f);
+            }
         }
     }
 }

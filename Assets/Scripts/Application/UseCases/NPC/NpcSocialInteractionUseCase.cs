@@ -90,6 +90,8 @@ namespace Lifehandled.Application.UseCases.NPC
 
             var friendshipDelta = 1.5f + ((charismaLevel - 1) * 0.4f);
             var trustDelta = 1f + ((negotiationLevel - 1) * 0.35f);
+            var sharedHobbyBonus = ResolveSharedHobbyBonus(context, npc.profile.preferences?.hobbyIds);
+            friendshipDelta += sharedHobbyBonus;
             if (npc.profile.socialTraits.Contains(Domain.Common.SocialTraitType.Introverted))
             {
                 friendshipDelta -= 0.4f;
@@ -101,6 +103,17 @@ namespace Lifehandled.Application.UseCases.NPC
             if (npc.profile.emotionalTraits.Contains(Domain.Common.EmotionalTraitType.Forgiving))
             {
                 friendshipDelta += 0.35f;
+            }
+
+            if (npc.profile.preferences?.favoriteFoodItemIds != null && npc.profile.preferences.favoriteFoodItemIds.Exists(id => context.inventory.GetCount(id) > 0))
+            {
+                friendshipDelta += 0.4f;
+                reaction += " They seem happy you remembered their favorite food.";
+            }
+
+            if (npc.profile.preferences != null && npc.profile.preferences.preferredClothingStyleId == npc.profile.clothingStyleId)
+            {
+                trustDelta += 0.2f;
             }
 
             rel.friendship = Clamp(rel.friendship + friendshipDelta);
@@ -135,6 +148,22 @@ namespace Lifehandled.Application.UseCases.NPC
         private static string BuildSpeechPrefix(Domain.Common.VoiceType voice, Domain.Common.SpeechStyleType speech)
         {
             return $"{voice.ToString().ToLowerInvariant()} / {speech.ToString().ToLowerInvariant()}";
+        }
+
+        private static float ResolveSharedHobbyBonus(GameSessionContext context, System.Collections.Generic.List<string> hobbies)
+        {
+            if (hobbies == null || hobbies.Count == 0)
+            {
+                return 0f;
+            }
+
+            float bonus = 0f;
+            if (hobbies.Contains("fishing") && context.progression?.GetSkillLevel("fishing") > 1) bonus += 0.3f;
+            if (hobbies.Contains("cooking") && context.progression?.GetSkillLevel("cooking") > 1) bonus += 0.3f;
+            if (hobbies.Contains("working_out") && context.progression?.GetSkillLevel("fitness") > 1) bonus += 0.25f;
+            if (hobbies.Contains("painting") && context.progression?.GetSkillLevel("crafting") > 1) bonus += 0.2f;
+            if (hobbies.Contains("reading") && context.progression?.GetSkillLevel("medicine") > 1) bonus += 0.2f;
+            return bonus;
         }
     }
 }

@@ -115,6 +115,11 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
         public List<string> pastRelationshipNotes = new();
         public List<string> previousJobs = new();
         public List<string> traumaTags = new();
+        public List<string> favoriteFoodItemIds = new();
+        public List<string> favoriteActivityIds = new();
+        public string preferredClothingStyleId = "casual_basic";
+        public string musicTasteId = "pop";
+        public List<string> hobbyIds = new();
         public List<PersonalityTraitType> personalityTraits = new();
         public List<EmotionalTraitType> emotionalTraits = new();
         public List<SocialTraitType> socialTraits = new();

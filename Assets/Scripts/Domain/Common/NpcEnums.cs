@@ -125,6 +125,18 @@ namespace Lifehandled.Domain.Common
     }
 
     [Serializable]
+    public enum SocialEventType
+    {
+        Party = 0,
+        Festival = 1,
+        Market = 2,
+        Wedding = 3,
+        Funeral = 4,
+        Protest = 5,
+        Emergency = 6
+    }
+
+    [Serializable]
     public enum NpcScheduleBlock
     {
         Home = 0,

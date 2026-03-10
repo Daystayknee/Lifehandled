@@ -18,6 +18,7 @@ namespace Lifehandled.Domain.NPC
         public string clothingStyleId = "casual_basic";
         public OccupationProfile occupation = new();
         public LifeHistoryProfile lifeHistory = new();
+        public LifestylePreferences preferences = new();
 
         public List<PersonalityTraitType> personalityTraits = new();
         public List<EmotionalTraitType> emotionalTraits = new();
@@ -89,5 +90,15 @@ namespace Lifehandled.Domain.NPC
         public int dailyIncome = 10;
         public float reputationImpact = 1f;
         public float socialCircleRadius = 1f;
+    }
+
+    [Serializable]
+    public class LifestylePreferences
+    {
+        public List<string> favoriteFoodItemIds = new();
+        public List<string> favoriteActivityIds = new();
+        public string preferredClothingStyleId = "casual_basic";
+        public string musicTasteId = "pop";
+        public List<string> hobbyIds = new();
     }
 }

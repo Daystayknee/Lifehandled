@@ -40,6 +40,16 @@ namespace Lifehandled.Application.Content
             "storms", "rumors", "break_ins", "social_drama", "illness_outbreaks"
         };
 
+        public static readonly List<string> SocialEventIds = new()
+        {
+            "party", "festival", "market", "wedding", "funeral", "protest", "emergency"
+        };
+
+        public static readonly List<string> HobbyIds = new()
+        {
+            "painting", "gardening", "fishing", "gaming", "cooking", "reading", "working_out"
+        };
+
         public static readonly List<string> BuildingIds = new()
         {
             "apartments", "houses", "shops", "restaurants", "workplaces"
@@ -427,6 +437,9 @@ namespace Lifehandled.Application.Content
 
         private static Vs01NpcState BuildNpcFromArchetype(string npcId, string displayName, NpcArchetypeDefinition archetype)
         {
+            var fallbackFood = archetype.archetype == NpcArchetypeType.Bartender ? "grilled_meat" : archetype.archetype == NpcArchetypeType.Mechanic ? "grilled_meat" : "soup";
+            var fallbackActivity = archetype.archetype == NpcArchetypeType.Teacher ? "reading" : archetype.archetype == NpcArchetypeType.TravelingMerchant ? "market" : "fishing";
+
             return new Vs01NpcState
             {
                 npcId = npcId,
@@ -448,6 +461,11 @@ namespace Lifehandled.Application.Content
                 pastRelationshipNotes = archetype.pastRelationshipNotes.ToList(),
                 previousJobs = archetype.previousJobs.ToList(),
                 traumaTags = archetype.traumaTags.ToList(),
+                favoriteFoodItemIds = archetype.favoriteFoodItemIds.Count > 0 ? archetype.favoriteFoodItemIds.ToList() : new List<string> { fallbackFood },
+                favoriteActivityIds = archetype.favoriteActivityIds.Count > 0 ? archetype.favoriteActivityIds.ToList() : new List<string> { fallbackActivity },
+                preferredClothingStyleId = archetype.preferredClothingStyleId,
+                musicTasteId = archetype.musicTasteId,
+                hobbyIds = archetype.hobbyIds.Count > 0 ? archetype.hobbyIds.ToList() : new List<string> { fallbackActivity },
                 personalityTraits = archetype.personalityTraits.ToList(),
                 emotionalTraits = archetype.emotionalTraits.ToList(),
                 socialTraits = archetype.socialTraits.ToList(),
@@ -517,7 +535,12 @@ namespace Lifehandled.Application.Content
             string hometown = "founders_town",
             List<string> pastRelationshipNotes = null,
             List<string> previousJobs = null,
-            List<string> traumaTags = null)
+            List<string> traumaTags = null,
+            List<string> favoriteFoodItemIds = null,
+            List<string> favoriteActivityIds = null,
+            string preferredClothingStyleId = "casual_basic",
+            string musicTasteId = "pop",
+            List<string> hobbyIds = null)
         {
             this.archetype = archetype;
             this.dialogueStyle = dialogueStyle;
@@ -542,6 +565,11 @@ namespace Lifehandled.Application.Content
             this.pastRelationshipNotes = pastRelationshipNotes ?? new List<string>();
             this.previousJobs = previousJobs ?? new List<string>();
             this.traumaTags = traumaTags ?? new List<string>();
+            this.favoriteFoodItemIds = favoriteFoodItemIds ?? new List<string>();
+            this.favoriteActivityIds = favoriteActivityIds ?? new List<string>();
+            this.preferredClothingStyleId = preferredClothingStyleId;
+            this.musicTasteId = musicTasteId;
+            this.hobbyIds = hobbyIds ?? new List<string>();
         }
 
         public NpcArchetypeType archetype { get; }
@@ -567,6 +595,11 @@ namespace Lifehandled.Application.Content
         public List<string> pastRelationshipNotes { get; }
         public List<string> previousJobs { get; }
         public List<string> traumaTags { get; }
+        public List<string> favoriteFoodItemIds { get; }
+        public List<string> favoriteActivityIds { get; }
+        public string preferredClothingStyleId { get; }
+        public string musicTasteId { get; }
+        public List<string> hobbyIds { get; }
     }
 
     public class AnimalDefinition

@@ -26,6 +26,7 @@ namespace Lifehandled.Application.UseCases.World
             context.shopOpen = ResolveShopOpen(context.hourOfDay, context.weather);
 
             ApplyZoneContext(context);
+            ApplySocialEventContext(context);
         }
 
         private static void ApplyZoneContext(GameSessionContext context)
@@ -44,6 +45,52 @@ namespace Lifehandled.Application.UseCases.World
             // Weather raises danger outdoors.
             var weatherDanger = context.weather == WeatherType.Storm ? 0.2f : (context.weather == WeatherType.Rain ? 0.1f : 0f);
             activeZone.dangerLevel = Clamp01(activeZone.dangerLevel + weatherDanger);
+        }
+
+        private static void ApplySocialEventContext(GameSessionContext context)
+        {
+            if (context.zones == null || context.zones.Count == 0)
+            {
+                return;
+            }
+
+            var activeZone = context.zones.FirstOrDefault(z => z.zoneType == context.currentZone);
+            if (activeZone == null)
+            {
+                return;
+            }
+
+            activeZone.events ??= new System.Collections.Generic.List<string>();
+            activeZone.events.RemoveAll(e => e.StartsWith("social_event:"));
+
+            var socialEvent = ResolveSocialEvent(context.currentDay);
+            if (socialEvent == SocialEventType.Emergency)
+            {
+                context.npcOutsideFactor = Clamp01(context.npcOutsideFactor - 0.25f);
+                activeZone.dangerLevel = Clamp01(activeZone.dangerLevel + 0.15f);
+            }
+            else
+            {
+                context.npcOutsideFactor = Clamp01(context.npcOutsideFactor + 0.12f);
+                context.socialReputation = Clamp100(context.socialReputation + 0.35f);
+            }
+
+            activeZone.events.Add($"social_event:{socialEvent.ToString().ToLowerInvariant()}");
+        }
+
+        private static SocialEventType ResolveSocialEvent(int day)
+        {
+            var idx = (day - 1) % 7;
+            return idx switch
+            {
+                0 => SocialEventType.Party,
+                1 => SocialEventType.Festival,
+                2 => SocialEventType.Market,
+                3 => SocialEventType.Wedding,
+                4 => SocialEventType.Funeral,
+                5 => SocialEventType.Protest,
+                _ => SocialEventType.Emergency
+            };
         }
 
         private static void AdvanceTime(GameSessionContext context, float minutes)
@@ -123,6 +170,13 @@ namespace Lifehandled.Application.UseCases.World
         {
             if (value < 0f) return 0f;
             if (value > 1f) return 1f;
+            return value;
+        }
+
+        private static float Clamp100(float value)
+        {
+            if (value < 0f) return 0f;
+            if (value > 100f) return 100f;
             return value;
         }
     }

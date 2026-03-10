@@ -192,6 +192,19 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
                 npc.pastRelationshipNotes ??= new List<string>();
                 npc.previousJobs ??= new List<string>();
                 npc.traumaTags ??= new List<string>();
+                npc.favoriteFoodItemIds ??= new List<string>();
+                npc.favoriteActivityIds ??= new List<string>();
+                npc.hobbyIds ??= new List<string>();
+
+                if (string.IsNullOrWhiteSpace(npc.preferredClothingStyleId))
+                {
+                    npc.preferredClothingStyleId = npc.clothingStyleId;
+                }
+
+                if (string.IsNullOrWhiteSpace(npc.musicTasteId))
+                {
+                    npc.musicTasteId = "pop";
+                }
 
                 if (npc.lifestyleTraits == null)
                 {

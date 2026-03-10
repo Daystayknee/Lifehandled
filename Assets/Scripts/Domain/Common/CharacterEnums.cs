@@ -20,7 +20,12 @@ namespace Lifehandled.Domain.Common
         Friend = 1,
         Roommate = 2,
         Romantic = 3,
-        Rival = 4
+        Rival = 4,
+        BestFriend = 5,
+        Acquaintance = 6,
+        ExPartner = 7,
+        Mentor = 8,
+        Enemy = 9
     }
 
     [Serializable]

@@ -191,6 +191,14 @@ namespace Lifehandled.Application.UseCases.Session
                             previousJobs = saved.previousJobs ?? new System.Collections.Generic.List<string>(),
                             traumaTags = saved.traumaTags ?? new System.Collections.Generic.List<string>()
                         },
+                        preferences = new LifestylePreferences
+                        {
+                            favoriteFoodItemIds = saved.favoriteFoodItemIds ?? new System.Collections.Generic.List<string>(),
+                            favoriteActivityIds = saved.favoriteActivityIds ?? new System.Collections.Generic.List<string>(),
+                            preferredClothingStyleId = saved.preferredClothingStyleId,
+                            musicTasteId = saved.musicTasteId,
+                            hobbyIds = saved.hobbyIds ?? new System.Collections.Generic.List<string>()
+                        },
                         personalityTraits = saved.personalityTraits ?? new System.Collections.Generic.List<PersonalityTraitType>(),
                         emotionalTraits = saved.emotionalTraits ?? new System.Collections.Generic.List<EmotionalTraitType>(),
                         socialTraits = saved.socialTraits ?? new System.Collections.Generic.List<SocialTraitType>(),
