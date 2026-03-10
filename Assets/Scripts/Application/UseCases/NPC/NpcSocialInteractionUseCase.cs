@@ -42,6 +42,7 @@ namespace Lifehandled.Application.UseCases.NPC
             var drama = npc.profile.drama;
             var charismaLevel = context.progression?.GetSkillLevel("charisma") ?? 1;
             var negotiationLevel = context.progression?.GetSkillLevel("negotiation") ?? 1;
+            var socialEvent = ResolveTodaySocialEventTag(activeZone?.events, context.currentDay);
 
             var remembersTheft = npc.profile.memory.Exists(m => m.outcome.Contains("stole from the store"));
             var remembersHelp = npc.profile.memory.Exists(m => m.outcome.Contains("helped"));
@@ -116,6 +117,8 @@ namespace Lifehandled.Application.UseCases.NPC
                 trustDelta += 0.2f;
             }
 
+            ApplySocialEventConversationModifiers(socialEvent, ref friendshipDelta, ref trustDelta, ref reaction);
+
             rel.friendship = Clamp(rel.friendship + friendshipDelta);
             rel.trust = Clamp(rel.trust + trustDelta);
             npc.profile.mood = Clamp(npc.profile.mood + 1f);
@@ -164,6 +167,60 @@ namespace Lifehandled.Application.UseCases.NPC
             if (hobbies.Contains("painting") && context.progression?.GetSkillLevel("crafting") > 1) bonus += 0.2f;
             if (hobbies.Contains("reading") && context.progression?.GetSkillLevel("medicine") > 1) bonus += 0.2f;
             return bonus;
+        }
+
+        private static string ResolveTodaySocialEventTag(System.Collections.Generic.List<string> events, int day)
+        {
+            if (events == null || events.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            var prefix = $"social_event_day:{day}:";
+            var raw = events.Find(e => e.StartsWith(prefix));
+            if (string.IsNullOrWhiteSpace(raw))
+            {
+                return string.Empty;
+            }
+
+            return raw.Substring(prefix.Length);
+        }
+
+        private static void ApplySocialEventConversationModifiers(string socialEvent, ref float friendshipDelta, ref float trustDelta, ref string reaction)
+        {
+            if (string.IsNullOrWhiteSpace(socialEvent))
+            {
+                return;
+            }
+
+            if (socialEvent == "party" || socialEvent == "festival" || socialEvent == "wedding")
+            {
+                friendshipDelta += 0.35f;
+                reaction += " The event atmosphere makes conversation easier.";
+                return;
+            }
+
+            if (socialEvent == "market")
+            {
+                trustDelta += 0.2f;
+                reaction += " You chat while browsing stalls.";
+                return;
+            }
+
+            if (socialEvent == "funeral")
+            {
+                friendshipDelta += 0.15f;
+                trustDelta += 0.15f;
+                reaction += " The moment is quieter and more sincere.";
+                return;
+            }
+
+            if (socialEvent == "protest" || socialEvent == "emergency")
+            {
+                friendshipDelta -= 0.4f;
+                trustDelta -= 0.2f;
+                reaction += " Tension in town makes the interaction brief.";
+            }
         }
     }
 }

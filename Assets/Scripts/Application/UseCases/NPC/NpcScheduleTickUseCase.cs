@@ -1,3 +1,4 @@
+using System.Linq;
 using Lifehandled.Application.Session;
 using Lifehandled.Application.Session.NPC;
 using Lifehandled.Domain.Common;
@@ -12,6 +13,9 @@ namespace Lifehandled.Application.UseCases.NPC
             {
                 return;
             }
+
+            var activeZone = context.zones?.FirstOrDefault(z => z.zoneType == context.currentZone);
+            var todayEvent = ResolveTodaySocialEvent(activeZone?.events, context.currentDay);
 
             foreach (NpcRuntimeState npc in context.npcs)
             {
@@ -49,6 +53,8 @@ namespace Lifehandled.Application.UseCases.NPC
                     schedule.currentBlock = NpcScheduleBlock.Home;
                     schedule.isAvailableForTalk = true;
                 }
+
+                ApplySocialEventScheduleModifiers(schedule, todayEvent, hour);
 
                 if (npc.profile.socialTraits.Contains(Domain.Common.SocialTraitType.Introverted) && schedule.currentBlock == NpcScheduleBlock.Social)
                 {
@@ -109,6 +115,84 @@ namespace Lifehandled.Application.UseCases.NPC
             if (hobbies.Contains("fishing") || hobbies.Contains("gardening") || hobbies.Contains("cooking"))
             {
                 npc.profile.needs.social = Clamp(npc.profile.needs.social + 0.04f);
+            }
+        }
+
+        private static SocialEventType? ResolveTodaySocialEvent(System.Collections.Generic.List<string> zoneEvents, int currentDay)
+        {
+            if (zoneEvents == null || zoneEvents.Count == 0)
+            {
+                return null;
+            }
+
+            var prefix = $"social_event_day:{currentDay}:";
+            var raw = zoneEvents.FirstOrDefault(e => e.StartsWith(prefix));
+            if (string.IsNullOrWhiteSpace(raw))
+            {
+                return null;
+            }
+
+            var value = raw.Substring(prefix.Length);
+            return value switch
+            {
+                "party" => SocialEventType.Party,
+                "festival" => SocialEventType.Festival,
+                "market" => SocialEventType.Market,
+                "wedding" => SocialEventType.Wedding,
+                "funeral" => SocialEventType.Funeral,
+                "protest" => SocialEventType.Protest,
+                "emergency" => SocialEventType.Emergency,
+                _ => null
+            };
+        }
+
+        private static void ApplySocialEventScheduleModifiers(NpcSchedule schedule, SocialEventType? socialEvent, float hour)
+        {
+            if (!socialEvent.HasValue)
+            {
+                return;
+            }
+
+            switch (socialEvent.Value)
+            {
+                case SocialEventType.Party:
+                case SocialEventType.Festival:
+                case SocialEventType.Wedding:
+                    if (hour >= 18f && hour < 22f)
+                    {
+                        schedule.currentBlock = NpcScheduleBlock.Social;
+                        schedule.isAvailableForTalk = true;
+                    }
+                    break;
+
+                case SocialEventType.Market:
+                    if (hour >= 10f && hour < 16f)
+                    {
+                        schedule.currentBlock = NpcScheduleBlock.Errands;
+                        schedule.isAvailableForTalk = true;
+                    }
+                    break;
+
+                case SocialEventType.Protest:
+                    if (hour >= 12f && hour < 18f)
+                    {
+                        schedule.currentBlock = NpcScheduleBlock.Social;
+                        schedule.isAvailableForTalk = false;
+                    }
+                    break;
+
+                case SocialEventType.Emergency:
+                    schedule.currentBlock = NpcScheduleBlock.Home;
+                    schedule.isAvailableForTalk = false;
+                    break;
+
+                case SocialEventType.Funeral:
+                    if (hour >= 9f && hour < 14f)
+                    {
+                        schedule.currentBlock = NpcScheduleBlock.Social;
+                        schedule.isAvailableForTalk = false;
+                    }
+                    break;
             }
         }
     }

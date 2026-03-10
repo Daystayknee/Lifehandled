@@ -58,12 +58,7 @@ namespace Lifehandled.Application.UseCases.LifeSim
             }
 
             ReduceStressFromHobby(context, hours, skill.level);
-            skill.xp += 1.5f * hours;
-            while (skill.xp >= (20f + (skill.level * 10f)))
-            {
-                skill.xp -= 20f + (skill.level * 10f);
-                skill.level += 1;
-            }
+            context.progression.GainSkillXp(hobbySkill, 1.5f * hours);
         }
 
         private static void ReduceStressFromHobby(GameSessionContext context, float hours, int level)

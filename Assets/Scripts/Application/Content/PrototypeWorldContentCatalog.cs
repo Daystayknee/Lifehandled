@@ -439,6 +439,10 @@ namespace Lifehandled.Application.Content
         {
             var fallbackFood = archetype.archetype == NpcArchetypeType.Bartender ? "grilled_meat" : archetype.archetype == NpcArchetypeType.Mechanic ? "grilled_meat" : "soup";
             var fallbackActivity = archetype.archetype == NpcArchetypeType.Teacher ? "reading" : archetype.archetype == NpcArchetypeType.TravelingMerchant ? "market" : "fishing";
+            var fallbackMusic = ResolveDefaultMusicTaste(archetype.archetype);
+            var fallbackClothingPreference = string.IsNullOrWhiteSpace(archetype.preferredClothingStyleId)
+                ? archetype.clothingStyleId
+                : archetype.preferredClothingStyleId;
 
             return new Vs01NpcState
             {
@@ -463,8 +467,8 @@ namespace Lifehandled.Application.Content
                 traumaTags = archetype.traumaTags.ToList(),
                 favoriteFoodItemIds = archetype.favoriteFoodItemIds.Count > 0 ? archetype.favoriteFoodItemIds.ToList() : new List<string> { fallbackFood },
                 favoriteActivityIds = archetype.favoriteActivityIds.Count > 0 ? archetype.favoriteActivityIds.ToList() : new List<string> { fallbackActivity },
-                preferredClothingStyleId = archetype.preferredClothingStyleId,
-                musicTasteId = archetype.musicTasteId,
+                preferredClothingStyleId = fallbackClothingPreference,
+                musicTasteId = string.IsNullOrWhiteSpace(archetype.musicTasteId) ? fallbackMusic : archetype.musicTasteId,
                 hobbyIds = archetype.hobbyIds.Count > 0 ? archetype.hobbyIds.ToList() : new List<string> { fallbackActivity },
                 personalityTraits = archetype.personalityTraits.ToList(),
                 emotionalTraits = archetype.emotionalTraits.ToList(),
@@ -475,6 +479,22 @@ namespace Lifehandled.Application.Content
                 friendship = archetype.archetype == NpcArchetypeType.Rival ? 15f : 25f,
                 trust = archetype.archetype == NpcArchetypeType.MysteriousOutsider ? 18f : 24f,
                 respect = archetype.archetype == NpcArchetypeType.WealthyResident ? 38f : 26f
+            };
+        }
+
+        private static string ResolveDefaultMusicTaste(NpcArchetypeType archetype)
+        {
+            return archetype switch
+            {
+                NpcArchetypeType.Bartender => "jazz",
+                NpcArchetypeType.Mechanic => "country",
+                NpcArchetypeType.Teacher => "classical",
+                NpcArchetypeType.Rival => "rock",
+                NpcArchetypeType.RomanticInterest => "indie",
+                NpcArchetypeType.WealthyResident => "orchestral",
+                NpcArchetypeType.MysteriousOutsider => "ambient",
+                NpcArchetypeType.TravelingMerchant => "folk",
+                _ => "pop"
             };
         }
 
