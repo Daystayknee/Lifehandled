@@ -76,6 +76,19 @@ namespace Lifehandled.Application.UseCases.NewGame
                     currentZone = ZoneType.Home,
                     socialReputation = 50f,
                     familyTension = 15f,
+                    generationIndex = 0,
+                    legacyFamilyName = "Founders",
+                    legacyReputation = 50f,
+                    skills =
+                    {
+                        new Vs01SkillState { skillId = "cooking", level = 1, xp = 0f },
+                        new Vs01SkillState { skillId = "social", level = 1, xp = 0f },
+                        new Vs01SkillState { skillId = "survival", level = 1, xp = 0f }
+                    },
+                    unlockedPerkIds = { },
+                    collectibles = { },
+                    rareEventsSeen = { },
+                    generationCharacterIds = { playerCharacter.characterId },
                     zones = BuildZoneCatalogUseCase.CreateDefault().ConvertAll(z => new Vs01ZoneState
                     {
                         zoneType = z.zoneType,

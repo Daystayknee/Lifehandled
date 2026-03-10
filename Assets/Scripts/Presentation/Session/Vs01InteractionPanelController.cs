@@ -30,6 +30,12 @@ namespace Lifehandled.Presentation.Session
         [SerializeField] private Button travelLakeButton;
         [SerializeField] private Button travelClinicButton;
         [SerializeField] private Button travelWorkplaceButton;
+        [SerializeField] private Button gainCookingSkillButton;
+        [SerializeField] private Button unlockPerkButton;
+        [SerializeField] private Button collectRelicButton;
+        [SerializeField] private Button rareEventButton;
+        [SerializeField] private Button upgradePropertyButton;
+        [SerializeField] private Button nextGenerationButton;
         [SerializeField] private Button cookButton;
         [SerializeField] private Button cleanButton;
         [SerializeField] private Button buyFurnitureButton;
@@ -45,6 +51,7 @@ namespace Lifehandled.Presentation.Session
         [SerializeField] private Text homeText;
         [SerializeField] private Text npcText;
         [SerializeField] private Text zoneText;
+        [SerializeField] private Text progressionText;
         [SerializeField] private Text feedbackText;
 
         private readonly ConsumeStarterItemUseCase _consumeUseCase = new();
@@ -55,6 +62,12 @@ namespace Lifehandled.Presentation.Session
         private readonly CleanHomeUseCase _cleanHomeUseCase = new();
         private readonly BuyFurnitureUseCase _buyFurnitureUseCase = new();
         private readonly TravelToZoneUseCase _travelToZoneUseCase = new();
+        private readonly SkillProgressionUseCase _skillProgressionUseCase = new();
+        private readonly PerkUnlockUseCase _perkUnlockUseCase = new();
+        private readonly CollectiblesUseCase _collectiblesUseCase = new();
+        private readonly RareEventUseCase _rareEventUseCase = new();
+        private readonly PropertyUpgradeUseCase _propertyUpgradeUseCase = new();
+        private readonly AdvanceGenerationUseCase _advanceGenerationUseCase = new();
         private readonly SleepEndDayUseCase _sleepUseCase = new();
         private SaveCurrentSessionUseCase _saveUseCase;
         private ReloadSessionValidationUseCase _reloadValidationUseCase;
@@ -79,6 +92,12 @@ namespace Lifehandled.Presentation.Session
             if (travelLakeButton != null) travelLakeButton.onClick.AddListener(() => OnTravelClicked(ZoneType.Lake));
             if (travelClinicButton != null) travelClinicButton.onClick.AddListener(() => OnTravelClicked(ZoneType.Clinic));
             if (travelWorkplaceButton != null) travelWorkplaceButton.onClick.AddListener(() => OnTravelClicked(ZoneType.Workplace));
+            if (gainCookingSkillButton != null) gainCookingSkillButton.onClick.AddListener(OnGainCookingSkillClicked);
+            if (unlockPerkButton != null) unlockPerkButton.onClick.AddListener(OnUnlockPerkClicked);
+            if (collectRelicButton != null) collectRelicButton.onClick.AddListener(OnCollectRelicClicked);
+            if (rareEventButton != null) rareEventButton.onClick.AddListener(OnRareEventClicked);
+            if (upgradePropertyButton != null) upgradePropertyButton.onClick.AddListener(OnUpgradePropertyClicked);
+            if (nextGenerationButton != null) nextGenerationButton.onClick.AddListener(OnNextGenerationClicked);
             if (cookButton != null) cookButton.onClick.AddListener(OnCookClicked);
             if (cleanButton != null) cleanButton.onClick.AddListener(OnCleanClicked);
             if (buyFurnitureButton != null) buyFurnitureButton.onClick.AddListener(OnBuyFurnitureClicked);
@@ -103,6 +122,12 @@ namespace Lifehandled.Presentation.Session
             if (travelLakeButton != null) travelLakeButton.onClick.RemoveAllListeners();
             if (travelClinicButton != null) travelClinicButton.onClick.RemoveAllListeners();
             if (travelWorkplaceButton != null) travelWorkplaceButton.onClick.RemoveAllListeners();
+            if (gainCookingSkillButton != null) gainCookingSkillButton.onClick.RemoveListener(OnGainCookingSkillClicked);
+            if (unlockPerkButton != null) unlockPerkButton.onClick.RemoveListener(OnUnlockPerkClicked);
+            if (collectRelicButton != null) collectRelicButton.onClick.RemoveListener(OnCollectRelicClicked);
+            if (rareEventButton != null) rareEventButton.onClick.RemoveListener(OnRareEventClicked);
+            if (upgradePropertyButton != null) upgradePropertyButton.onClick.RemoveListener(OnUpgradePropertyClicked);
+            if (nextGenerationButton != null) nextGenerationButton.onClick.RemoveListener(OnNextGenerationClicked);
             if (cookButton != null) cookButton.onClick.RemoveListener(OnCookClicked);
             if (cleanButton != null) cleanButton.onClick.RemoveListener(OnCleanClicked);
             if (buyFurnitureButton != null) buyFurnitureButton.onClick.RemoveListener(OnBuyFurnitureClicked);
@@ -124,6 +149,7 @@ namespace Lifehandled.Presentation.Session
                 SetText(homeText, "Home: -");
                 SetText(npcText, "NPC: -");
                 SetText(zoneText, "Zone: -");
+                SetText(progressionText, "Progression: -");
                 return;
             }
 
@@ -160,6 +186,14 @@ namespace Lifehandled.Presentation.Session
             var eventCount = activeZone?.events?.Count ?? 0;
             SetText(zoneText,
                 $"Zone: {context.currentZone} | NPC Pool {npcPoolCount} | Resources {resourceCount} | Events {eventCount} | Danger {(activeZone?.dangerLevel ?? 0f):0.00}");
+
+            context.progression ??= new ProgressionState();
+            context.collectibles ??= new System.Collections.Generic.List<string>();
+            context.rareEventsSeen ??= new System.Collections.Generic.List<string>();
+            context.familyLineage ??= new FamilyLineageState();
+
+            SetText(progressionText,
+                $"Skills C:{context.progression.GetSkillLevel("cooking")} S:{context.progression.GetSkillLevel("social")} Sur:{context.progression.GetSkillLevel("survival")} | Perks {context.progression.unlockedPerkIds.Count} | Collectibles {context.collectibles.Count} | RareEvents {context.rareEventsSeen.Count} | Gen {context.familyLineage.generationIndex}");
         }
 
         private void OnConsumeClicked()
@@ -214,6 +248,49 @@ namespace Lifehandled.Presentation.Session
         {
             var context = SessionContextRegistry.Current;
             var ok = _travelToZoneUseCase.Execute(context, zoneType, out var message);
+            SetFeedback(ok, message);
+        }
+
+        private void OnGainCookingSkillClicked()
+        {
+            var context = SessionContextRegistry.Current;
+            var ok = _skillProgressionUseCase.GainXp(context, "cooking", 12f, out var message);
+            SetFeedback(ok, message);
+        }
+
+        private void OnUnlockPerkClicked()
+        {
+            var context = SessionContextRegistry.Current;
+            var ok = _perkUnlockUseCase.TryUnlock(context, "efficient_cook", "cooking", 2, out var message);
+            SetFeedback(ok, message);
+        }
+
+        private void OnCollectRelicClicked()
+        {
+            var context = SessionContextRegistry.Current;
+            var collectibleId = $"relic_{context.currentZone.ToString().ToLowerInvariant()}";
+            var ok = _collectiblesUseCase.Collect(context, collectibleId, out var message);
+            SetFeedback(ok, message);
+        }
+
+        private void OnRareEventClicked()
+        {
+            var context = SessionContextRegistry.Current;
+            var ok = _rareEventUseCase.TryTrigger(context, out var message);
+            SetFeedback(ok, message);
+        }
+
+        private void OnUpgradePropertyClicked()
+        {
+            var context = SessionContextRegistry.Current;
+            var ok = _propertyUpgradeUseCase.Execute(context, out var message);
+            SetFeedback(ok, message);
+        }
+
+        private void OnNextGenerationClicked()
+        {
+            var context = SessionContextRegistry.Current;
+            var ok = _advanceGenerationUseCase.Execute(context, out var message);
             SetFeedback(ok, message);
         }
 

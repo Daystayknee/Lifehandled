@@ -20,6 +20,10 @@ namespace Lifehandled.Application.UseCases.Gameplay
             context.economy ??= new EconomyState();
             context.home ??= new HomeLifeState();
             context.zones ??= Application.UseCases.World.BuildZoneCatalogUseCase.CreateDefault();
+            context.progression ??= new ProgressionState();
+            context.collectibles ??= new List<string>();
+            context.rareEventsSeen ??= new List<string>();
+            context.familyLineage ??= new FamilyLineageState();
 
             var envelope = _saveStore.Load();
             envelope.vs01State.currentDay = context.currentDay;
@@ -30,6 +34,10 @@ namespace Lifehandled.Application.UseCases.Gameplay
             envelope.vs01State.talkCountToday = context.talkCountToday;
             envelope.vs01State.socialReputation = context.socialReputation;
             envelope.vs01State.familyTension = context.familyTension;
+            envelope.vs01State.generationIndex = context.familyLineage.generationIndex;
+            envelope.vs01State.legacyFamilyName = context.familyLineage.legacyFamilyName;
+            envelope.vs01State.legacyReputation = context.familyLineage.legacyReputation;
+            envelope.vs01State.generationCharacterIds = context.familyLineage.generationCharacterIds;
 
             envelope.vs01State.season = context.season;
             envelope.vs01State.weather = context.weather;
@@ -87,6 +95,16 @@ namespace Lifehandled.Application.UseCases.Gameplay
                 events = z.events,
                 dangerLevel = z.dangerLevel
             }).ToList();
+
+            envelope.vs01State.skills = context.progression.skills.Select(s => new Vs01SkillState
+            {
+                skillId = s.skillId,
+                level = s.level,
+                xp = s.xp
+            }).ToList();
+            envelope.vs01State.unlockedPerkIds = context.progression.unlockedPerkIds;
+            envelope.vs01State.collectibles = context.collectibles;
+            envelope.vs01State.rareEventsSeen = context.rareEventsSeen;
 
             envelope.vs01State.npcs = context.npcs.Select(n => new Vs01NpcState
             {

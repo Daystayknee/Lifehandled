@@ -26,6 +26,11 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
             envelope.vs01State.inventory ??= new List<Vs01ItemStack>();
             envelope.vs01State.npcs ??= new List<Vs01NpcState>();
             envelope.vs01State.zones ??= new List<Vs01ZoneState>();
+            envelope.vs01State.skills ??= new List<Vs01SkillState>();
+            envelope.vs01State.unlockedPerkIds ??= new List<string>();
+            envelope.vs01State.collectibles ??= new List<string>();
+            envelope.vs01State.rareEventsSeen ??= new List<string>();
+            envelope.vs01State.generationCharacterIds ??= new List<string>();
             if (string.IsNullOrWhiteSpace(envelope.vs01State.currentLocationId))
             {
                 envelope.vs01State.currentLocationId = "home";
@@ -102,6 +107,14 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
             {
                 envelope.vs01State.familyTension = 15f;
             }
+            if (envelope.vs01State.legacyReputation < 0f || envelope.vs01State.legacyReputation > 100f)
+            {
+                envelope.vs01State.legacyReputation = 50f;
+            }
+            if (string.IsNullOrWhiteSpace(envelope.vs01State.legacyFamilyName))
+            {
+                envelope.vs01State.legacyFamilyName = "Founders";
+            }
 
             if (envelope.vs01State.npcs.Count == 0)
             {
@@ -138,6 +151,19 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
             if (envelope.vs01State.zones.Count == 0)
             {
                 envelope.vs01State.zones = CreateDefaultZones();
+            }
+
+            foreach (var skill in envelope.vs01State.skills)
+            {
+                if (skill.level <= 0)
+                {
+                    skill.level = 1;
+                }
+
+                if (skill.xp < 0f)
+                {
+                    skill.xp = 0f;
+                }
             }
 
             if (envelope.geneticSchemaVersion <= 0)

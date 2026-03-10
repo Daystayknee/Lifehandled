@@ -34,6 +34,10 @@ namespace Lifehandled.Application.Session
         public HomeLifeState home = new();
         public InventoryState inventory = new();
         public List<ZoneState> zones = new();
+        public ProgressionState progression = new();
+        public FamilyLineageState familyLineage = new();
+        public List<string> collectibles = new();
+        public List<string> rareEventsSeen = new();
 
         public RuntimeCharacterState playerCharacter = new();
         public List<RuntimeCharacterState> householdMembers = new();

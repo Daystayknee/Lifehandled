@@ -36,6 +36,9 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
         public int talkCountToday;
         public float socialReputation = 50f;
         public float familyTension = 15f;
+        public int generationIndex;
+        public string legacyFamilyName = "Founders";
+        public float legacyReputation = 50f;
 
         public SeasonType season = SeasonType.Spring;
         public WeatherType weather = WeatherType.Clear;
@@ -66,6 +69,11 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
         public List<Vs01ItemStack> inventory = new();
         public List<Vs01NpcState> npcs = new();
         public List<Vs01ZoneState> zones = new();
+        public List<Vs01SkillState> skills = new();
+        public List<string> unlockedPerkIds = new();
+        public List<string> collectibles = new();
+        public List<string> rareEventsSeen = new();
+        public List<string> generationCharacterIds = new();
 
         public float hunger = -1f;
         public float thirst = -1f;
@@ -137,5 +145,13 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
         public List<string> resources = new();
         public List<string> events = new();
         public float dangerLevel;
+    }
+
+    [Serializable]
+    public class Vs01SkillState
+    {
+        public string skillId = string.Empty;
+        public int level = 1;
+        public float xp;
     }
 }

@@ -72,6 +72,16 @@ namespace Lifehandled.Application.UseCases.Session
                     neighborhoodReputation = envelope.vs01State.neighborhoodReputation
                 },
                 zones = LoadZones(envelope.vs01State),
+                progression = LoadProgression(envelope.vs01State),
+                collectibles = envelope.vs01State.collectibles,
+                rareEventsSeen = envelope.vs01State.rareEventsSeen,
+                familyLineage = new FamilyLineageState
+                {
+                    generationIndex = envelope.vs01State.generationIndex,
+                    legacyFamilyName = envelope.vs01State.legacyFamilyName,
+                    legacyReputation = envelope.vs01State.legacyReputation,
+                    generationCharacterIds = envelope.vs01State.generationCharacterIds
+                },
                 inventory = LoadInventory(envelope.vs01State),
                 npcs = LoadNpcs(envelope.vs01State),
                 playerCharacter = CreateRuntimeCharacter(playerData, false, envelope.vs01State)
@@ -127,6 +137,22 @@ namespace Lifehandled.Application.UseCases.Session
                 events = z.events,
                 dangerLevel = z.dangerLevel
             }).ToList();
+        }
+
+        private static ProgressionState LoadProgression(Vs01RuntimeState state)
+        {
+            var progression = new ProgressionState
+            {
+                skills = state.skills.Select(s => new SkillProgress
+                {
+                    skillId = s.skillId,
+                    level = s.level,
+                    xp = s.xp
+                }).ToList(),
+                unlockedPerkIds = state.unlockedPerkIds
+            };
+
+            return progression;
         }
 
         private static System.Collections.Generic.List<NpcRuntimeState> LoadNpcs(Vs01RuntimeState state)
