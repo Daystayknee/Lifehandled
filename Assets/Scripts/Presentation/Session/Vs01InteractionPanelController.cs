@@ -161,7 +161,9 @@ namespace Lifehandled.Presentation.Session
             SetText(inventoryText,
                 $"Water: {context.inventory.GetCount(ConsumeStarterItemUseCase.WaterBottleId)} | StaleFood: {context.inventory.GetCount(ConsumeStarterItemUseCase.BadFoodId)}");
             SetText(walletText, $"Wallet: ${context.wallet}");
-            SetText(dayText, $"Day: {context.currentDay}");
+            var weekendTag = context.isWeekend ? "Weekend" : "Weekday";
+            var holidayTag = string.IsNullOrWhiteSpace(context.activeHolidayId) || context.activeHolidayId == "none" ? "none" : context.activeHolidayId;
+            SetText(dayText, $"Day: {context.currentDay} ({context.dayOfWeekName}) {context.monthName}-{context.dayOfMonth:00} {weekendTag} | Holiday {holidayTag}");
 
             var playerName = context.playerCharacter?.data?.displayName ?? "(none)";
             var playerAge = context.playerCharacter?.data?.ageYears ?? 0;

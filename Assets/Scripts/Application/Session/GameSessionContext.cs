@@ -30,6 +30,15 @@ namespace Lifehandled.Application.Session
         public float npcOutsideFactor = 0.8f;
         public float foodPriceMultiplier = 1f;
 
+        // Calendar runtime projections (derived from currentDay).
+        public int dayOfWeekIndex = 1;
+        public string dayOfWeekName = "Mon";
+        public int dayOfMonth = 1;
+        public int monthOfYear = 1;
+        public string monthName = "Springrise";
+        public bool isWeekend;
+        public string activeHolidayId = "none";
+
         public EconomyState economy = new();
         public HomeLifeState home = new();
         public InventoryState inventory = new();

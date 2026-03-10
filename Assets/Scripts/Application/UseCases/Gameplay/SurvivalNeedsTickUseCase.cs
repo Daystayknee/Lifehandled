@@ -59,6 +59,30 @@ namespace Lifehandled.Application.UseCases.Gameplay
             moodDelta -= (needs.stress > 50f ? 0.18f : 0.05f) * minutes * modifiers.moodDropMultiplier;
             if (needs.hygiene < 30f) moodDelta -= 0.08f * minutes;
             if (needs.energy < 30f) moodDelta -= 0.08f * minutes;
+
+            // Direct weather mood pressure/recovery.
+            if (context.weather == WeatherType.Clear && context.isDaytime)
+            {
+                moodDelta += 0.03f * minutes;
+            }
+            else if (context.weather == WeatherType.Cloudy)
+            {
+                moodDelta -= 0.01f * minutes;
+            }
+            else if (context.weather == WeatherType.Rain)
+            {
+                moodDelta -= 0.03f * minutes;
+            }
+            else if (context.weather == WeatherType.Storm)
+            {
+                moodDelta -= 0.06f * minutes;
+            }
+
+            if (context.activeHolidayId != "none")
+            {
+                moodDelta += 0.02f * minutes;
+            }
+
             needs.mood = NeedsStatus.ClampToRange(needs.mood + moodDelta);
 
             // Illness risk from low warmth/hygiene/high stress.

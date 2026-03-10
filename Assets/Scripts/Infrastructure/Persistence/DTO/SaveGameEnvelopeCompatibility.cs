@@ -101,6 +101,32 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
             {
                 envelope.vs01State.npcOutsideFactor = 0.8f;
             }
+            if (envelope.vs01State.dayOfWeekIndex < 1 || envelope.vs01State.dayOfWeekIndex > 7)
+            {
+                envelope.vs01State.dayOfWeekIndex = 1;
+            }
+            if (string.IsNullOrWhiteSpace(envelope.vs01State.dayOfWeekName))
+            {
+                envelope.vs01State.dayOfWeekName = "Mon";
+            }
+            if (envelope.vs01State.dayOfMonth < 1 || envelope.vs01State.dayOfMonth > 30)
+            {
+                var safeDay = envelope.vs01State.currentDay < 1 ? 1 : envelope.vs01State.currentDay;
+                envelope.vs01State.dayOfMonth = ((safeDay - 1) % 30) + 1;
+            }
+            if (envelope.vs01State.monthOfYear < 1 || envelope.vs01State.monthOfYear > 12)
+            {
+                var safeDay = envelope.vs01State.currentDay < 1 ? 1 : envelope.vs01State.currentDay;
+                envelope.vs01State.monthOfYear = ((safeDay - 1) / 30) % 12 + 1;
+            }
+            if (string.IsNullOrWhiteSpace(envelope.vs01State.monthName))
+            {
+                envelope.vs01State.monthName = "Springrise";
+            }
+            if (string.IsNullOrWhiteSpace(envelope.vs01State.activeHolidayId))
+            {
+                envelope.vs01State.activeHolidayId = "none";
+            }
             if (envelope.vs01State.socialReputation < 0f || envelope.vs01State.socialReputation > 100f)
             {
                 envelope.vs01State.socialReputation = 50f;

@@ -45,6 +45,13 @@ namespace Lifehandled.Application.UseCases.Gameplay
             envelope.vs01State.shopOpen = context.shopOpen;
             envelope.vs01State.npcOutsideFactor = context.npcOutsideFactor;
             envelope.vs01State.foodPriceMultiplier = context.foodPriceMultiplier;
+            envelope.vs01State.dayOfWeekIndex = context.dayOfWeekIndex;
+            envelope.vs01State.dayOfWeekName = context.dayOfWeekName;
+            envelope.vs01State.dayOfMonth = context.dayOfMonth;
+            envelope.vs01State.monthOfYear = context.monthOfYear;
+            envelope.vs01State.monthName = context.monthName;
+            envelope.vs01State.isWeekend = context.isWeekend;
+            envelope.vs01State.activeHolidayId = context.activeHolidayId;
 
             envelope.vs01State.currentJob = context.economy.currentJob;
             envelope.vs01State.dailyIncome = context.economy.dailyIncome;

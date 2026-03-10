@@ -49,6 +49,13 @@ namespace Lifehandled.Application.UseCases.Session
                 shopOpen = envelope.vs01State.shopOpen,
                 npcOutsideFactor = envelope.vs01State.npcOutsideFactor,
                 foodPriceMultiplier = envelope.vs01State.foodPriceMultiplier,
+                dayOfWeekIndex = envelope.vs01State.dayOfWeekIndex,
+                dayOfWeekName = envelope.vs01State.dayOfWeekName,
+                dayOfMonth = envelope.vs01State.dayOfMonth,
+                monthOfYear = envelope.vs01State.monthOfYear,
+                monthName = envelope.vs01State.monthName,
+                isWeekend = envelope.vs01State.isWeekend,
+                activeHolidayId = envelope.vs01State.activeHolidayId,
                 economy = new EconomyState
                 {
                     currentJob = envelope.vs01State.currentJob,

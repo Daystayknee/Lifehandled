@@ -19,9 +19,11 @@ namespace Lifehandled.Application.UseCases.Economy
             context.economy ??= new EconomyState();
 
             var scarcity = 1f;
-            if (context.weather == WeatherType.Rain) scarcity += 0.08f;
-            if (context.weather == WeatherType.Storm) scarcity += 0.18f;
+            if (context.weather == WeatherType.Rain) scarcity += 0.1f;
+            if (context.weather == WeatherType.Storm) scarcity += 0.22f;
             if (context.npcOutsideFactor < 0.5f) scarcity += 0.06f;
+            if (context.isWeekend) scarcity += 0.03f;
+            if (context.activeHolidayId != "none") scarcity += 0.04f;
 
             var activeZone = context.zones?.FirstOrDefault(z => z.zoneType == context.currentZone);
             var socialEvent = ResolveTodaySocialEvent(activeZone?.events, context.currentDay);
@@ -33,6 +35,8 @@ namespace Lifehandled.Application.UseCases.Economy
             var supplyDemand = 1f;
             if (context.npcOutsideFactor < 0.4f) supplyDemand += 0.08f;
             if (!context.shopOpen) supplyDemand += 0.08f;
+            if (context.isWeekend) supplyDemand += 0.05f;
+            if (context.activeHolidayId != "none") supplyDemand += 0.09f;
             if (socialEvent == SocialEventType.Festival || socialEvent == SocialEventType.Party || socialEvent == SocialEventType.BlockParty) supplyDemand += 0.05f;
             if (socialEvent == SocialEventType.Protest) supplyDemand += 0.07f;
             if (socialEvent == SocialEventType.Concert || socialEvent == SocialEventType.SportsTournament) supplyDemand += 0.06f;

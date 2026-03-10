@@ -19,12 +19,14 @@ namespace Lifehandled.Application.UseCases.World
             }
 
             AdvanceTime(context, minutes);
+            CalendarRuntimeHelper.PopulateCalendar(context);
+
             context.season = ResolveSeason(context.currentDay);
             context.weather = ResolveWeather(context.currentDay, context.hourOfDay);
 
             context.isDaytime = context.hourOfDay >= 6f && context.hourOfDay < 19f;
-            context.npcOutsideFactor = ResolveNpcOutsideFactor(context.hourOfDay, context.weather);
-            context.shopOpen = ResolveShopOpen(context.hourOfDay, context.weather);
+            context.npcOutsideFactor = ResolveNpcOutsideFactor(context.hourOfDay, context.weather, context.isWeekend, context.activeHolidayId);
+            context.shopOpen = ResolveShopOpen(context.hourOfDay, context.weather, context.isWeekend, context.activeHolidayId);
 
             ApplyZoneContext(context);
             ApplySocialEventContext(context);
@@ -37,15 +39,31 @@ namespace Lifehandled.Application.UseCases.World
                 return;
             }
 
-            var activeZone = context.zones.FirstOrDefault(z => z.zoneType == context.currentZone);
-            if (activeZone == null)
+            foreach (var zone in context.zones)
             {
-                return;
+                var baseDanger = ResolveBaseZoneDanger(zone.zoneType);
+                var weatherDanger = context.weather == WeatherType.Storm ? 0.22f : (context.weather == WeatherType.Rain ? 0.1f : 0f);
+                var weekendCrowdDanger = context.isWeekend && zone.zoneType == ZoneType.TownCenter ? 0.05f : 0f;
+                var holidayCrowdDanger = context.activeHolidayId != "none" && zone.zoneType == ZoneType.TownCenter ? 0.06f : 0f;
+                zone.dangerLevel = Clamp01(baseDanger + weatherDanger + weekendCrowdDanger + holidayCrowdDanger);
             }
+        }
 
-            // Weather raises danger outdoors.
-            var weatherDanger = context.weather == WeatherType.Storm ? 0.2f : (context.weather == WeatherType.Rain ? 0.1f : 0f);
-            activeZone.dangerLevel = Clamp01(activeZone.dangerLevel + weatherDanger);
+        private static float ResolveBaseZoneDanger(ZoneType zoneType)
+        {
+            return zoneType switch
+            {
+                ZoneType.Home => 0.05f,
+                ZoneType.Clinic => 0.05f,
+                ZoneType.Store => 0.1f,
+                ZoneType.Apartments => 0.15f,
+                ZoneType.TownCenter => 0.2f,
+                ZoneType.Workplace => 0.25f,
+                ZoneType.GasStation => 0.3f,
+                ZoneType.Lake => 0.35f,
+                ZoneType.Forest => 0.65f,
+                _ => 0.2f
+            };
         }
 
         private static void ApplySocialEventContext(GameSessionContext context)
@@ -86,6 +104,12 @@ namespace Lifehandled.Application.UseCases.World
                 npcMoodDelta = socialEvent == SocialEventType.Funeral ? -0.8f : 1.2f;
             }
 
+            if (context.activeHolidayId != "none")
+            {
+                context.npcOutsideFactor = Clamp01(context.npcOutsideFactor + 0.08f);
+                npcMoodDelta += 0.6f;
+            }
+
             if (context.npcs != null && context.npcs.Count > 0)
             {
                 foreach (var npc in context.npcs.Where(n => activeZone.npcPool == null || activeZone.npcPool.Count == 0 || activeZone.npcPool.Contains(n.profile.npcId)))
@@ -110,6 +134,10 @@ namespace Lifehandled.Application.UseCases.World
                 zone.events ??= new System.Collections.Generic.List<string>();
                 zone.events.RemoveAll(e => e.StartsWith("social_event_day:"));
                 zone.events.Add(eventTag);
+                if (context.activeHolidayId != "none")
+                {
+                    zone.events.Add($"holiday_day:{context.currentDay}:{context.activeHolidayId}");
+                }
             }
         }
 
@@ -200,7 +228,7 @@ namespace Lifehandled.Application.UseCases.World
             return WeatherType.Clear;
         }
 
-        private static float ResolveNpcOutsideFactor(float hour, WeatherType weather)
+        private static float ResolveNpcOutsideFactor(float hour, WeatherType weather, bool isWeekend, string activeHolidayId)
         {
             float baseFactor;
 
@@ -221,15 +249,24 @@ namespace Lifehandled.Application.UseCases.World
                 baseFactor = 0.5f;
             }
 
+            if (isWeekend) baseFactor += 0.08f;
+            if (activeHolidayId != "none") baseFactor += 0.12f;
             if (weather == WeatherType.Rain) baseFactor -= 0.2f;
             if (weather == WeatherType.Storm) baseFactor -= 0.5f;
 
             return Clamp01(baseFactor);
         }
 
-        private static bool ResolveShopOpen(float hour, WeatherType weather)
+        private static bool ResolveShopOpen(float hour, WeatherType weather, bool isWeekend, string activeHolidayId)
         {
-            var normalHours = hour >= 8f && hour < 20f;
+            var openHour = isWeekend ? 9f : 8f;
+            var closeHour = isWeekend ? 22f : 20f;
+            if (activeHolidayId != "none")
+            {
+                closeHour = 23f;
+            }
+
+            var normalHours = hour >= openHour && hour < closeHour;
             if (!normalHours)
             {
                 return false;

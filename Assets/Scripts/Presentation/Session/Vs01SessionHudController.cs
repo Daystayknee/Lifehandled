@@ -81,8 +81,13 @@ namespace Lifehandled.Presentation.Session
                 $"Hunger {needs.hunger:0} | Thirst {needs.thirst:0} | Energy {needs.energy:0} | Warmth {needs.warmth:0} | Hygiene {needs.hygiene:0}");
             SetText(secondaryStatusText,
                 $"Age {player.data.ageYears} ({ageStage}-{ageSubStage}) | Next {nextStageLabel} in ~{daysToNextBirthday}d | Stress {needs.stress:0} | Mood {needs.mood:0} | IllnessRisk {needs.illnessRisk:0} | Wetness {needs.wetness:0} | Perks {context.progression.unlockedPerkIds.Count} | Collect {context.collectibles.Count} | Gen {context.familyLineage.generationIndex}");
+            var weekendTag = context.isWeekend ? "Weekend" : "Weekday";
+            var holidayTag = string.IsNullOrWhiteSpace(context.activeHolidayId) || context.activeHolidayId == "none"
+                ? "none"
+                : context.activeHolidayId;
+            var weatherMoodHint = ResolveWeatherMoodHint(context.weather, context.isDaytime);
             SetText(worldStatusText,
-                $"Day {context.currentDay} {context.hourOfDay:00.0}h | Zone {context.currentZone} | Event {currentSocialEvent} | Interactables {interactableCount} | {context.season} | {context.weather} | Shop {(context.shopOpen ? "OPEN" : "CLOSED")} | NPCsOut {context.npcOutsideFactor:0.00} | Food x{context.foodPriceMultiplier:0.00} | HomeComfort {context.home.homeComfort:0} | HomeClean {context.home.cleanliness:0} | SocRep {context.socialReputation:0} | FamilyTension {context.familyTension:0}");
+                $"Day {context.currentDay} ({context.dayOfWeekName}) {context.monthName}-{context.dayOfMonth:00} {weekendTag} | Holiday {holidayTag} | Zone {context.currentZone} | Event {currentSocialEvent} | Interactables {interactableCount} | {context.season} | {context.weather} ({weatherMoodHint}) | Shop {(context.shopOpen ? "OPEN" : "CLOSED")} | NPCsOut {context.npcOutsideFactor:0.00} | Food x{context.foodPriceMultiplier:0.00} | HomeComfort {context.home.homeComfort:0} | HomeClean {context.home.cleanliness:0} | SocRep {context.socialReputation:0} | FamilyTension {context.familyTension:0}");
 
             SetNeedsBars(
                 needs.hunger, needs.thirst, needs.energy, needs.warmth, needs.hygiene,
@@ -125,6 +130,18 @@ namespace Lifehandled.Presentation.Session
             {
                 target.text = value;
             }
+        }
+
+        private static string ResolveWeatherMoodHint(Lifehandled.Domain.Common.WeatherType weather, bool isDaytime)
+        {
+            return weather switch
+            {
+                Lifehandled.Domain.Common.WeatherType.Clear when isDaytime => "mood+",
+                Lifehandled.Domain.Common.WeatherType.Cloudy => "mood-",
+                Lifehandled.Domain.Common.WeatherType.Rain => "mood--",
+                Lifehandled.Domain.Common.WeatherType.Storm => "mood---",
+                _ => "neutral"
+            };
         }
 
         private static string ResolveSocialEventTag(System.Collections.Generic.List<string> events, int day)
