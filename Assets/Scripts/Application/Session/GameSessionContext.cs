@@ -12,6 +12,10 @@ namespace Lifehandled.Application.Session
         public string playerCharacterId = string.Empty;
         public string activeHouseholdId = string.Empty;
 
+        public int currentDay = 1;
+        public int wallet = 20;
+        public InventoryState inventory = new();
+
         public RuntimeCharacterState playerCharacter = new();
         public List<RuntimeCharacterState> householdMembers = new();
     }

@@ -52,7 +52,16 @@ namespace Lifehandled.Application.UseCases.NewGame
             {
                 saveVersion = 1,
                 geneticSchemaVersion = 1,
-                playerCharacterId = playerCharacter.characterId
+                playerCharacterId = playerCharacter.characterId,
+                vs01State = new Vs01RuntimeState
+                {
+                    currentDay = 1,
+                    wallet = 20,
+                    inventory =
+                    {
+                        new Vs01ItemStack { itemId = "water_bottle", count = 1 }
+                    }
+                }
             };
 
             envelope.characters.Add(playerCharacter);

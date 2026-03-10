@@ -7,9 +7,7 @@ using Lifehandled.Infrastructure.Persistence.DTO;
 namespace Lifehandled.Application.UseCases.Session
 {
     /// <summary>
-    /// Batch 3 runtime connection: builds a session context from save data,
-    /// assigns the player character, loads household members, and applies
-    /// initial genetics modifiers.
+    /// Builds session context from save data, including VS01 runtime loop state.
     /// </summary>
     public class InitializeGameSessionUseCase
     {
@@ -33,7 +31,10 @@ namespace Lifehandled.Application.UseCases.Session
             {
                 playerCharacterId = playerData.characterId,
                 activeHouseholdId = activeHousehold?.householdId ?? string.Empty,
-                playerCharacter = CreateRuntimeCharacter(playerData, false)
+                currentDay = envelope.vs01State.currentDay,
+                wallet = envelope.vs01State.wallet,
+                inventory = LoadInventory(envelope.vs01State),
+                playerCharacter = CreateRuntimeCharacter(playerData, false, envelope.vs01State)
             };
 
             if (activeHousehold != null)
@@ -44,7 +45,7 @@ namespace Lifehandled.Application.UseCases.Session
 
                 foreach (var member in members)
                 {
-                    context.householdMembers.Add(CreateRuntimeCharacter(member, true));
+                    context.householdMembers.Add(CreateRuntimeCharacter(member, true, envelope.vs01State));
                 }
             }
 
@@ -55,15 +56,36 @@ namespace Lifehandled.Application.UseCases.Session
             };
         }
 
-        private RuntimeCharacterState CreateRuntimeCharacter(CharacterData character, bool lightSim)
+        private static InventoryState LoadInventory(Vs01RuntimeState state)
+        {
+            var inventory = new InventoryState();
+            foreach (var stack in state.inventory)
+            {
+                if (stack.count > 0)
+                {
+                    inventory.Add(stack.itemId, stack.count);
+                }
+            }
+
+            return inventory;
+        }
+
+        private RuntimeCharacterState CreateRuntimeCharacter(CharacterData character, bool lightSim, Vs01RuntimeState state)
         {
             var modifiers = _geneticModifierProvider.BuildModifiers(character.genetics);
+            var defaultNeeds = NeedsStatus.CreateDefault(modifiers);
 
             return new RuntimeCharacterState
             {
                 data = character,
                 geneticModifiers = modifiers,
-                needsStatus = NeedsStatus.CreateDefault(modifiers),
+                needsStatus = new NeedsStatus
+                {
+                    hunger = state.hunger >= 0 ? state.hunger : defaultNeeds.hunger,
+                    thirst = state.thirst >= 0 ? state.thirst : defaultNeeds.thirst,
+                    energy = state.energy >= 0 ? state.energy : defaultNeeds.energy,
+                    stress = state.stress >= 0 ? state.stress : defaultNeeds.stress
+                },
                 isLightSimulatedHouseholdMember = lightSim
             };
         }

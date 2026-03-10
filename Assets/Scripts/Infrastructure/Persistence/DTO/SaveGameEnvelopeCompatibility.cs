@@ -22,6 +22,8 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
             envelope.characters ??= new List<CharacterData>();
             envelope.households ??= new List<HouseholdData>();
             envelope.relationshipLinks ??= new List<RelationshipLink>();
+            envelope.vs01State ??= new Vs01RuntimeState();
+            envelope.vs01State.inventory ??= new List<Vs01ItemStack>();
 
             if (envelope.geneticSchemaVersion <= 0)
             {
