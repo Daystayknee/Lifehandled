@@ -25,10 +25,11 @@ namespace Lifehandled.Domain.Social
     [Serializable]
     public class RelationshipStats
     {
-        public float familiarity;
-        public float trust;
-        public float affection;
-        public float tension;
-        public float respect;
+        public float friendship = 30f;
+        public float trust = 30f;
+        public float attraction = 0f;
+        public float respect = 30f;
+        public float fear = 0f;
+        public float resentment = 0f;
     }
 }

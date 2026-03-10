@@ -42,6 +42,7 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
         public float foodPriceMultiplier = 1f;
 
         public List<Vs01ItemStack> inventory = new();
+        public List<Vs01NpcState> npcs = new();
 
         public float hunger = -1f;
         public float thirst = -1f;
@@ -59,5 +60,39 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
     {
         public string itemId = string.Empty;
         public int count;
+    }
+
+    [Serializable]
+    public class Vs01NpcState
+    {
+        public string npcId = string.Empty;
+        public string displayName = "NPC";
+        public List<PersonalityTraitType> personalityTraits = new();
+
+        public float hunger = 40f;
+        public float energy = 70f;
+        public float social = 50f;
+        public float mood = 60f;
+
+        public NpcScheduleBlock currentScheduleBlock = NpcScheduleBlock.Home;
+        public bool isAvailableForTalk = true;
+
+        public float friendship = 30f;
+        public float trust = 30f;
+        public float attraction;
+        public float respect = 30f;
+        public float fear;
+        public float resentment;
+
+        public List<Vs01NpcMemoryEntry> memory = new();
+    }
+
+    [Serializable]
+    public class Vs01NpcMemoryEntry
+    {
+        public int day;
+        public float hour;
+        public string interactionType = string.Empty;
+        public string outcome = string.Empty;
     }
 }

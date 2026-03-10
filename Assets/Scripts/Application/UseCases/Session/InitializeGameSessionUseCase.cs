@@ -1,7 +1,10 @@
 using System.Linq;
 using Lifehandled.Application.Ports;
 using Lifehandled.Application.Session;
+using Lifehandled.Application.Session.NPC;
 using Lifehandled.Domain.Character;
+using Lifehandled.Domain.NPC;
+using Lifehandled.Domain.Social;
 using Lifehandled.Infrastructure.Persistence.DTO;
 
 namespace Lifehandled.Application.UseCases.Session
@@ -43,6 +46,7 @@ namespace Lifehandled.Application.UseCases.Session
                 npcOutsideFactor = envelope.vs01State.npcOutsideFactor,
                 foodPriceMultiplier = envelope.vs01State.foodPriceMultiplier,
                 inventory = LoadInventory(envelope.vs01State),
+                npcs = LoadNpcs(envelope.vs01State),
                 playerCharacter = CreateRuntimeCharacter(playerData, false, envelope.vs01State)
             };
 
@@ -62,7 +66,8 @@ namespace Lifehandled.Application.UseCases.Session
             {
                 Context = context,
                 CompatibilityWarnings = compatibility.Warnings
-            };        }
+            };
+        }
 
         private static InventoryState LoadInventory(Vs01RuntimeState state)
         {
@@ -76,6 +81,54 @@ namespace Lifehandled.Application.UseCases.Session
             }
 
             return inventory;
+        }
+
+        private static System.Collections.Generic.List<NpcRuntimeState> LoadNpcs(Vs01RuntimeState state)
+        {
+            var npcs = new System.Collections.Generic.List<NpcRuntimeState>();
+
+            foreach (var saved in state.npcs)
+            {
+                npcs.Add(new NpcRuntimeState
+                {
+                    profile = new NpcProfile
+                    {
+                        npcId = saved.npcId,
+                        displayName = saved.displayName,
+                        personalityTraits = saved.personalityTraits,
+                        needs = new NpcNeeds
+                        {
+                            hunger = saved.hunger,
+                            energy = saved.energy,
+                            social = saved.social
+                        },
+                        mood = saved.mood,
+                        schedule = new NpcSchedule
+                        {
+                            currentBlock = saved.currentScheduleBlock,
+                            isAvailableForTalk = saved.isAvailableForTalk
+                        },
+                        relationshipToPlayer = new RelationshipStats
+                        {
+                            friendship = saved.friendship,
+                            trust = saved.trust,
+                            attraction = saved.attraction,
+                            respect = saved.respect,
+                            fear = saved.fear,
+                            resentment = saved.resentment
+                        },
+                        memory = saved.memory.Select(m => new NpcMemoryEntry
+                        {
+                            day = m.day,
+                            hour = m.hour,
+                            interactionType = m.interactionType,
+                            outcome = m.outcome
+                        }).ToList()
+                    }
+                });
+            }
+
+            return npcs;
         }
 
         private RuntimeCharacterState CreateRuntimeCharacter(CharacterData character, bool lightSim, Vs01RuntimeState state)

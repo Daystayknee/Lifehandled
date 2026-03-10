@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Lifehandled.Domain.Common;
+using Lifehandled.Application.Session.NPC;
 
 namespace Lifehandled.Application.Session
 {
@@ -30,5 +31,6 @@ namespace Lifehandled.Application.Session
 
         public RuntimeCharacterState playerCharacter = new();
         public List<RuntimeCharacterState> householdMembers = new();
+        public List<NpcRuntimeState> npcs = new();
     }
 }

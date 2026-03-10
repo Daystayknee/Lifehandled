@@ -63,7 +63,19 @@ namespace Lifehandled.Application.UseCases.NewGame
                     {
                         new Vs01ItemStack { itemId = "water_bottle", count = 1 },
                         new Vs01ItemStack { itemId = "stale_food", count = 1 }
-                    }
+                    },
+                    npcs =
+                    {
+                        new Vs01NpcState
+                        {
+                            npcId = "npc_vendor_01",
+                            displayName = "Mara",
+                            personalityTraits = { PersonalityTraitType.Practical, PersonalityTraitType.Reserved },
+                            friendship = 35f,
+                            trust = 30f,
+                            respect = 40f
+                        }
+                    },
                 }
             };
 

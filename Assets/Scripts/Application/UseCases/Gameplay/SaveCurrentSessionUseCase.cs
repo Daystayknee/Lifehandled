@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Lifehandled.Application.Ports;
 using Lifehandled.Application.Session;
 using Lifehandled.Infrastructure.Persistence.DTO;
@@ -49,6 +50,32 @@ namespace Lifehandled.Application.UseCases.Gameplay
                     envelope.vs01State.inventory.Add(new Vs01ItemStack { itemId = item.itemId, count = item.count });
                 }
             }
+
+            envelope.vs01State.npcs = context.npcs.Select(n => new Vs01NpcState
+            {
+                npcId = n.profile.npcId,
+                displayName = n.profile.displayName,
+                personalityTraits = n.profile.personalityTraits,
+                hunger = n.profile.needs.hunger,
+                energy = n.profile.needs.energy,
+                social = n.profile.needs.social,
+                mood = n.profile.mood,
+                currentScheduleBlock = n.profile.schedule.currentBlock,
+                isAvailableForTalk = n.profile.schedule.isAvailableForTalk,
+                friendship = n.profile.relationshipToPlayer.friendship,
+                trust = n.profile.relationshipToPlayer.trust,
+                attraction = n.profile.relationshipToPlayer.attraction,
+                respect = n.profile.relationshipToPlayer.respect,
+                fear = n.profile.relationshipToPlayer.fear,
+                resentment = n.profile.relationshipToPlayer.resentment,
+                memory = n.profile.memory.Select(m => new Vs01NpcMemoryEntry
+                {
+                    day = m.day,
+                    hour = m.hour,
+                    interactionType = m.interactionType,
+                    outcome = m.outcome
+                }).ToList()
+            }).ToList();
 
             _saveStore.Save(envelope);
         }

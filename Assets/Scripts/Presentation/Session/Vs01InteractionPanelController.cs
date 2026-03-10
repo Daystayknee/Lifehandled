@@ -1,5 +1,6 @@
 using Lifehandled.Application.Session;
 using Lifehandled.Application.UseCases.Gameplay;
+using Lifehandled.Application.UseCases.NPC;
 using Lifehandled.Infrastructure.Persistence.Stores;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,12 +9,13 @@ namespace Lifehandled.Presentation.Session
 {
     /// <summary>
     /// Minimal interaction panel for VS01:
-    /// consume, buy, sleep/end-day, save, and reload validation.
+    /// consume, buy, talk, sleep/end-day, save, and reload validation.
     /// </summary>
     public class Vs01InteractionPanelController : MonoBehaviour
     {
         [SerializeField] private Button consumeButton;
         [SerializeField] private Button buyButton;
+        [SerializeField] private Button talkButton;
         [SerializeField] private Button sleepButton;
         [SerializeField] private Button saveButton;
         [SerializeField] private Button reloadValidateButton;
@@ -23,10 +25,12 @@ namespace Lifehandled.Presentation.Session
         [SerializeField] private Text dayText;
         [SerializeField] private Text contextText;
         [SerializeField] private Text shopText;
+        [SerializeField] private Text npcText;
         [SerializeField] private Text feedbackText;
 
         private readonly ConsumeStarterItemUseCase _consumeUseCase = new();
         private readonly BuyStarterItemUseCase _buyUseCase = new();
+        private readonly NpcSocialInteractionUseCase _talkUseCase = new();
         private readonly SleepEndDayUseCase _sleepUseCase = new();
         private SaveCurrentSessionUseCase _saveUseCase;
         private ReloadSessionValidationUseCase _reloadValidationUseCase;
@@ -39,6 +43,7 @@ namespace Lifehandled.Presentation.Session
 
             if (consumeButton != null) consumeButton.onClick.AddListener(OnConsumeClicked);
             if (buyButton != null) buyButton.onClick.AddListener(OnBuyClicked);
+            if (talkButton != null) talkButton.onClick.AddListener(OnTalkClicked);
             if (sleepButton != null) sleepButton.onClick.AddListener(OnSleepClicked);
             if (saveButton != null) saveButton.onClick.AddListener(OnSaveClicked);
             if (reloadValidateButton != null) reloadValidateButton.onClick.AddListener(OnReloadValidateClicked);
@@ -48,6 +53,7 @@ namespace Lifehandled.Presentation.Session
         {
             if (consumeButton != null) consumeButton.onClick.RemoveListener(OnConsumeClicked);
             if (buyButton != null) buyButton.onClick.RemoveListener(OnBuyClicked);
+            if (talkButton != null) talkButton.onClick.RemoveListener(OnTalkClicked);
             if (sleepButton != null) sleepButton.onClick.RemoveListener(OnSleepClicked);
             if (saveButton != null) saveButton.onClick.RemoveListener(OnSaveClicked);
             if (reloadValidateButton != null) reloadValidateButton.onClick.RemoveListener(OnReloadValidateClicked);
@@ -63,6 +69,7 @@ namespace Lifehandled.Presentation.Session
                 SetText(dayText, "Day: -");
                 SetText(contextText, "Player/Household: -");
                 SetText(shopText, "Shop: -");
+                SetText(npcText, "NPC: -");
                 return;
             }
 
@@ -72,10 +79,15 @@ namespace Lifehandled.Presentation.Session
             SetText(dayText, $"Day: {context.currentDay}");
 
             var playerName = context.playerCharacter?.data?.displayName ?? "(none)";
-            SetText(contextText, $"Player: {playerName} | HouseholdMembers: {context.householdMembers.Count}");
+            SetText(contextText, $"Player: {playerName} | HouseholdMembers: {context.householdMembers.Count} | TalksToday: {context.talkCountToday}");
 
             var price = BuyStarterItemUseCase.ResolvePrice(context.foodPriceMultiplier);
             SetText(shopText, $"Shop: {(context.shopOpen ? "OPEN" : "CLOSED")} | Water Price: ${price}");
+
+            var npcCount = context.npcs?.Count ?? 0;
+            var npcName = npcCount > 0 ? context.npcs[0].profile.displayName : "none";
+            var npcMood = npcCount > 0 ? context.npcs[0].profile.mood.ToString("0") : "-";
+            SetText(npcText, $"NPC: {npcName} | Mood: {npcMood} | Time: {context.hourOfDay:00.0}");
         }
 
         private void OnConsumeClicked()
@@ -89,6 +101,13 @@ namespace Lifehandled.Presentation.Session
         {
             var context = SessionContextRegistry.Current;
             var ok = _buyUseCase.Execute(context, out var message);
+            SetFeedback(ok, message);
+        }
+
+        private void OnTalkClicked()
+        {
+            var context = SessionContextRegistry.Current;
+            var ok = _talkUseCase.TalkToNpc(context, string.Empty, out var message);
             SetFeedback(ok, message);
         }
 

@@ -24,6 +24,7 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
             envelope.relationshipLinks ??= new List<RelationshipLink>();
             envelope.vs01State ??= new Vs01RuntimeState();
             envelope.vs01State.inventory ??= new List<Vs01ItemStack>();
+            envelope.vs01State.npcs ??= new List<Vs01NpcState>();
             if (string.IsNullOrWhiteSpace(envelope.vs01State.currentLocationId))
             {
                 envelope.vs01State.currentLocationId = "home";
@@ -39,6 +40,19 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
             if (envelope.vs01State.npcOutsideFactor < 0f)
             {
                 envelope.vs01State.npcOutsideFactor = 0.8f;
+            }
+
+            if (envelope.vs01State.npcs.Count == 0)
+            {
+                envelope.vs01State.npcs.Add(new Vs01NpcState
+                {
+                    npcId = "npc_vendor_01",
+                    displayName = "Mara",
+                    personalityTraits = new List<PersonalityTraitType> { PersonalityTraitType.Practical },
+                    friendship = 30f,
+                    trust = 30f,
+                    respect = 35f
+                });
             }
 
             if (envelope.geneticSchemaVersion <= 0)

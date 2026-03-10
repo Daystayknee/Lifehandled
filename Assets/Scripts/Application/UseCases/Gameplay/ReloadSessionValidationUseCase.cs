@@ -38,7 +38,7 @@ namespace Lifehandled.Application.UseCases.Gameplay
             }
 
             message =
-                $"Reload OK: Player={context.playerCharacter.data.displayName}, HouseholdMembers={context.householdMembers.Count}, Genetics=loaded, World={context.season}/{context.weather}, Day={context.currentDay} {context.hourOfDay:00.0}h";
+                $"Reload OK: Player={context.playerCharacter.data.displayName}, HouseholdMembers={context.householdMembers.Count}, Genetics=loaded, NPCs={context.npcs.Count}, World={context.season}/{context.weather}, Day={context.currentDay} {context.hourOfDay:00.0}h";
             return true;
         }
     }

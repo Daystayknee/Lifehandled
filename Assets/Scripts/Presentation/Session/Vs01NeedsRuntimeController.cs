@@ -2,6 +2,7 @@ using Lifehandled.Application.Session;
 using Lifehandled.Application.UseCases.Gameplay;
 using Lifehandled.Application.UseCases.World;
 using Lifehandled.Domain.Common;
+using Lifehandled.Application.UseCases.NPC;
 using UnityEngine;
 
 namespace Lifehandled.Presentation.Session
@@ -21,6 +22,7 @@ namespace Lifehandled.Presentation.Session
         private float _tickTimer;
         private readonly WorldSimulationTickUseCase _worldTickUseCase = new();
         private readonly SurvivalNeedsTickUseCase _survivalTickUseCase = new();
+        private readonly NpcScheduleTickUseCase _npcScheduleTickUseCase = new();
 
         private void Update()
         {
@@ -41,6 +43,7 @@ namespace Lifehandled.Presentation.Session
 
             var isRaining = forceRain || context.weather == WeatherType.Rain || context.weather == WeatherType.Storm;
             _survivalTickUseCase.Execute(context, isRaining, inGameMinutesPerTick);
+            _npcScheduleTickUseCase.Execute(context);
         }
     }
 }
