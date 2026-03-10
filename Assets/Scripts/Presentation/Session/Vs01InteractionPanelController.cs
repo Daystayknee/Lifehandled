@@ -7,37 +7,49 @@ using UnityEngine.UI;
 namespace Lifehandled.Presentation.Session
 {
     /// <summary>
-    /// Minimal interaction panel for VS01 Batch 3+4:
-    /// consume, buy, and save buttons with simple text feedback.
+    /// Minimal interaction panel for VS01 Batch 3-5:
+    /// consume, buy, sleep/end-day, save, and reload validation.
     /// </summary>
     public class Vs01InteractionPanelController : MonoBehaviour
     {
         [SerializeField] private Button consumeButton;
         [SerializeField] private Button buyButton;
+        [SerializeField] private Button sleepButton;
         [SerializeField] private Button saveButton;
+        [SerializeField] private Button reloadValidateButton;
 
         [SerializeField] private Text inventoryText;
         [SerializeField] private Text walletText;
+        [SerializeField] private Text dayText;
+        [SerializeField] private Text contextText;
         [SerializeField] private Text feedbackText;
 
         private readonly ConsumeStarterItemUseCase _consumeUseCase = new();
         private readonly BuyStarterItemUseCase _buyUseCase = new();
+        private readonly SleepEndDayUseCase _sleepUseCase = new();
         private SaveCurrentSessionUseCase _saveUseCase;
+        private ReloadSessionValidationUseCase _reloadValidationUseCase;
 
         private void Awake()
         {
-            _saveUseCase = new SaveCurrentSessionUseCase(new JsonNewGameSaveStore());
+            var saveStore = new JsonNewGameSaveStore();
+            _saveUseCase = new SaveCurrentSessionUseCase(saveStore);
+            _reloadValidationUseCase = new ReloadSessionValidationUseCase(saveStore);
 
             if (consumeButton != null) consumeButton.onClick.AddListener(OnConsumeClicked);
             if (buyButton != null) buyButton.onClick.AddListener(OnBuyClicked);
+            if (sleepButton != null) sleepButton.onClick.AddListener(OnSleepClicked);
             if (saveButton != null) saveButton.onClick.AddListener(OnSaveClicked);
+            if (reloadValidateButton != null) reloadValidateButton.onClick.AddListener(OnReloadValidateClicked);
         }
 
         private void OnDestroy()
         {
             if (consumeButton != null) consumeButton.onClick.RemoveListener(OnConsumeClicked);
             if (buyButton != null) buyButton.onClick.RemoveListener(OnBuyClicked);
+            if (sleepButton != null) sleepButton.onClick.RemoveListener(OnSleepClicked);
             if (saveButton != null) saveButton.onClick.RemoveListener(OnSaveClicked);
+            if (reloadValidateButton != null) reloadValidateButton.onClick.RemoveListener(OnReloadValidateClicked);
         }
 
         private void Update()
@@ -47,11 +59,17 @@ namespace Lifehandled.Presentation.Session
             {
                 SetText(inventoryText, "Inventory: -");
                 SetText(walletText, "Wallet: -");
+                SetText(dayText, "Day: -");
+                SetText(contextText, "Player/Household: -");
                 return;
             }
 
             SetText(inventoryText, $"Water: {context.inventory.GetCount(ConsumeStarterItemUseCase.WaterBottleId)}");
             SetText(walletText, $"Wallet: ${context.wallet}");
+            SetText(dayText, $"Day: {context.currentDay}");
+
+            var playerName = context.playerCharacter?.data?.displayName ?? "(none)";
+            SetText(contextText, $"Player: {playerName} | HouseholdMembers: {context.householdMembers.Count}");
         }
 
         private void OnConsumeClicked()
@@ -68,6 +86,19 @@ namespace Lifehandled.Presentation.Session
             SetFeedback(ok, message);
         }
 
+        private void OnSleepClicked()
+        {
+            var context = SessionContextRegistry.Current;
+            var ok = _sleepUseCase.Execute(context, out var message);
+            SetFeedback(ok, message);
+
+            if (ok)
+            {
+                _saveUseCase.Execute(context);
+                SetFeedback(true, $"{message} Auto-saved.");
+            }
+        }
+
         private void OnSaveClicked()
         {
             var context = SessionContextRegistry.Current;
@@ -79,6 +110,12 @@ namespace Lifehandled.Presentation.Session
 
             _saveUseCase.Execute(context);
             SetFeedback(true, "Session saved.");
+        }
+
+        private void OnReloadValidateClicked()
+        {
+            var ok = _reloadValidationUseCase.Execute(out var message);
+            SetFeedback(ok, message);
         }
 
         private void SetFeedback(bool success, string message)
