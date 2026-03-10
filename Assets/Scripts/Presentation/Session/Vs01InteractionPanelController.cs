@@ -193,7 +193,7 @@ namespace Lifehandled.Presentation.Session
             context.familyLineage ??= new FamilyLineageState();
 
             SetText(progressionText,
-                $"Skills C:{context.progression.GetSkillLevel("cooking")} S:{context.progression.GetSkillLevel("social")} Sur:{context.progression.GetSkillLevel("survival")} | Perks {context.progression.unlockedPerkIds.Count} | Collectibles {context.collectibles.Count} | RareEvents {context.rareEventsSeen.Count} | Gen {context.familyLineage.generationIndex}");
+                $"Skills C:{context.progression.GetSkillLevel("cooking")} F:{context.progression.GetSkillLevel("fishing")} Sur:{context.progression.GetSkillLevel("survival")} Ch:{context.progression.GetSkillLevel("charisma")} N:{context.progression.GetSkillLevel("negotiation")} | Perks {context.progression.unlockedPerkIds.Count} | Collectibles {context.collectibles.Count} | RareEvents {context.rareEventsSeen.Count} | Gen {context.familyLineage.generationIndex}");
         }
 
         private void OnConsumeClicked()
@@ -254,8 +254,21 @@ namespace Lifehandled.Presentation.Session
         private void OnGainCookingSkillClicked()
         {
             var context = SessionContextRegistry.Current;
-            var ok = _skillProgressionUseCase.GainXp(context, "cooking", 12f, out var message);
+            var skillId = ResolveSkillTrainingForZone(context?.currentZone ?? ZoneType.Home);
+            var ok = _skillProgressionUseCase.GainXp(context, skillId, 12f, out var message);
             SetFeedback(ok, message);
+        }
+
+        private static string ResolveSkillTrainingForZone(ZoneType zone)
+        {
+            return zone switch
+            {
+                ZoneType.Lake => "fishing",
+                ZoneType.Forest => "survival",
+                ZoneType.TownCenter => "charisma",
+                ZoneType.GasStation => "negotiation",
+                _ => "cooking"
+            };
         }
 
         private void OnUnlockPerkClicked()

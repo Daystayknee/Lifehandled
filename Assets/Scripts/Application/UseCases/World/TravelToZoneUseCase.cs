@@ -1,4 +1,6 @@
 using System.Linq;
+using System.Text;
+using Lifehandled.Application.Content;
 using Lifehandled.Application.Session;
 using Lifehandled.Domain.Common;
 
@@ -39,8 +41,65 @@ namespace Lifehandled.Application.UseCases.World
                 }
             }
 
-            message = $"Traveled to {zone.displayName}. Danger {zone.dangerLevel:0.00}.";
+            var detail = ApplyZoneAssetAndWildlifeEffects(context, zone);
+
+            message = $"Traveled to {zone.displayName}. Danger {zone.dangerLevel:0.00}. {detail}";
             return true;
+        }
+
+        private static string ApplyZoneAssetAndWildlifeEffects(GameSessionContext context, ZoneState zone)
+        {
+            var effects = new StringBuilder();
+            var resources = zone.resources ?? new System.Collections.Generic.List<string>();
+            var storageCapacity = context.home?.GetStorageCapacity() ?? 6;
+            var needs = context.playerCharacter?.needsStatus;
+            foreach (var resourceId in resources)
+            {
+                if (!PrototypeWorldContentCatalog.TryGetInteractableDefinition(resourceId, out var interactable))
+                {
+                    continue;
+                }
+
+                if (interactable.walletDelta < 0 && context.wallet < -interactable.walletDelta)
+                {
+                    continue;
+                }
+
+                context.wallet += interactable.walletDelta;
+                if (needs != null)
+                {
+                    needs.stress = NeedsStatus.ClampToRange(needs.stress + interactable.stressDelta);
+                    needs.energy = NeedsStatus.ClampToRange(needs.energy + interactable.energyDelta);
+                }
+
+                if (!string.IsNullOrWhiteSpace(interactable.inventoryItemId))
+                {
+                    context.inventory.TryAddWithCapacity(interactable.inventoryItemId, 1, storageCapacity);
+                }
+
+                effects.Append($"Used {interactable.interactableId}. ");
+            }
+
+            var fishingSkill = context.progression?.GetSkillLevel("fishing") ?? 1;
+            var survivalSkill = context.progression?.GetSkillLevel("survival") ?? 1;
+            foreach (var def in PrototypeWorldContentCatalog.AnimalDefinitions.Where(a => resources.Contains(a.animalId)))
+            {
+                var encounterScore = def.encounterWeight + (survivalSkill * 0.03f) + (def.animalId == "fish" ? fishingSkill * 0.04f : 0f);
+                if (encounterScore >= 0.75f)
+                {
+                    context.inventory.TryAddWithCapacity(def.outputItemId, 1, storageCapacity);
+                    context.progression?.GainSkillXp(def.animalId == "fish" ? "fishing" : "survival", 3f);
+                    effects.Append($"Encountered {def.animalId} and gained {def.outputItemId}. ");
+                    break;
+                }
+            }
+
+            if (effects.Length == 0)
+            {
+                return "No special encounters.";
+            }
+
+            return effects.ToString().Trim();
         }
     }
 }

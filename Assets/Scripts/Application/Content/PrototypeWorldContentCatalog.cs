@@ -98,6 +98,15 @@ namespace Lifehandled.Application.Content
             new("horse", AnimalClassType.Domestic, AnimalGameplayRoleType.Companionship, "town_center", "travel_bonus", 0.3f)
         };
 
+        public static readonly List<InteractableDefinition> InteractableDefinitions = new()
+        {
+            new("vending_machine", stressDelta: -0.8f, energyDelta: 0.6f, walletDelta: -2, inventoryItemId: "water_bottle"),
+            new("bench", stressDelta: -1.2f, energyDelta: 0.2f, walletDelta: 0),
+            new("trash_can", stressDelta: 0.1f, energyDelta: -0.1f, walletDelta: 0),
+            new("atm", stressDelta: -0.2f, energyDelta: 0f, walletDelta: 1),
+            new("cooking_station", stressDelta: -0.6f, energyDelta: -0.2f, walletDelta: 0, inventoryItemId: "simple_meal")
+        };
+
         public static readonly List<NpcArchetypeDefinition> NpcArchetypes = BuildNpcArchetypes();
 
         public static List<Vs01NpcState> CreateNpcRoster()
@@ -410,6 +419,12 @@ namespace Lifehandled.Application.Content
             return definition != null;
         }
 
+        public static bool TryGetInteractableDefinition(string interactableId, out InteractableDefinition definition)
+        {
+            definition = InteractableDefinitions.FirstOrDefault(i => i.interactableId == interactableId);
+            return definition != null;
+        }
+
         private static T PickEnum<T>(Random random) where T : struct, Enum
         {
             var values = Enum.GetValues(typeof(T));
@@ -686,5 +701,23 @@ namespace Lifehandled.Application.Content
         public float jobEligibilityScore { get; }
         public float attractivenessBonus { get; }
         public float weatherResistanceBonus { get; }
+    }
+
+    public class InteractableDefinition
+    {
+        public InteractableDefinition(string interactableId, float stressDelta, float energyDelta, int walletDelta, string inventoryItemId = "")
+        {
+            this.interactableId = interactableId;
+            this.stressDelta = stressDelta;
+            this.energyDelta = energyDelta;
+            this.walletDelta = walletDelta;
+            this.inventoryItemId = inventoryItemId ?? string.Empty;
+        }
+
+        public string interactableId { get; }
+        public float stressDelta { get; }
+        public float energyDelta { get; }
+        public int walletDelta { get; }
+        public string inventoryItemId { get; }
     }
 }

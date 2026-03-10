@@ -21,6 +21,23 @@ namespace Lifehandled.Application.UseCases.LifeSim
             }
 
             context.collectibles.Add(collectibleId);
+
+            context.progression ??= new ProgressionState();
+            context.progression.GainSkillXp("survival", 2f);
+
+            if (context.collectibles.Count % 5 == 0)
+            {
+                var milestonePerk = $"collector_tier_{context.collectibles.Count / 5}";
+                if (!context.progression.unlockedPerkIds.Contains(milestonePerk))
+                {
+                    context.progression.unlockedPerkIds.Add(milestonePerk);
+                }
+
+                context.socialReputation = NeedsStatus.ClampToRange(context.socialReputation + 1.5f);
+                message = $"Collected {collectibleId}. Milestone reached: {milestonePerk}.";
+                return true;
+            }
+
             message = $"Collected {collectibleId}.";
             return true;
         }

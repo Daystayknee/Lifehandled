@@ -21,7 +21,11 @@ namespace Lifehandled.Application.UseCases.Economy
             var incomePaid = 0;
             if (economy.currentJob != JobType.Unemployed && economy.lastIncomePaidDay != context.currentDay)
             {
-                incomePaid = economy.dailyIncome;
+                var negotiationBonus = context.progression?.GetSkillLevel("negotiation") ?? 1;
+                var charismaBonus = context.progression?.GetSkillLevel("charisma") ?? 1;
+                var skillBonus = (negotiationBonus - 1) + (charismaBonus - 1);
+                var repBonus = context.socialReputation >= 65f ? 2 : 0;
+                incomePaid = economy.dailyIncome + skillBonus + repBonus;
                 context.wallet += incomePaid;
                 economy.lastIncomePaidDay = context.currentDay;
             }
@@ -30,6 +34,11 @@ namespace Lifehandled.Application.UseCases.Economy
             if (context.currentDay % 7 == 0 && economy.lastRentPaidDay != context.currentDay)
             {
                 rentPaid = economy.weeklyRentCost;
+                if (context.progression?.GetSkillLevel("negotiation") >= 3)
+                {
+                    rentPaid = System.Math.Max(0, rentPaid - 2);
+                }
+
                 context.wallet -= rentPaid;
                 economy.lastRentPaidDay = context.currentDay;
             }
