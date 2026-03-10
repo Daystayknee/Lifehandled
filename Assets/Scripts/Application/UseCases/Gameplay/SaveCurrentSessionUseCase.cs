@@ -18,9 +18,17 @@ namespace Lifehandled.Application.UseCases.Gameplay
         {
             var envelope = _saveStore.Load();
             envelope.vs01State.currentDay = context.currentDay;
+            envelope.vs01State.hourOfDay = context.hourOfDay;
             envelope.vs01State.wallet = context.wallet;
             envelope.vs01State.currentLocationId = context.currentLocationId;
             envelope.vs01State.talkCountToday = context.talkCountToday;
+
+            envelope.vs01State.season = context.season;
+            envelope.vs01State.weather = context.weather;
+            envelope.vs01State.isDaytime = context.isDaytime;
+            envelope.vs01State.shopOpen = context.shopOpen;
+            envelope.vs01State.npcOutsideFactor = context.npcOutsideFactor;
+            envelope.vs01State.foodPriceMultiplier = context.foodPriceMultiplier;
 
             var needs = context.playerCharacter.needsStatus;
             envelope.vs01State.hunger = needs.hunger;

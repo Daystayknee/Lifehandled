@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using Lifehandled.Domain.Character;
+using Lifehandled.Domain.Common;
 using Lifehandled.Domain.Household;
 using Lifehandled.Domain.Social;
 
 namespace Lifehandled.Infrastructure.Persistence.DTO
 {
     /// <summary>
-    /// Minimal save envelope update for character/household/genetics + VS01 runtime loop state.
+    /// Save envelope for character/household/genetics and VS01 runtime loop state.
     /// </summary>
     [Serializable]
     public class SaveGameEnvelope
@@ -28,9 +29,17 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
     public class Vs01RuntimeState
     {
         public int currentDay = 1;
+        public float hourOfDay = 8f;
         public int wallet = 20;
         public string currentLocationId = "home";
         public int talkCountToday;
+
+        public SeasonType season = SeasonType.Spring;
+        public WeatherType weather = WeatherType.Clear;
+        public bool isDaytime = true;
+        public bool shopOpen = true;
+        public float npcOutsideFactor = 0.8f;
+        public float foodPriceMultiplier = 1f;
 
         public List<Vs01ItemStack> inventory = new();
 

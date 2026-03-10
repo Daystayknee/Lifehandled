@@ -1,11 +1,13 @@
 using Lifehandled.Application.Session;
 using Lifehandled.Application.UseCases.Gameplay;
+using Lifehandled.Application.UseCases.World;
+using Lifehandled.Domain.Common;
 using UnityEngine;
 
 namespace Lifehandled.Presentation.Session
 {
     /// <summary>
-    /// VS01 survival runtime tick driver.
+    /// VS01 runtime tick driver for world + survival state.
     /// </summary>
     public class Vs01NeedsRuntimeController : MonoBehaviour
     {
@@ -13,11 +15,12 @@ namespace Lifehandled.Presentation.Session
         [SerializeField] private float realSecondsPerTick = 1f;
         [SerializeField] private float inGameMinutesPerTick = 1f;
 
-        [Header("Environment")]
-        [SerializeField] private bool simulateRain;
+        [Header("Debug Override")]
+        [SerializeField] private bool forceRain;
 
         private float _tickTimer;
-        private readonly SurvivalNeedsTickUseCase _tickUseCase = new();
+        private readonly WorldSimulationTickUseCase _worldTickUseCase = new();
+        private readonly SurvivalNeedsTickUseCase _survivalTickUseCase = new();
 
         private void Update()
         {
@@ -29,7 +32,15 @@ namespace Lifehandled.Presentation.Session
 
             _tickTimer = 0f;
             var context = SessionContextRegistry.Current;
-            _tickUseCase.Execute(context, simulateRain, inGameMinutesPerTick);
+            if (context == null)
+            {
+                return;
+            }
+
+            _worldTickUseCase.Execute(context, inGameMinutesPerTick);
+
+            var isRaining = forceRain || context.weather == WeatherType.Rain || context.weather == WeatherType.Storm;
+            _survivalTickUseCase.Execute(context, isRaining, inGameMinutesPerTick);
         }
     }
 }

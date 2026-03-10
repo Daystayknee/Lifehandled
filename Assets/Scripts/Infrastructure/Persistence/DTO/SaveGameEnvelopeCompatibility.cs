@@ -28,6 +28,18 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
             {
                 envelope.vs01State.currentLocationId = "home";
             }
+            if (envelope.vs01State.hourOfDay < 0f || envelope.vs01State.hourOfDay >= 24f)
+            {
+                envelope.vs01State.hourOfDay = 8f;
+            }
+            if (envelope.vs01State.foodPriceMultiplier <= 0f)
+            {
+                envelope.vs01State.foodPriceMultiplier = 1f;
+            }
+            if (envelope.vs01State.npcOutsideFactor < 0f)
+            {
+                envelope.vs01State.npcOutsideFactor = 0.8f;
+            }
 
             if (envelope.geneticSchemaVersion <= 0)
             {

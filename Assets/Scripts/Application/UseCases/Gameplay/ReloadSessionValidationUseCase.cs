@@ -6,7 +6,7 @@ using Lifehandled.Infrastructure.Persistence.DTO;
 namespace Lifehandled.Application.UseCases.Gameplay
 {
     /// <summary>
-    /// VS01 Batch 5: reloads save and reinitializes session context for validation.
+    /// Reloads save and reinitializes session context for validation.
     /// </summary>
     public class ReloadSessionValidationUseCase
     {
@@ -38,7 +38,7 @@ namespace Lifehandled.Application.UseCases.Gameplay
             }
 
             message =
-                $"Reload OK: Player={context.playerCharacter.data.displayName}, HouseholdMembers={context.householdMembers.Count}, Genetics=loaded, Day={context.currentDay}";
+                $"Reload OK: Player={context.playerCharacter.data.displayName}, HouseholdMembers={context.householdMembers.Count}, Genetics=loaded, World={context.season}/{context.weather}, Day={context.currentDay} {context.hourOfDay:00.0}h";
             return true;
         }
     }

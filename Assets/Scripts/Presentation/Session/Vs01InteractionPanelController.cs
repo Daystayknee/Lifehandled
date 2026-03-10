@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace Lifehandled.Presentation.Session
 {
     /// <summary>
-    /// Minimal interaction panel for VS01 Batch 3-5:
+    /// Minimal interaction panel for VS01:
     /// consume, buy, sleep/end-day, save, and reload validation.
     /// </summary>
     public class Vs01InteractionPanelController : MonoBehaviour
@@ -22,6 +22,7 @@ namespace Lifehandled.Presentation.Session
         [SerializeField] private Text walletText;
         [SerializeField] private Text dayText;
         [SerializeField] private Text contextText;
+        [SerializeField] private Text shopText;
         [SerializeField] private Text feedbackText;
 
         private readonly ConsumeStarterItemUseCase _consumeUseCase = new();
@@ -61,15 +62,20 @@ namespace Lifehandled.Presentation.Session
                 SetText(walletText, "Wallet: -");
                 SetText(dayText, "Day: -");
                 SetText(contextText, "Player/Household: -");
+                SetText(shopText, "Shop: -");
                 return;
             }
 
-            SetText(inventoryText, $"Water: {context.inventory.GetCount(ConsumeStarterItemUseCase.WaterBottleId)} | StaleFood: {context.inventory.GetCount(ConsumeStarterItemUseCase.BadFoodId)}");
+            SetText(inventoryText,
+                $"Water: {context.inventory.GetCount(ConsumeStarterItemUseCase.WaterBottleId)} | StaleFood: {context.inventory.GetCount(ConsumeStarterItemUseCase.BadFoodId)}");
             SetText(walletText, $"Wallet: ${context.wallet}");
             SetText(dayText, $"Day: {context.currentDay}");
 
             var playerName = context.playerCharacter?.data?.displayName ?? "(none)";
             SetText(contextText, $"Player: {playerName} | HouseholdMembers: {context.householdMembers.Count}");
+
+            var price = BuyStarterItemUseCase.ResolvePrice(context.foodPriceMultiplier);
+            SetText(shopText, $"Shop: {(context.shopOpen ? "OPEN" : "CLOSED")} | Water Price: ${price}");
         }
 
         private void OnConsumeClicked()

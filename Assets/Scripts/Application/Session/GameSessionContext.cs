@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lifehandled.Domain.Common;
 
 namespace Lifehandled.Application.Session
 {
@@ -13,9 +14,17 @@ namespace Lifehandled.Application.Session
         public string activeHouseholdId = string.Empty;
 
         public int currentDay = 1;
+        public float hourOfDay = 8f;
         public int wallet = 20;
         public string currentLocationId = "home";
         public int talkCountToday;
+
+        public SeasonType season = SeasonType.Spring;
+        public WeatherType weather = WeatherType.Clear;
+        public bool isDaytime = true;
+        public bool shopOpen = true;
+        public float npcOutsideFactor = 0.8f;
+        public float foodPriceMultiplier = 1f;
 
         public InventoryState inventory = new();
 

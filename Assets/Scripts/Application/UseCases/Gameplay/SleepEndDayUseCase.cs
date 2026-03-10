@@ -17,6 +17,7 @@ namespace Lifehandled.Application.UseCases.Gameplay
             }
 
             context.currentDay += 1;
+            context.hourOfDay = 7f;
             var needs = context.playerCharacter.needsStatus;
 
             var sleepQuality = ComputeSleepQuality(needs);

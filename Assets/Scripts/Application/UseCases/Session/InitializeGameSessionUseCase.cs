@@ -32,9 +32,16 @@ namespace Lifehandled.Application.UseCases.Session
                 playerCharacterId = playerData.characterId,
                 activeHouseholdId = activeHousehold?.householdId ?? string.Empty,
                 currentDay = envelope.vs01State.currentDay,
+                hourOfDay = envelope.vs01State.hourOfDay,
                 wallet = envelope.vs01State.wallet,
                 currentLocationId = envelope.vs01State.currentLocationId,
                 talkCountToday = envelope.vs01State.talkCountToday,
+                season = envelope.vs01State.season,
+                weather = envelope.vs01State.weather,
+                isDaytime = envelope.vs01State.isDaytime,
+                shopOpen = envelope.vs01State.shopOpen,
+                npcOutsideFactor = envelope.vs01State.npcOutsideFactor,
+                foodPriceMultiplier = envelope.vs01State.foodPriceMultiplier,
                 inventory = LoadInventory(envelope.vs01State),
                 playerCharacter = CreateRuntimeCharacter(playerData, false, envelope.vs01State)
             };
@@ -55,8 +62,7 @@ namespace Lifehandled.Application.UseCases.Session
             {
                 Context = context,
                 CompatibilityWarnings = compatibility.Warnings
-            };
-        }
+            };        }
 
         private static InventoryState LoadInventory(Vs01RuntimeState state)
         {

@@ -56,7 +56,9 @@ namespace Lifehandled.Application.UseCases.NewGame
                 vs01State = new Vs01RuntimeState
                 {
                     currentDay = 1,
+                    hourOfDay = 8f,
                     wallet = 20,
+                    currentLocationId = "home",
                     inventory =
                     {
                         new Vs01ItemStack { itemId = "water_bottle", count = 1 },

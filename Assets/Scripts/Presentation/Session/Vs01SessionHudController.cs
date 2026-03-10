@@ -5,7 +5,7 @@ using UnityEngine.UI;
 namespace Lifehandled.Presentation.Session
 {
     /// <summary>
-    /// Minimal HUD for VS01 startup + survival runtime visibility.
+    /// Minimal HUD for VS01 startup + survival/world runtime visibility.
     /// </summary>
     public class Vs01SessionHudController : MonoBehaviour
     {
@@ -13,6 +13,7 @@ namespace Lifehandled.Presentation.Session
         [SerializeField] private Text playerNameText;
         [SerializeField] private Text primaryStatusText;
         [SerializeField] private Text secondaryStatusText;
+        [SerializeField] private Text worldStatusText;
         [SerializeField] private Text sessionStateText;
 
         [Header("Needs Bars (Optional)")]
@@ -48,6 +49,7 @@ namespace Lifehandled.Presentation.Session
                 SetText(playerNameText, "Player: (none)");
                 SetText(primaryStatusText, "No runtime status available");
                 SetText(secondaryStatusText, string.Empty);
+                SetText(worldStatusText, string.Empty);
                 SetNeedsBars(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f);
                 return;
             }
@@ -61,6 +63,8 @@ namespace Lifehandled.Presentation.Session
                 $"Hunger {needs.hunger:0} | Thirst {needs.thirst:0} | Energy {needs.energy:0} | Warmth {needs.warmth:0} | Hygiene {needs.hygiene:0}");
             SetText(secondaryStatusText,
                 $"Stress {needs.stress:0} | Mood {needs.mood:0} | IllnessRisk {needs.illnessRisk:0} | Wetness {needs.wetness:0}");
+            SetText(worldStatusText,
+                $"Day {context.currentDay} {context.hourOfDay:00.0}h | {context.season} | {context.weather} | Shop {(context.shopOpen ? "OPEN" : "CLOSED")} | NPCsOut {context.npcOutsideFactor:0.00} | Food x{context.foodPriceMultiplier:0.00}");
 
             SetNeedsBars(
                 needs.hunger, needs.thirst, needs.energy, needs.warmth, needs.hygiene,
