@@ -1,5 +1,6 @@
 using Lifehandled.Application.Session;
 using Lifehandled.Application.UseCases.Gameplay;
+using Lifehandled.Application.UseCases.Economy;
 using Lifehandled.Application.UseCases.World;
 using Lifehandled.Domain.Common;
 using Lifehandled.Application.UseCases.NPC;
@@ -21,6 +22,7 @@ namespace Lifehandled.Presentation.Session
 
         private float _tickTimer;
         private readonly WorldSimulationTickUseCase _worldTickUseCase = new();
+        private readonly EconomySimulationTickUseCase _economyTickUseCase = new();
         private readonly SurvivalNeedsTickUseCase _survivalTickUseCase = new();
         private readonly NpcScheduleTickUseCase _npcScheduleTickUseCase = new();
 
@@ -40,6 +42,7 @@ namespace Lifehandled.Presentation.Session
             }
 
             _worldTickUseCase.Execute(context, inGameMinutesPerTick);
+            _economyTickUseCase.Execute(context);
 
             var isRaining = forceRain || context.weather == WeatherType.Rain || context.weather == WeatherType.Storm;
             _survivalTickUseCase.Execute(context, isRaining, inGameMinutesPerTick);

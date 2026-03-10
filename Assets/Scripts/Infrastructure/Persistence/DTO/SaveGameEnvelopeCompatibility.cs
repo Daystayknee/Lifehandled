@@ -37,6 +37,30 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
             {
                 envelope.vs01State.foodPriceMultiplier = 1f;
             }
+            if (envelope.vs01State.dailyIncome < 0)
+            {
+                envelope.vs01State.dailyIncome = 12;
+            }
+            if (envelope.vs01State.weeklyRentCost < 0)
+            {
+                envelope.vs01State.weeklyRentCost = 18;
+            }
+            if (envelope.vs01State.scarcityMultiplier <= 0f)
+            {
+                envelope.vs01State.scarcityMultiplier = 1f;
+            }
+            if (envelope.vs01State.regionWealthMultiplier <= 0f)
+            {
+                envelope.vs01State.regionWealthMultiplier = 1f;
+            }
+            if (envelope.vs01State.reputationMultiplier <= 0f)
+            {
+                envelope.vs01State.reputationMultiplier = 1f;
+            }
+            if (envelope.vs01State.supplyDemandMultiplier <= 0f)
+            {
+                envelope.vs01State.supplyDemandMultiplier = 1f;
+            }
             if (envelope.vs01State.npcOutsideFactor < 0f)
             {
                 envelope.vs01State.npcOutsideFactor = 0.8f;

@@ -5,7 +5,7 @@ namespace Lifehandled.Application.UseCases.World
 {
     /// <summary>
     /// Small, expandable world simulation tick:
-    /// day/night, season, weather, NPC-outside factor, shop hours, and food price.
+    /// day/night, season, weather, NPC-outside factor, and shop hours.
     /// </summary>
     public class WorldSimulationTickUseCase
     {
@@ -23,7 +23,6 @@ namespace Lifehandled.Application.UseCases.World
             context.isDaytime = context.hourOfDay >= 6f && context.hourOfDay < 19f;
             context.npcOutsideFactor = ResolveNpcOutsideFactor(context.hourOfDay, context.weather);
             context.shopOpen = ResolveShopOpen(context.hourOfDay, context.weather);
-            context.foodPriceMultiplier = ResolveFoodPriceMultiplier(context.weather, context.npcOutsideFactor);
         }
 
         private static void AdvanceTime(GameSessionContext context, float minutes)
@@ -97,17 +96,6 @@ namespace Lifehandled.Application.UseCases.World
 
             // Severe weather can close shop for prototype world reaction.
             return weather != WeatherType.Storm;
-        }
-
-        private static float ResolveFoodPriceMultiplier(WeatherType weather, float npcOutsideFactor)
-        {
-            var price = 1f;
-
-            if (weather == WeatherType.Rain) price += 0.10f;
-            if (weather == WeatherType.Storm) price += 0.25f;
-            if (npcOutsideFactor < 0.5f) price += 0.10f;
-
-            return price;
         }
 
         private static float Clamp01(float value)

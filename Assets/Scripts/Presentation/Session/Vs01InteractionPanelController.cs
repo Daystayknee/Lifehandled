@@ -81,8 +81,9 @@ namespace Lifehandled.Presentation.Session
             var playerName = context.playerCharacter?.data?.displayName ?? "(none)";
             SetText(contextText, $"Player: {playerName} | HouseholdMembers: {context.householdMembers.Count} | TalksToday: {context.talkCountToday}");
 
-            var price = BuyStarterItemUseCase.ResolvePrice(context.foodPriceMultiplier);
-            SetText(shopText, $"Shop: {(context.shopOpen ? "OPEN" : "CLOSED")} | Water Price: ${price}");
+            var price = BuyStarterItemUseCase.ResolvePrice(context);
+            SetText(shopText,
+                $"Shop: {(context.shopOpen ? "OPEN" : "CLOSED")} | Water Price: ${price} | Job: {context.economy.currentJob} +${context.economy.dailyIncome}/day | Rent ${context.economy.weeklyRentCost}/week");
 
             var npcCount = context.npcs?.Count ?? 0;
             var npcName = npcCount > 0 ? context.npcs[0].profile.displayName : "none";

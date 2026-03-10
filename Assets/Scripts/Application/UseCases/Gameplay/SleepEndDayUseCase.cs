@@ -1,4 +1,5 @@
 using Lifehandled.Application.Session;
+using Lifehandled.Application.UseCases.Economy;
 
 namespace Lifehandled.Application.UseCases.Gameplay
 {
@@ -8,6 +9,8 @@ namespace Lifehandled.Application.UseCases.Gameplay
     /// </summary>
     public class SleepEndDayUseCase
     {
+        private readonly DailyEconomySettlementUseCase _dailyEconomySettlementUseCase = new();
+
         public bool Execute(GameSessionContext context, out string message)
         {
             if (context == null || context.playerCharacter?.needsStatus == null)
@@ -34,13 +37,15 @@ namespace Lifehandled.Application.UseCases.Gameplay
             {
                 needs.stress = NeedsStatus.ClampToRange(needs.stress + 8f);
                 needs.mood = NeedsStatus.ClampToRange(needs.mood - 10f);
-                message = $"Poor sleep. Day is now {context.currentDay}.";
+                var economyResult = _dailyEconomySettlementUseCase.Execute(context);
+                message = $"Poor sleep. Day is now {context.currentDay}. {economyResult}";
             }
             else
             {
                 needs.stress = NeedsStatus.ClampToRange(needs.stress - 8f);
                 needs.mood = NeedsStatus.ClampToRange(needs.mood + 5f);
-                message = $"Slept well. Day is now {context.currentDay}.";
+                var economyResult = _dailyEconomySettlementUseCase.Execute(context);
+                message = $"Slept well. Day is now {context.currentDay}. {economyResult}";
             }
 
             return true;

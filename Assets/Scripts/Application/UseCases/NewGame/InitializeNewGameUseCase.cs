@@ -58,6 +58,12 @@ namespace Lifehandled.Application.UseCases.NewGame
                     currentDay = 1,
                     hourOfDay = 8f,
                     wallet = 20,
+                    currentJob = JobType.PartTimeShopHelper,
+                    dailyIncome = 12,
+                    housingTier = HousingTier.Basic,
+                    weeklyRentCost = 18,
+                    regionWealthMultiplier = 1f,
+                    reputationMultiplier = 1f,
                     currentLocationId = "home",
                     inventory =
                     {

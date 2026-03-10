@@ -45,6 +45,19 @@ namespace Lifehandled.Application.UseCases.Session
                 shopOpen = envelope.vs01State.shopOpen,
                 npcOutsideFactor = envelope.vs01State.npcOutsideFactor,
                 foodPriceMultiplier = envelope.vs01State.foodPriceMultiplier,
+                economy = new EconomyState
+                {
+                    currentJob = envelope.vs01State.currentJob,
+                    dailyIncome = envelope.vs01State.dailyIncome,
+                    housingTier = envelope.vs01State.housingTier,
+                    weeklyRentCost = envelope.vs01State.weeklyRentCost,
+                    scarcityMultiplier = envelope.vs01State.scarcityMultiplier,
+                    regionWealthMultiplier = envelope.vs01State.regionWealthMultiplier,
+                    reputationMultiplier = envelope.vs01State.reputationMultiplier,
+                    supplyDemandMultiplier = envelope.vs01State.supplyDemandMultiplier,
+                    lastIncomePaidDay = envelope.vs01State.lastIncomePaidDay,
+                    lastRentPaidDay = envelope.vs01State.lastRentPaidDay
+                },
                 inventory = LoadInventory(envelope.vs01State),
                 npcs = LoadNpcs(envelope.vs01State),
                 playerCharacter = CreateRuntimeCharacter(playerData, false, envelope.vs01State)

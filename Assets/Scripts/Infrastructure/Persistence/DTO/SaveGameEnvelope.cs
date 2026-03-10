@@ -41,6 +41,17 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
         public float npcOutsideFactor = 0.8f;
         public float foodPriceMultiplier = 1f;
 
+        public JobType currentJob = JobType.PartTimeShopHelper;
+        public int dailyIncome = 12;
+        public HousingTier housingTier = HousingTier.Basic;
+        public int weeklyRentCost = 18;
+        public float scarcityMultiplier = 1f;
+        public float regionWealthMultiplier = 1f;
+        public float reputationMultiplier = 1f;
+        public float supplyDemandMultiplier = 1f;
+        public int lastIncomePaidDay;
+        public int lastRentPaidDay;
+
         public List<Vs01ItemStack> inventory = new();
         public List<Vs01NpcState> npcs = new();
 
