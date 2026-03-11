@@ -1,3 +1,7 @@
+## Presentation Direction Update (Pure 2D)
+
+This roadmap now assumes a pure 2D presentation path (dashboard + layered portraits + zone/event cards + scrapbook feed), while preserving the current simulation architecture and use-case stack. See `PURE_2D_DASHBOARD_SCRAPBOOK_DIRECTION.md` for the visual/product implementation blueprint.
+
 # Living World Alpha + Social Drama Alpha
 
 This is the **next milestone roadmap** built on the current runtime architecture:
