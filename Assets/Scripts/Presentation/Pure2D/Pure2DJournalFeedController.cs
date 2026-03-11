@@ -20,6 +20,7 @@ namespace Lifehandled.Presentation.Pure2D
         private string _lastObservedNpcReaction = string.Empty;
         private string _lastObservedEconomyEvent = string.Empty;
         private int _lastPlayerPostDay = -1;
+        private string _lastObservedReactionSummary = string.Empty;
 
         private void Start()
         {
@@ -76,6 +77,14 @@ namespace Lifehandled.Presentation.Pure2D
                     : "You:\nManaged the day one step at a time.";
 
             AddEntry(entry);
+        }
+
+        private static string BuildFeedReactionSummary(float socialReputation, float familyTension)
+        {
+            var likes = (int)(4 + (socialReputation * 0.18f));
+            var support = (int)(1 + (socialReputation * 0.08f));
+            var sideEye = (int)(1 + ((100f - socialReputation) * 0.06f) + (familyTension * 0.03f));
+            return $"❤️ {likes}  🤝 {support}  😬 {sideEye}";
         }
 
         private static string BuildWorldPost(string worldEvent)

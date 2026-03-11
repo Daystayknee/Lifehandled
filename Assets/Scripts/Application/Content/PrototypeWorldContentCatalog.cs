@@ -470,6 +470,19 @@ namespace Lifehandled.Application.Content
             return definition != null;
         }
 
+
+        public static string ResolveClothingStyleTag(string upperWearId, string lowerWearId, string footwearId)
+        {
+            var ids = new[] { upperWearId, lowerWearId, footwearId };
+            var text = string.Join(" ", ids).ToLowerInvariant();
+
+            if (text.Contains("blazer") || text.Contains("formal") || text.Contains("slacks")) return "formal";
+            if (text.Contains("hoodie") || text.Contains("sneakers") || text.Contains("cargo") || text.Contains("denim")) return "streetwear";
+            if (text.Contains("parka") || text.Contains("sweater") || text.Contains("beanie") || text.Contains("scarf")) return "cozy";
+            if (text.Contains("leggings") || text.Contains("hiking") || text.Contains("boots")) return "athletic";
+            return "casual";
+        }
+
         private static T PickEnum<T>(Random random) where T : struct, Enum
         {
             var values = Enum.GetValues(typeof(T));

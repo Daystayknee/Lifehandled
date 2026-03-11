@@ -81,8 +81,20 @@ namespace Lifehandled.Application.UseCases.LifeSim
             }
 
             ApplyCookingSideEffects(context, cleanlinessCost: 2.2f, hygieneCost: 2.4f, moodBonus: 1.6f);
-            context.lastHouseholdEvent = $"Cooked recipe: {recipe.outputItemId}.";
-            message = $"Cooked {recipe.outputItemId} from recipe.";
+            context.progression ??= new ProgressionState();
+            var discoveryId = $"recipe_discovered:{recipe.recipeId}";
+            var isNewDiscovery = !context.progression.unlockedPerkIds.Contains(discoveryId);
+            if (isNewDiscovery)
+            {
+                context.progression.unlockedPerkIds.Add(discoveryId);
+            }
+
+            context.lastHouseholdEvent = isNewDiscovery
+                ? $"Cooked recipe: {recipe.outputItemId}. New discovery logged."
+                : $"Cooked recipe: {recipe.outputItemId}.";
+            message = isNewDiscovery
+                ? $"Cooked {recipe.outputItemId} from recipe. New recipe discovered!"
+                : $"Cooked {recipe.outputItemId} from recipe.";
             return true;
         }
 

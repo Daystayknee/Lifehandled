@@ -1,3 +1,4 @@
+using Lifehandled.Application.Content;
 using Lifehandled.Application.Session;
 using Lifehandled.Domain.NPC;
 using Lifehandled.Domain.Social;
@@ -124,9 +125,22 @@ namespace Lifehandled.Application.UseCases.NPC
                 reaction += " They seem happy you remembered their favorite food.";
             }
 
-            if (npc.profile.preferences != null && npc.profile.preferences.preferredClothingStyleId == npc.profile.clothingStyleId)
+            if (npc.profile.preferences != null)
             {
-                trustDelta += 0.2f;
+                var playerAppearance = context.playerCharacter?.data?.appearance;
+                var playerStyleTag = PrototypeWorldContentCatalog.ResolveClothingStyleTag(
+                    playerAppearance?.upperWearId,
+                    playerAppearance?.lowerWearId,
+                    playerAppearance?.footwearId);
+
+                if (!string.IsNullOrWhiteSpace(npc.profile.preferences.preferredClothingStyleId) &&
+                    (npc.profile.preferences.preferredClothingStyleId.Contains(playerStyleTag) ||
+                     npc.profile.preferences.preferredClothingStyleId == playerAppearance?.upperWearId ||
+                     npc.profile.preferences.preferredClothingStyleId == playerAppearance?.lowerWearId))
+                {
+                    trustDelta += 0.35f;
+                    reaction += " They like your outfit style.";
+                }
             }
 
             ApplySocialEventConversationModifiers(socialEvent, ref friendshipDelta, ref trustDelta, ref reaction);

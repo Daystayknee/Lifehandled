@@ -282,3 +282,9 @@ To keep momentum toward a deeper life sim survival RPG loop, prioritize:
 5. **UI readability pass**
    - Apply typography theme assets in scene prefabs (heading/body/note groups).
    - Keep icon language consistent across dashboard/feed/map/notifications.
+
+
+### Current continuation checkpoint
+- ✅ Social-feed post formatting and notification card motion are in place.
+- ✅ Recipe cooking now supports discovery progression hooks.
+- 🔜 Next pass: connect feed reactions directly to NPC memory/rumor propagation use-cases.
