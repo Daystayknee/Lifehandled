@@ -144,3 +144,23 @@ Keep behavior changes inside the existing runtime architecture:
 - Persistence via save store + envelope compatibility
 
 That keeps the vertical slice stable as features expand.
+
+
+## Paper Doll (2D AAA pivot) quick setup
+
+1. Create a `Player` GameObject.
+2. Add child layer GameObjects with `SpriteRenderer` components:
+   - `BaseBody` (sorting order 0)
+   - `Eyes` (sorting order 1)
+   - `Nose` (sorting order 2)
+   - `Lips` (sorting order 3)
+   - `Makeup` (sorting order 4)
+   - `Details_Freckles` (sorting order 5)
+   - `Details_BeautyMarks` (sorting order 6)
+3. Add `CharacterRenderer` to `Player` and map each `LayerSlot` to its child renderer.
+4. Create a `CharacterIdentity` ScriptableObject and assign initial sprites/stats/trait.
+5. Add `CharacterCreatorUI` to your creator canvas and wire its button events (`CycleEyes`, `CycleNose`, `ToggleFreckles`, `ToggleBeautyMarks`).
+6. Create one `EnvironmentProfile` asset per area (Mall/Park/Hospital), set background + stat modifiers.
+7. Add `EnvironmentManager` + `SurvivalSystem` in the scene, assign `CharacterIdentity` and profiles.
+
+This keeps visuals decoupled from survival mechanics and supports scene changes without losing identity data.
