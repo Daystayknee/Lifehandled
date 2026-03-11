@@ -130,6 +130,21 @@ This becomes the long-term memory surface of the game.
 
 ---
 
+## Requested Delivery Batches
+
+### Phase 1 — Pure 2D presentation foundation
+Build:
+- dashboard main screen
+- 2D portrait panel
+- map/travel screen
+- journal/feed panel
+
+### Phase 2 — Avatar content system
+Build:
+- layered portrait renderer
+- face/body/hair/clothing data assets
+- preset-based assembly
+
 ## Incremental implementation order (architecture-safe)
 
 ### Phase A — Dashboard foundation
