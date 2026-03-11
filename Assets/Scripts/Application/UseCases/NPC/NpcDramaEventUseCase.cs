@@ -124,6 +124,7 @@ namespace Lifehandled.Application.UseCases.NPC
 
             RecomputeGlobalReputationFromNpcBeliefs(context);
             npc.currentReactionHint = message;
+            context.lastNpcReaction = message;
             return true;
         }
 

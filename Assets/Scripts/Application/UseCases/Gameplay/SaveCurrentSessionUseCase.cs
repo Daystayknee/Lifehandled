@@ -52,6 +52,10 @@ namespace Lifehandled.Application.UseCases.Gameplay
             envelope.vs01State.monthName = context.monthName;
             envelope.vs01State.isWeekend = context.isWeekend;
             envelope.vs01State.activeHolidayId = context.activeHolidayId;
+            envelope.vs01State.lastWorldEvent = context.lastWorldEvent;
+            envelope.vs01State.lastNpcReaction = context.lastNpcReaction;
+            envelope.vs01State.lastHouseholdEvent = context.lastHouseholdEvent;
+            envelope.vs01State.lastEconomyEvent = context.lastEconomyEvent;
 
             envelope.vs01State.currentJob = context.economy.currentJob;
             envelope.vs01State.dailyIncome = context.economy.dailyIncome;

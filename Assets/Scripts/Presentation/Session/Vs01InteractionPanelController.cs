@@ -177,8 +177,10 @@ namespace Lifehandled.Presentation.Session
             SetText(contextText, $"Player: {playerName} | Age {playerAge} ({ageStage}-{ageSubStage}) | Next {nextStageLabel} ~{daysToBirthday}d | HouseholdMembers: {context.householdMembers.Count} | TalksToday: {context.talkCountToday} | SocRep: {context.socialReputation:0} | FamilyTension: {context.familyTension:0}");
 
             var price = BuyStarterItemUseCase.ResolvePrice(context);
+            var repShopTier = BuyStarterItemUseCase.ResolveShopReputationTier(context.socialReputation);
+            var jobAccess = ResolveJobAccessTier(context.socialReputation);
             SetText(shopText,
-                $"Shop: {(context.shopOpen ? "OPEN" : "CLOSED")} | Water Price: ${price} | Job: {context.economy.currentJob} +${context.economy.dailyIncome}/day | Rent ${context.economy.weeklyRentCost}/week");
+                $"Shop: {(context.shopOpen ? "OPEN" : "CLOSED")} | Water Price: ${price} | ShopRep: {repShopTier} | JobAccess: {jobAccess} | Job: {context.economy.currentJob} +${context.economy.dailyIncome}/day | Rent ${context.economy.weeklyRentCost}/week");
 
             var storageUsed = context.inventory.GetTotalItemCount();
             var storageCap = context.home.GetStorageCapacity();
@@ -189,7 +191,7 @@ namespace Lifehandled.Presentation.Session
             var npcName = npcCount > 0 ? context.npcs[0].profile.displayName : "none";
             var npcMood = npcCount > 0 ? context.npcs[0].profile.mood.ToString("0") : "-";
             var npcDrama = npcCount > 0 ? context.npcs[0].profile.drama : null;
-            SetText(npcText, $"NPC: {npcName} | Mood: {npcMood} | Rivalry: {(npcDrama?.rivalryWithPlayer ?? 0f):0} | Romance: {(npcDrama?.romanceInterest ?? 0f):0} | Gossip: {(npcDrama?.gossipHeat ?? 0f):0} | Time: {context.hourOfDay:00.0}");
+            SetText(npcText, $"NPC: {npcName} | Mood: {npcMood} | Rivalry: {(npcDrama?.rivalryWithPlayer ?? 0f):0} | Romance: {(npcDrama?.romanceInterest ?? 0f):0} | Gossip: {(npcDrama?.gossipHeat ?? 0f):0} | LastReaction: {context.lastNpcReaction} | Time: {context.hourOfDay:00.0}");
 
             var activeZone = context.zones?.Find(z => z.zoneType == context.currentZone);
             var npcPoolCount = activeZone?.npcPool?.Count ?? 0;
@@ -208,7 +210,7 @@ namespace Lifehandled.Presentation.Session
             context.familyLineage ??= new FamilyLineageState();
 
             SetText(progressionText,
-                $"Skills C:{context.progression.GetSkillLevel("cooking")} F:{context.progression.GetSkillLevel("fishing")} Sur:{context.progression.GetSkillLevel("survival")} Ch:{context.progression.GetSkillLevel("charisma")} N:{context.progression.GetSkillLevel("negotiation")} | Perks {context.progression.unlockedPerkIds.Count} | Collectibles {context.collectibles.Count} | RareEvents {context.rareEventsSeen.Count} | Gen {context.familyLineage.generationIndex}");
+                $"Skills C:{context.progression.GetSkillLevel("cooking")} F:{context.progression.GetSkillLevel("fishing")} Sur:{context.progression.GetSkillLevel("survival")} Ch:{context.progression.GetSkillLevel("charisma")} N:{context.progression.GetSkillLevel("negotiation")} | Perks {context.progression.unlockedPerkIds.Count} | Collectibles {context.collectibles.Count} | RareEvents {context.rareEventsSeen.Count} | Gen {context.familyLineage.generationIndex} | WorldEvt {context.lastWorldEvent} | EconEvt {context.lastEconomyEvent} | HomeEvt {context.lastHouseholdEvent}");
         }
 
         private void OnConsumeClicked()
@@ -269,9 +271,35 @@ namespace Lifehandled.Presentation.Session
         private void OnGainCookingSkillClicked()
         {
             var context = SessionContextRegistry.Current;
-            var skillId = ResolveSkillTrainingForZone(context?.currentZone ?? ZoneType.Home);
+            if (context == null)
+            {
+                SetFeedback(false, "No active session.");
+                return;
+            }
+
+            if (context.currentZone == ZoneType.Apartments && !HasJobAccess(context.socialReputation))
+            {
+                SetFeedback(false, "Job board locked: improve reputation before taking shifts.");
+                return;
+            }
+
+            var skillId = ResolveSkillTrainingForZone(context.currentZone);
             var ok = _skillProgressionUseCase.GainXp(context, skillId, 12f, out var message);
             SetFeedback(ok, message);
+        }
+
+
+        private static bool HasJobAccess(float socialReputation)
+        {
+            return socialReputation >= 35f;
+        }
+
+        private static string ResolveJobAccessTier(float socialReputation)
+        {
+            if (socialReputation >= 80f) return "Priority hiring";
+            if (socialReputation >= 60f) return "Preferred";
+            if (socialReputation >= 35f) return "Eligible";
+            return "Restricted";
         }
 
         private static string ResolveSkillTrainingForZone(ZoneType zone)
@@ -378,7 +406,15 @@ namespace Lifehandled.Presentation.Session
         private void SetFeedback(bool success, string message)
         {
             if (feedbackText == null) return;
-            feedbackText.text = success ? $"OK: {message}" : $"WARN: {message}";
+
+            var context = SessionContextRegistry.Current;
+            var eventSummary = context == null
+                ? string.Empty
+                : $" | World: {context.lastWorldEvent} | Economy: {context.lastEconomyEvent} | Home: {context.lastHouseholdEvent}";
+
+            feedbackText.text = success
+                ? $"OK: {message}{eventSummary}"
+                : $"WARN: {message}{eventSummary}";
         }
 
         private static void SetText(Text target, string value)

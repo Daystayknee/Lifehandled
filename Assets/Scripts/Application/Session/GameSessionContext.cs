@@ -22,6 +22,10 @@ namespace Lifehandled.Application.Session
         public int talkCountToday;
         public float socialReputation = 50f;
         public float familyTension = 15f;
+        public string lastWorldEvent = "none";
+        public string lastNpcReaction = "none";
+        public string lastHouseholdEvent = "none";
+        public string lastEconomyEvent = "none";
 
         public SeasonType season = SeasonType.Spring;
         public WeatherType weather = WeatherType.Clear;

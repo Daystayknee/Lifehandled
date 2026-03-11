@@ -57,6 +57,13 @@ namespace Lifehandled.Application.UseCases.Economy
             economy.reputationMultiplier = Clamp(1f + ((context.socialReputation - 50f) * 0.002f), 0.85f, 1.25f);
 
             context.foodPriceMultiplier = ResolveBaseFoodPriceMultiplier(economy);
+
+            var economyPressure = context.foodPriceMultiplier >= 1.3f
+                ? "prices surging"
+                : context.foodPriceMultiplier <= 0.9f
+                    ? "discount cycle"
+                    : "stable market";
+            context.lastEconomyEvent = $"Economy: {economyPressure} ({context.foodPriceMultiplier:0.00}x food).";
         }
 
         private static SocialEventType? ResolveTodaySocialEvent(System.Collections.Generic.List<string> events, int day)

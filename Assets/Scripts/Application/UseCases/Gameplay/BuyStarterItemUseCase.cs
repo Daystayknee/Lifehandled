@@ -46,7 +46,9 @@ namespace Lifehandled.Application.UseCases.Gameplay
 
             context.wallet -= price;
             context.inventory.TryAddWithCapacity(WaterBottleId, 1, capacity);
-            message = $"Bought water bottle for ${price}.";
+            var repNote = ResolveShopReputationTier(context?.socialReputation ?? 50f);
+            context.lastEconomyEvent = $"Shop reacts to your reputation ({repNote}).";
+            message = $"Bought water bottle for ${price}. {repNote}.";
             return true;
         }
 
@@ -65,7 +67,30 @@ namespace Lifehandled.Application.UseCases.Gameplay
 
             multiplier *= discountMultiplier;
 
+            var socialReputation = context?.socialReputation ?? 50f;
+            var reputationMultiplier = ResolveShopReputationPriceMultiplier(socialReputation);
+            multiplier *= reputationMultiplier;
+
             return ResolvePrice(multiplier);
+        }
+
+
+        public static float ResolveShopReputationPriceMultiplier(float socialReputation)
+        {
+            if (socialReputation >= 80f) return 0.86f;
+            if (socialReputation >= 65f) return 0.93f;
+            if (socialReputation >= 45f) return 1f;
+            if (socialReputation >= 30f) return 1.1f;
+            return 1.22f;
+        }
+
+        public static string ResolveShopReputationTier(float socialReputation)
+        {
+            if (socialReputation >= 80f) return "Local favorite discount";
+            if (socialReputation >= 65f) return "Trusted regular pricing";
+            if (socialReputation >= 45f) return "Neutral pricing";
+            if (socialReputation >= 30f) return "Suspicious customer surcharge";
+            return "Blacklisted premium surcharge";
         }
 
         public static int ResolvePrice(float multiplier)

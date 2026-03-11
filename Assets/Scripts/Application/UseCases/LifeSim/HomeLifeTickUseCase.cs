@@ -35,7 +35,72 @@ namespace Lifehandled.Application.UseCases.LifeSim
                 home.neighborhoodReputation = NeedsStatus.ClampToRange(home.neighborhoodReputation - (0.2f * hours));
             }
 
+            ApplyHouseholdTension(context, hours);
+            ApplySharedResourcePressure(context, hours);
             ApplyHobbyRecovery(context, hours);
+        }
+
+
+        private static void ApplyHouseholdTension(GameSessionContext context, float hours)
+        {
+            var memberCount = context.householdMembers?.Count ?? 0;
+            if (memberCount <= 0)
+            {
+                context.lastHouseholdEvent = "Household: living solo.";
+                return;
+            }
+
+            var needs = context.playerCharacter.needsStatus;
+            var pressure = 0.12f * hours * memberCount;
+            if (context.home.cleanliness < 40f) pressure += 0.18f * hours;
+            if (needs.stress > 60f) pressure += 0.22f * hours;
+            if (context.isWeekend) pressure += 0.08f * hours;
+
+            if (context.currentZone == Domain.Common.ZoneType.Home && context.hourOfDay >= 18f)
+            {
+                context.familyTension = NeedsStatus.ClampToRange(context.familyTension + pressure);
+            }
+            else
+            {
+                context.familyTension = NeedsStatus.ClampToRange(context.familyTension - (0.1f * hours));
+            }
+
+            if (context.familyTension >= 70f)
+            {
+                needs.mood = NeedsStatus.ClampToRange(needs.mood - (0.9f * hours));
+                needs.stress = NeedsStatus.ClampToRange(needs.stress + (0.8f * hours));
+                context.lastHouseholdEvent = "Household conflict spike: everyone is tense.";
+            }
+            else if (context.familyTension >= 45f)
+            {
+                needs.mood = NeedsStatus.ClampToRange(needs.mood - (0.35f * hours));
+                context.lastHouseholdEvent = "Household friction is building.";
+            }
+            else
+            {
+                context.lastHouseholdEvent = "Household feels stable.";
+            }
+        }
+
+        private static void ApplySharedResourcePressure(GameSessionContext context, float hours)
+        {
+            if (context.inventory == null || context.home == null)
+            {
+                return;
+            }
+
+            var memberCount = context.householdMembers?.Count ?? 0;
+            var totalPeople = 1 + memberCount;
+            var used = context.inventory.GetTotalItemCount();
+            var capacity = context.home.GetStorageCapacity();
+            var freeSlots = capacity - used;
+
+            if (freeSlots <= totalPeople)
+            {
+                context.familyTension = NeedsStatus.ClampToRange(context.familyTension + (0.45f * hours));
+                context.playerCharacter.needsStatus.stress = NeedsStatus.ClampToRange(context.playerCharacter.needsStatus.stress + (0.35f * hours));
+                context.lastHouseholdEvent = $"Shared storage strain: {used}/{capacity} slots in use.";
+            }
         }
 
         private static void ApplyHobbyRecovery(GameSessionContext context, float hours)

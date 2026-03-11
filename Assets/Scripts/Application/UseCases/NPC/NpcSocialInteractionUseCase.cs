@@ -48,13 +48,25 @@ namespace Lifehandled.Application.UseCases.NPC
             var remembersHelp = npc.profile.memory.Exists(m => m.outcome.Contains("helped"));
             var remembersInsult = npc.profile.memory.Exists(m => m.outcome.Contains("insulted"));
 
-            if (remembersTheft || drama.rivalryWithPlayer > 60f || rel.fear > 50f || rel.resentment > 60f)
+            var hostileReputation = context.socialReputation < 28f;
+            var celebratedReputation = context.socialReputation > 75f;
+
+            if (hostileReputation)
+            {
+                reaction = $"{npc.profile.displayName}: I've heard enough stories about you.";
+                rel.trust = Clamp(rel.trust - 0.5f);
+            }
+            else if (remembersTheft || drama.rivalryWithPlayer > 60f || rel.fear > 50f || rel.resentment > 60f)
             {
                 reaction = $"{npc.profile.displayName} avoids you.";
             }
             else if (drama.romanceInterest > 65f && rel.attraction > 30f && mood > 55f && time >= 18f)
             {
                 reaction = $"{npc.profile.displayName}: Want to spend some time together tonight?";
+            }
+            else if (celebratedReputation && rel.trust > 40f)
+            {
+                reaction = $"{npc.profile.displayName}: People are talking about your good deeds.";
             }
             else if (rel.friendship > 60f && rel.trust > 50f && mood > 55f)
             {
@@ -138,6 +150,7 @@ namespace Lifehandled.Application.UseCases.NPC
 
             context.talkCountToday += 1;
             npc.currentReactionHint = reaction;
+            context.lastNpcReaction = reaction;
             return true;
         }
 

@@ -56,6 +56,10 @@ namespace Lifehandled.Application.UseCases.Session
                 monthName = envelope.vs01State.monthName,
                 isWeekend = envelope.vs01State.isWeekend,
                 activeHolidayId = envelope.vs01State.activeHolidayId,
+                lastWorldEvent = envelope.vs01State.lastWorldEvent,
+                lastNpcReaction = envelope.vs01State.lastNpcReaction,
+                lastHouseholdEvent = envelope.vs01State.lastHouseholdEvent,
+                lastEconomyEvent = envelope.vs01State.lastEconomyEvent,
                 economy = new EconomyState
                 {
                     currentJob = envelope.vs01State.currentJob,

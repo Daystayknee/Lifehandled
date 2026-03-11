@@ -119,6 +119,7 @@ namespace Lifehandled.Application.UseCases.World
             }
 
             EnsureDailySocialEventAcrossZones(context, socialEvent);
+            context.lastWorldEvent = BuildWorldEventSummary(context, socialEvent);
         }
 
         private static void EnsureDailySocialEventAcrossZones(GameSessionContext context, SocialEventType socialEvent)
@@ -141,6 +142,14 @@ namespace Lifehandled.Application.UseCases.World
             }
         }
 
+
+
+        private static string BuildWorldEventSummary(GameSessionContext context, SocialEventType socialEvent)
+        {
+            var weekendTag = context.isWeekend ? "weekend" : "weekday";
+            var holidayTag = context.activeHolidayId == "none" ? "no holiday" : context.activeHolidayId;
+            return $"World: {ResolveSocialEventTag(socialEvent)} | {context.weather} | {weekendTag} | {holidayTag}.";
+        }
 
         private static string ResolveSocialEventTag(SocialEventType socialEvent)
         {

@@ -54,6 +54,10 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
         public string monthName = "Springrise";
         public bool isWeekend;
         public string activeHolidayId = "none";
+        public string lastWorldEvent = "none";
+        public string lastNpcReaction = "none";
+        public string lastHouseholdEvent = "none";
+        public string lastEconomyEvent = "none";
 
         public JobType currentJob = JobType.PartTimeShopHelper;
         public int dailyIncome = 12;

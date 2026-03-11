@@ -75,7 +75,7 @@ namespace Lifehandled.Presentation.Session
             var interactableCount = activeZone?.resources?.Count(r => r == "bench" || r == "atm" || r == "vending_machine" || r == "cooking_station" || r == "trash_can") ?? 0;
 
             SetText(sessionStateText,
-                $"Session: READY | PlayerId={context.playerCharacterId} | Location={context.currentLocationId} | Geno M:{modifiers.metabolismMultiplier:0.00} S:{modifiers.staminaRecoveryMultiplier:0.00} I:{modifiers.illnessRiskGainMultiplier:0.00}");
+                $"Session: READY | PlayerId={context.playerCharacterId} | Location={context.currentLocationId} | Geno M:{modifiers.metabolismMultiplier:0.00} S:{modifiers.staminaRecoveryMultiplier:0.00} I:{modifiers.illnessRiskGainMultiplier:0.00} | LastNPC {context.lastNpcReaction} | LastHome {context.lastHouseholdEvent}");
             SetText(playerNameText, $"Player: {player.data.displayName}");
             SetText(primaryStatusText,
                 $"Hunger {needs.hunger:0} | Thirst {needs.thirst:0} | Energy {needs.energy:0} | Warmth {needs.warmth:0} | Hygiene {needs.hygiene:0}");

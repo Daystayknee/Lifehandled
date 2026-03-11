@@ -127,6 +127,22 @@ namespace Lifehandled.Infrastructure.Persistence.DTO
             {
                 envelope.vs01State.activeHolidayId = "none";
             }
+            if (string.IsNullOrWhiteSpace(envelope.vs01State.lastWorldEvent))
+            {
+                envelope.vs01State.lastWorldEvent = "none";
+            }
+            if (string.IsNullOrWhiteSpace(envelope.vs01State.lastNpcReaction))
+            {
+                envelope.vs01State.lastNpcReaction = "none";
+            }
+            if (string.IsNullOrWhiteSpace(envelope.vs01State.lastHouseholdEvent))
+            {
+                envelope.vs01State.lastHouseholdEvent = "none";
+            }
+            if (string.IsNullOrWhiteSpace(envelope.vs01State.lastEconomyEvent))
+            {
+                envelope.vs01State.lastEconomyEvent = "none";
+            }
             if (envelope.vs01State.socialReputation < 0f || envelope.vs01State.socialReputation > 100f)
             {
                 envelope.vs01State.socialReputation = 50f;
