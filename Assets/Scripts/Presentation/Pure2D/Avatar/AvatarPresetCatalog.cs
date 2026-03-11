@@ -26,6 +26,7 @@ namespace Lifehandled.Presentation.Pure2D.Avatar
     {
         public string presetId = "default";
         public string displayName = "Default";
+        public string portraitStyleTag = "anime_semi_real";
 
         public string baseBodyPartId = "body_average";
         public string facePartId = "face_oval";

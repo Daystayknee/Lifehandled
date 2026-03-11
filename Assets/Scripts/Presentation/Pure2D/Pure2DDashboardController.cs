@@ -14,6 +14,8 @@ namespace Lifehandled.Presentation.Pure2D
         [SerializeField] private Text playerNameText;
         [SerializeField] private Text zoneText;
         [SerializeField] private Text timeWeatherText;
+        [SerializeField] private Image weatherIconImage;
+        [SerializeField] private Pure2DIconRegistry iconRegistry;
 
         [Header("Core Stats")]
         [SerializeField] private Text needsText;
@@ -38,6 +40,7 @@ namespace Lifehandled.Presentation.Pure2D
                 SetText(playerNameText, "Player: (none)");
                 SetText(zoneText, "Zone: -");
                 SetText(timeWeatherText, "Time: -");
+                if (weatherIconImage != null) weatherIconImage.enabled = false;
                 SetText(needsText, "Needs: -");
                 SetText(moneyText, "Wallet: -");
                 SetText(householdText, "Household: -");
@@ -53,7 +56,8 @@ namespace Lifehandled.Presentation.Pure2D
             SetText(playerNameText, $"{context.playerCharacter.data.displayName}");
             SetText(zoneText, $"Zone: {context.currentZone}");
             SetText(timeWeatherText,
-                $"Day {context.currentDay} ({context.dayOfWeekName}) {context.monthName}-{context.dayOfMonth:00} | {context.hourOfDay:00.0}h | {context.weather}");
+                $"🌤 Day {context.currentDay} ({context.dayOfWeekName}) {context.monthName}-{context.dayOfMonth:00} | {context.hourOfDay:00.0}h | {context.weather}");
+            ApplyWeatherIcon(context.weather);
             SetText(needsText,
                 $"H:{needs.hunger:0} T:{needs.thirst:0} E:{needs.energy:0} S:{needs.stress:0} M:{needs.mood:0}");
             SetText(moneyText, $"Wallet: ${context.wallet}");
@@ -61,9 +65,29 @@ namespace Lifehandled.Presentation.Pure2D
                 $"Members: {context.householdMembers.Count} | Tension: {context.familyTension:0} | Home: {(context.home?.isHomeOwned == true ? "Owned" : "Rent")}");
             SetText(reputationText,
                 $"SocialRep: {context.socialReputation:0} | Holiday: {(context.activeHolidayId == "none" ? "none" : context.activeHolidayId)}");
-            SetText(worldEventText, context.lastWorldEvent);
-            SetText(npcReactionText, context.lastNpcReaction);
-            SetText(economyText, context.lastEconomyEvent);
+            SetText(worldEventText, $"🗞 {context.lastWorldEvent}");
+            SetText(npcReactionText, $"💬 {context.lastNpcReaction}");
+            SetText(economyText, $"💸 {context.lastEconomyEvent}");
+        }
+
+        private void ApplyWeatherIcon(Lifehandled.Domain.Common.WeatherType weather)
+        {
+            if (weatherIconImage == null || iconRegistry == null)
+            {
+                return;
+            }
+
+            var key = weather switch
+            {
+                Lifehandled.Domain.Common.WeatherType.Clear => "weather_clear",
+                Lifehandled.Domain.Common.WeatherType.Cloudy => "weather_cloudy",
+                Lifehandled.Domain.Common.WeatherType.Rain => "weather_rain",
+                Lifehandled.Domain.Common.WeatherType.Storm => "weather_storm",
+                _ => string.Empty
+            };
+
+            weatherIconImage.sprite = iconRegistry.Resolve(key);
+            weatherIconImage.enabled = weatherIconImage.sprite != null;
         }
 
         private static void SetText(Text text, string value)

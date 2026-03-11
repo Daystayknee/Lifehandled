@@ -30,19 +30,19 @@ namespace Lifehandled.Presentation.Pure2D
             if (_lastObservedDay != context.currentDay)
             {
                 _lastObservedDay = context.currentDay;
-                AddEntry($"Day {context.currentDay}: {context.dayOfWeekName} {context.monthName}-{context.dayOfMonth:00}");
+                AddEntry($"📅 Day {context.currentDay}: {context.dayOfWeekName} {context.monthName}-{context.dayOfMonth:00}");
             }
 
             if (!string.IsNullOrWhiteSpace(context.lastWorldEvent) && context.lastWorldEvent != _lastObservedWorldEvent)
             {
                 _lastObservedWorldEvent = context.lastWorldEvent;
-                AddEntry(context.lastWorldEvent);
+                AddEntry($"🗞 {context.lastWorldEvent}");
             }
 
             if (!string.IsNullOrWhiteSpace(context.lastNpcReaction) && context.lastNpcReaction != _lastObservedNpcReaction)
             {
                 _lastObservedNpcReaction = context.lastNpcReaction;
-                AddEntry($"NPC: {context.lastNpcReaction}");
+                AddEntry($"💬 NPC: {context.lastNpcReaction}");
             }
 
             Render();

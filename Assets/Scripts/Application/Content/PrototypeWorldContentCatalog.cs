@@ -18,6 +18,8 @@ namespace Lifehandled.Application.Content
             "jam_toast", "noodle_bowl", "baked_potato", "fish_taco", "fruit_salad", "lentil_stew", "spiced_tea_snack", "wild_roots", "cabbage_roll", "tofu_bowl",
             "canned_beans", "canned_peaches", "canned_tuna", "dried_apricot", "granola_bar", "protein_biscuit", "herbal_broth", "tomato_bisque", "miso_soup", "beet_salad",
             "chicken_wrap", "veggie_wrap", "beef_stew", "seafood_pasta", "cheese_platter", "roasted_veggies", "fruit_tart", "cream_cake", "spice_cookie", "restaurant_ramen",
+            "kimchi_bowl", "pho_beef", "sushi_roll", "arepa_grill", "tikka_wrap", "tagine_veg", "pierogi_plate", "gumbo_spice", "ceviche_cup", "yakitori_skewer",
+            "mango_sticky_rice", "olive_tapenade_toast", "shawarma_plate", "bibimbap_bowl", "paella_pan", "falafel_wrap", "udon_broth", "risotto_mushroom", "empanada_baked", "baklava_slice"
         };
 
         public static readonly List<string> ToolItemIds = new()
@@ -45,6 +47,12 @@ namespace Lifehandled.Application.Content
             "party", "festival", "market", "wedding", "funeral", "protest", "emergency",
             "concert", "sports_tournament", "book_fair", "art_show", "harvest_fair",
             "science_expo", "charity_drive", "block_party", "talent_show", "night_market"
+        };
+
+        public static readonly List<string> CultureTagIds = new()
+        {
+            "coastal", "mountain", "urban", "rural", "nightlife", "artisan", "wellness", "academic",
+            "street_food", "farmstead", "heritage", "music_scene", "sports_culture", "tea_culture", "festival_tradition"
         };
 
         public static readonly List<string> HobbyIds = new()
@@ -85,7 +93,19 @@ namespace Lifehandled.Application.Content
             new("boots_work", ClothingCategoryType.Footwear, warmth: 5f, social: 1f, jobEligibility: 2f, attractiveness: 1f, weatherResistance: 5f),
             new("sandals_basic", ClothingCategoryType.Footwear, warmth: 0.5f, social: 1f, jobEligibility: 0.5f, attractiveness: 1f, weatherResistance: 0.5f),
             new("glasses_round", ClothingCategoryType.Accessory, warmth: 0f, social: 1f, jobEligibility: 1f, attractiveness: 1f, weatherResistance: 0f),
-            new("watch_basic", ClothingCategoryType.Accessory, warmth: 0f, social: 1f, jobEligibility: 2f, attractiveness: 0.5f, weatherResistance: 0f)
+            new("watch_basic", ClothingCategoryType.Accessory, warmth: 0f, social: 1f, jobEligibility: 2f, attractiveness: 0.5f, weatherResistance: 0f),
+            new("hoodie_cozy", ClothingCategoryType.UpperWear, warmth: 9f, social: 1f, jobEligibility: 1f, attractiveness: 1f, weatherResistance: 2.5f),
+            new("blazer_formal", ClothingCategoryType.UpperWear, warmth: 5f, social: 3f, jobEligibility: 3f, attractiveness: 2f, weatherResistance: 1f),
+            new("rain_poncho", ClothingCategoryType.UpperWear, warmth: 4f, social: 0.5f, jobEligibility: 1f, attractiveness: 0.5f, weatherResistance: 9f),
+            new("winter_parka", ClothingCategoryType.UpperWear, warmth: 13f, social: 1f, jobEligibility: 1.5f, attractiveness: 1f, weatherResistance: 8.5f),
+            new("cargo_pants", ClothingCategoryType.LowerWear, warmth: 4f, social: 1f, jobEligibility: 2f, attractiveness: 1f, weatherResistance: 3f),
+            new("formal_slacks", ClothingCategoryType.LowerWear, warmth: 3f, social: 2.5f, jobEligibility: 3f, attractiveness: 2f, weatherResistance: 1f),
+            new("rain_pants", ClothingCategoryType.LowerWear, warmth: 4f, social: 0.5f, jobEligibility: 1f, attractiveness: 0.5f, weatherResistance: 8f),
+            new("hiking_boots", ClothingCategoryType.Footwear, warmth: 6f, social: 1f, jobEligibility: 2f, attractiveness: 1f, weatherResistance: 7f),
+            new("formal_shoes", ClothingCategoryType.Footwear, warmth: 2f, social: 2f, jobEligibility: 3f, attractiveness: 2f, weatherResistance: 1f),
+            new("beanie_warm", ClothingCategoryType.Accessory, warmth: 2f, social: 0.5f, jobEligibility: 1f, attractiveness: 0.5f, weatherResistance: 2f),
+            new("scarf_soft", ClothingCategoryType.Accessory, warmth: 2f, social: 1f, jobEligibility: 1f, attractiveness: 1f, weatherResistance: 2f),
+            new("earrings_gem", ClothingCategoryType.Accessory, warmth: 0f, social: 2f, jobEligibility: 1f, attractiveness: 2.5f, weatherResistance: 0f)
         };
 
         public static readonly List<AnimalDefinition> AnimalDefinitions = new()
@@ -99,7 +119,14 @@ namespace Lifehandled.Application.Content
             new("cat", AnimalClassType.Domestic, AnimalGameplayRoleType.Companionship, "apartments", "companionship", 0.72f),
             new("chicken", AnimalClassType.Domestic, AnimalGameplayRoleType.FarmingProduct, "workplace", "eggs", 0.55f),
             new("cow", AnimalClassType.Domestic, AnimalGameplayRoleType.FarmingProduct, "workplace", "milk", 0.45f),
-            new("horse", AnimalClassType.Domestic, AnimalGameplayRoleType.Companionship, "town_center", "travel_bonus", 0.3f)
+            new("horse", AnimalClassType.Domestic, AnimalGameplayRoleType.Companionship, "town_center", "travel_bonus", 0.3f),
+            new("boar", AnimalClassType.Wild, AnimalGameplayRoleType.HuntingResource, "forest", "boar_meat", 0.14f),
+            new("owl", AnimalClassType.Wild, AnimalGameplayRoleType.EcosystemBehavior, "forest", "owl_feather", 0.22f),
+            new("otter", AnimalClassType.Wild, AnimalGameplayRoleType.EcosystemBehavior, "lake", "otter_fur", 0.16f),
+            new("frog", AnimalClassType.Wild, AnimalGameplayRoleType.EcosystemBehavior, "lake", "frog_egg", 0.5f),
+            new("goat", AnimalClassType.Domestic, AnimalGameplayRoleType.FarmingProduct, "workplace", "goat_milk", 0.4f),
+            new("pigeon", AnimalClassType.Wild, AnimalGameplayRoleType.EcosystemBehavior, "town", "gray_feather", 0.7f),
+            new("street_cat", AnimalClassType.Domestic, AnimalGameplayRoleType.Companionship, "town", "companionship", 0.48f)
         };
 
         public static readonly List<InteractableDefinition> InteractableDefinitions = new()
@@ -111,6 +138,20 @@ namespace Lifehandled.Application.Content
             new("cooking_station", stressDelta: -0.6f, energyDelta: -0.2f, walletDelta: 0, inventoryItemId: "simple_meal")
         };
 
+        public static readonly List<RecipeDefinition> RecipeDefinitions = new()
+        {
+            new("recipe_simple_meal", "simple_meal", "water_bottle", "bread", "egg"),
+            new("recipe_stew", "stew", "potato", "carrot", "beans"),
+            new("recipe_curry", "curry", "rice", "beans", "tomato"),
+            new("recipe_fried_rice", "fried_rice", "rice", "egg", "carrot"),
+            new("recipe_fish_taco", "fish_taco", "cooked_fish", "lettuce", "tomato"),
+            new("recipe_bibimbap", "bibimbap_bowl", "rice", "egg", "mushroom"),
+            new("recipe_noodle_bowl", "noodle_bowl", "pasta", "egg", "seaweed"),
+            new("recipe_shawarma", "shawarma_plate", "grilled_meat", "lettuce", "tomato"),
+            new("recipe_tagine", "tagine_veg", "carrot", "potato", "tomato"),
+            new("recipe_risotto", "risotto_mushroom", "rice", "mushroom", "cheese")
+        };
+
         public static readonly List<NpcArchetypeDefinition> NpcArchetypes = BuildNpcArchetypes();
 
         public static List<Vs01NpcState> CreateNpcRoster()
@@ -118,7 +159,7 @@ namespace Lifehandled.Application.Content
             var roster = new List<Vs01NpcState>();
             var archetypeCycle = NpcArchetypes.ToList();
 
-            for (var i = 1; i <= 20; i++)
+            for (var i = 1; i <= 28; i++)
             {
                 var archetype = archetypeCycle[(i - 1) % archetypeCycle.Count];
                 roster.Add(BuildNpcFromArchetype($"npc_citizen_{i:00}", $"Citizen {i:00}", archetype));
@@ -127,7 +168,7 @@ namespace Lifehandled.Application.Content
             var shopArchetypes = NpcArchetypes.Where(a =>
                     a.archetype == NpcArchetypeType.ShopOwner || a.archetype == NpcArchetypeType.Bartender || a.archetype == NpcArchetypeType.Mechanic || a.archetype == NpcArchetypeType.TravelingMerchant)
                 .ToList();
-            for (var i = 1; i <= 10; i++)
+            for (var i = 1; i <= 14; i++)
             {
                 var archetype = shopArchetypes[(i - 1) % shopArchetypes.Count];
                 roster.Add(BuildNpcFromArchetype($"npc_shopkeeper_{i:00}", $"Shopkeeper {i:00}", archetype));
@@ -136,7 +177,7 @@ namespace Lifehandled.Application.Content
             var specialArchetypes = NpcArchetypes.Where(a =>
                     a.archetype == NpcArchetypeType.WealthyResident || a.archetype == NpcArchetypeType.MysteriousOutsider || a.archetype == NpcArchetypeType.TravelingMerchant)
                 .ToList();
-            for (var i = 1; i <= 5; i++)
+            for (var i = 1; i <= 8; i++)
             {
                 var archetype = specialArchetypes[(i - 1) % specialArchetypes.Count];
                 var npc = BuildNpcFromArchetype($"npc_special_{i:00}", $"Special {i:00}", archetype);
@@ -450,7 +491,12 @@ namespace Lifehandled.Application.Content
                 new(NpcArchetypeType.RomanticInterest, DialogueStyleType.Flirty, "stylish", new() { PersonalityTraitType.Outgoing, PersonalityTraitType.Empathetic }, new() { EmotionalTraitType.Loyal, EmotionalTraitType.Anxious }, new() { SocialTraitType.Flirtatious, SocialTraitType.Charismatic }, new() { LifestyleTraitType.Neat }, new() { SurvivalTraitType.StrongMetabolism }, NpcScheduleBlock.Social, VoiceType.Soft, SpeechStyleType.Shy, OccupationCategoryType.Creative, "artist", "flex_shift", 15),
                 new(NpcArchetypeType.WealthyResident, DialogueStyleType.Formal, "luxury", new() { PersonalityTraitType.Reserved, PersonalityTraitType.Ambitious }, new() { EmotionalTraitType.Stubborn }, new() { SocialTraitType.Manipulative }, new() { LifestyleTraitType.Extravagant }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Errands, VoiceType.Monotone, SpeechStyleType.Formal, OccupationCategoryType.Professional, "investor", "flex_shift", 32),
                 new(NpcArchetypeType.MysteriousOutsider, DialogueStyleType.Cryptic, "traveler_dark", new() { PersonalityTraitType.Reserved, PersonalityTraitType.Anxious }, new() { EmotionalTraitType.Anxious, EmotionalTraitType.Jealous }, new() { SocialTraitType.Introverted, SocialTraitType.Awkward }, new() { LifestyleTraitType.Messy }, new() { SurvivalTraitType.FragileImmuneSystem }, NpcScheduleBlock.Commute, VoiceType.Raspy, SpeechStyleType.Shy, OccupationCategoryType.Criminal, "smuggler", "night_shift", 21),
-                new(NpcArchetypeType.TravelingMerchant, DialogueStyleType.Casual, "merchant_travel", new() { PersonalityTraitType.Practical, PersonalityTraitType.Outgoing }, new() { EmotionalTraitType.Optimistic, EmotionalTraitType.Stubborn }, new() { SocialTraitType.Charismatic }, new() { LifestyleTraitType.Frugal }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Commute, VoiceType.Energetic, SpeechStyleType.Casual, OccupationCategoryType.Service, "traveling_merchant", "split_shift", 17)
+                new(NpcArchetypeType.TravelingMerchant, DialogueStyleType.Casual, "merchant_travel", new() { PersonalityTraitType.Practical, PersonalityTraitType.Outgoing }, new() { EmotionalTraitType.Optimistic, EmotionalTraitType.Stubborn }, new() { SocialTraitType.Charismatic }, new() { LifestyleTraitType.Frugal }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Commute, VoiceType.Energetic, SpeechStyleType.Casual, OccupationCategoryType.Service, "traveling_merchant", "split_shift", 17),
+                new(NpcArchetypeType.ShopOwner, DialogueStyleType.Formal, "merchant_luxe", new() { PersonalityTraitType.Ambitious, PersonalityTraitType.Practical }, new() { EmotionalTraitType.Loyal }, new() { SocialTraitType.Charismatic }, new() { LifestyleTraitType.Neat }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Work, VoiceType.Monotone, SpeechStyleType.Formal, OccupationCategoryType.Service, "boutique_owner", "day_shift", 22, upbringing: "heritage_market", educationLevel: EducationLevelType.College, hometown: "old_quarter", favoriteFoodItemIds: new() { "fruit_tart", "spiced_tea_snack" }, favoriteActivityIds: new() { "market", "writing" }, preferredClothingStyleId: "blazer_formal", musicTasteId: "lofi", hobbyIds: new() { "writing", "photography" }),
+                new(NpcArchetypeType.Nurse, DialogueStyleType.Warm, "clinic_modern", new() { PersonalityTraitType.Kind, PersonalityTraitType.Empathetic }, new() { EmotionalTraitType.Optimistic, EmotionalTraitType.Forgiving }, new() { SocialTraitType.Charismatic }, new() { LifestyleTraitType.Neat }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Work, VoiceType.Soft, SpeechStyleType.Casual, OccupationCategoryType.Professional, "paramedic", "rotating_shift", 23, upbringing: "coastal_city", educationLevel: EducationLevelType.Graduate, hometown: "harbor_city", favoriteFoodItemIds: new() { "pho_beef", "miso_soup" }, favoriteActivityIds: new() { "volunteering", "hiking" }, preferredClothingStyleId: "rain_poncho", musicTasteId: "ambient", hobbyIds: new() { "volunteering", "reading" }),
+                new(NpcArchetypeType.Teacher, DialogueStyleType.Casual, "street_smart", new() { PersonalityTraitType.Outgoing, PersonalityTraitType.Empathetic }, new() { EmotionalTraitType.Optimistic }, new() { SocialTraitType.Charismatic }, new() { LifestyleTraitType.Frugal }, new() { SurvivalTraitType.StrongMetabolism }, NpcScheduleBlock.Social, VoiceType.Cheerful, SpeechStyleType.Casual, OccupationCategoryType.Creative, "street_performer", "night_shift", 15, upbringing: "festival_lane", educationLevel: EducationLevelType.TradeSchool, hometown: "music_district", favoriteFoodItemIds: new() { "yakitori_skewer", "falafel_wrap" }, favoriteActivityIds: new() { "dance", "music_production" }, preferredClothingStyleId: "hoodie_cozy", musicTasteId: "electro", hobbyIds: new() { "dance", "music_production" }),
+                new(NpcArchetypeType.Mechanic, DialogueStyleType.Blunt, "trail_ranger", new() { PersonalityTraitType.Practical, PersonalityTraitType.Kind }, new() { EmotionalTraitType.Loyal }, new() { SocialTraitType.Introverted }, new() { LifestyleTraitType.Neat }, new() { SurvivalTraitType.Resilient }, NpcScheduleBlock.Errands, VoiceType.Deep, SpeechStyleType.Blunt, OccupationCategoryType.Labor, "park_ranger", "day_shift", 17, upbringing: "mountain_settlement", educationLevel: EducationLevelType.TradeSchool, hometown: "pine_vale", favoriteFoodItemIds: new() { "trail_mix", "jerky" }, favoriteActivityIds: new() { "hiking", "birdwatching" }, preferredClothingStyleId: "hiking_boots", musicTasteId: "folk", hobbyIds: new() { "hiking", "birdwatching" }),
+                new(NpcArchetypeType.Friend, DialogueStyleType.Warm, "culinary_chic", new() { PersonalityTraitType.Outgoing, PersonalityTraitType.Kind }, new() { EmotionalTraitType.Optimistic, EmotionalTraitType.Loyal }, new() { SocialTraitType.Flirtatious }, new() { LifestyleTraitType.Extravagant }, new() { SurvivalTraitType.StrongMetabolism }, NpcScheduleBlock.Work, VoiceType.Energetic, SpeechStyleType.Casual, OccupationCategoryType.Creative, "chef", "split_shift", 20, upbringing: "food_market", educationLevel: EducationLevelType.College, hometown: "river_walk", favoriteFoodItemIds: new() { "paella_pan", "risotto_mushroom" }, favoriteActivityIds: new() { "cooking", "baking" }, preferredClothingStyleId: "blazer_formal", musicTasteId: "jazz", hobbyIds: new() { "cooking", "baking" })
             };
         }
 
@@ -683,6 +729,20 @@ namespace Lifehandled.Application.Content
         public float healthDelta { get; }
         public float illnessRiskDelta { get; }
         public float energyDelta { get; }
+    }
+
+    public class RecipeDefinition
+    {
+        public RecipeDefinition(string recipeId, string outputItemId, params string[] ingredientItemIds)
+        {
+            this.recipeId = recipeId;
+            this.outputItemId = outputItemId;
+            this.ingredientItemIds = ingredientItemIds?.ToList() ?? new List<string>();
+        }
+
+        public string recipeId { get; }
+        public string outputItemId { get; }
+        public List<string> ingredientItemIds { get; }
     }
 
     public class ClothingDefinition

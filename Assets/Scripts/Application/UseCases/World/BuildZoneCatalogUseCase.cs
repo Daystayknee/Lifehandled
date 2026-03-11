@@ -22,7 +22,7 @@ namespace Lifehandled.Application.UseCases.World
                         .Concat(PrototypeWorldContentCatalog.BuildingIds.Where(b => b == "houses"))
                         .Concat(PrototypeWorldContentCatalog.InteractableObjectIds.Where(i => i == "bench" || i == "cooking_station" || i == "trash_can"))
                         .ToList(),
-                    events = new List<string> { "rest", "cleaning", "social_event_day:1:party" },
+                    events = new List<string> { "rest", "cleaning", "social_event_day:1:party", "culture:heritage", "culture:tea_culture" },
                     dangerLevel = 0.05f
                 },
                 new()
@@ -36,7 +36,7 @@ namespace Lifehandled.Application.UseCases.World
                         .Concat(PrototypeWorldContentCatalog.InteractableObjectIds.Where(i => i == "bench" || i == "trash_can" || i == "atm" || i == "vending_machine"))
                         .Concat(ResolveAnimalIdsForZone("town_center"))
                         .ToList(),
-                    events = new List<string> { "rumors", "social_drama", "social_event_day:1:festival" },
+                    events = new List<string> { "rumors", "social_drama", "social_event_day:1:festival", "culture:urban", "culture:music_scene" },
                     dangerLevel = 0.2f
                 },
                 new()
@@ -50,7 +50,7 @@ namespace Lifehandled.Application.UseCases.World
                         .Concat(PrototypeWorldContentCatalog.NatureRegionIds.Where(n => n == "forests" || n == "mountains"))
                         .Concat(ResolveAnimalIdsForZone("forest"))
                         .ToList(),
-                    events = new List<string> { "storms", "break_ins", "gathering" },
+                    events = new List<string> { "storms", "break_ins", "gathering", "culture:mountain", "culture:festival_tradition" },
                     dangerLevel = 0.65f
                 },
                 new()
@@ -60,7 +60,7 @@ namespace Lifehandled.Application.UseCases.World
                     displayName = "Gas Station",
                     npcPool = BuildNpcSlice("npc_shopkeeper_", 1, 4),
                     resources = new List<string> { "fuel_can", "snacks", "vending_machine" },
-                    events = new List<string> { "rumors", "break_ins", "social_event_day:1:market" },
+                    events = new List<string> { "rumors", "break_ins", "social_event_day:1:market", "culture:street_food" },
                     dangerLevel = 0.3f
                 },
                 new()
@@ -74,7 +74,7 @@ namespace Lifehandled.Application.UseCases.World
                         .Concat(PrototypeWorldContentCatalog.InteractableObjectIds.Where(i => i == "bench"))
                         .Concat(ResolveAnimalIdsForZone("lake"))
                         .ToList(),
-                    events = new List<string> { "storms", "illness_outbreaks", "fishing" },
+                    events = new List<string> { "storms", "illness_outbreaks", "fishing", "culture:coastal" },
                     dangerLevel = 0.35f
                 },
                 new()
@@ -87,7 +87,7 @@ namespace Lifehandled.Application.UseCases.World
                         .Concat(PrototypeWorldContentCatalog.BuildingIds.Where(b => b == "workplaces"))
                         .Concat(PrototypeWorldContentCatalog.InteractableObjectIds.Where(i => i == "bench" || i == "vending_machine"))
                         .ToList(),
-                    events = new List<string> { "illness_outbreaks", "treatment" },
+                    events = new List<string> { "illness_outbreaks", "treatment", "culture:wellness" },
                     dangerLevel = 0.05f
                 },
                 new()
@@ -101,7 +101,7 @@ namespace Lifehandled.Application.UseCases.World
                         .Concat(PrototypeWorldContentCatalog.InteractableObjectIds.Where(i => i == "bench" || i == "trash_can"))
                         .Concat(ResolveAnimalIdsForZone("apartments"))
                         .ToList(),
-                    events = new List<string> { "social_drama", "break_ins" },
+                    events = new List<string> { "social_drama", "break_ins", "culture:urban" },
                     dangerLevel = 0.15f
                 },
                 new()
@@ -111,21 +111,35 @@ namespace Lifehandled.Application.UseCases.World
                     displayName = "Store",
                     npcPool = BuildNpcSlice("npc_shopkeeper_", 6, 10),
                     resources = PrototypeWorldContentCatalog.FoodItemIds.Take(30).ToList(),
-                    events = new List<string> { "trade", "rumors", "social_event_day:1:market" },
+                    events = new List<string> { "trade", "rumors", "social_event_day:1:market", "culture:street_food", "culture:artisan" },
                     dangerLevel = 0.1f
+                },
+                new()
+                {
+                    zoneType = ZoneType.Town,
+                    zoneId = "old_town",
+                    displayName = "Old Town",
+                    npcPool = BuildNpcSlice("npc_citizen_", 21, 28),
+                    resources = new List<string> { "story_square", "street_gallery", "tea_house" }
+                        .Concat(PrototypeWorldContentCatalog.BuildingIds.Where(b => b == "shops" || b == "restaurants"))
+                        .Concat(PrototypeWorldContentCatalog.InteractableObjectIds.Where(i => i == "bench" || i == "atm" || i == "trash_can"))
+                        .Concat(ResolveAnimalIdsForZone("town"))
+                        .ToList(),
+                    events = new List<string> { "rumors", "social_event_day:1:night_market", "culture:heritage", "culture:artisan" },
+                    dangerLevel = 0.18f
                 },
                 new()
                 {
                     zoneType = ZoneType.Workplace,
                     zoneId = "workplace",
                     displayName = "Workplace",
-                    npcPool = new List<string> { "npc_special_04", "npc_special_05" },
-                    resources = new List<string> { "income", "tools" }
+                    npcPool = new List<string> { "npc_special_04", "npc_special_05", "npc_special_06", "npc_special_07" },
+                    resources = new List<string> { "income", "tools", "craft_station" }
                         .Concat(PrototypeWorldContentCatalog.BuildingIds.Where(b => b == "workplaces"))
-                        .Concat(PrototypeWorldContentCatalog.InteractableObjectIds.Where(i => i == "vending_machine" || i == "bench"))
+                        .Concat(PrototypeWorldContentCatalog.InteractableObjectIds.Where(i => i == "vending_machine" || i == "bench" || i == "cooking_station"))
                         .Concat(ResolveAnimalIdsForZone("workplace"))
                         .ToList(),
-                    events = new List<string> { "shift", "social_drama" },
+                    events = new List<string> { "shift", "social_drama", "culture:farmstead" },
                     dangerLevel = 0.25f
                 }
             };

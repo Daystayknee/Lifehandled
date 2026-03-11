@@ -41,7 +41,7 @@ namespace Lifehandled.Presentation.Pure2D
 
             if (summaryText != null)
             {
-                summaryText.text = $"{character.displayName} | Face {character.appearance.faceShape} | Hair {character.appearance.hairType}/{character.appearance.hairLength}";
+                summaryText.text = $"{character.displayName} | Style anime × semi-real | Face {character.appearance.faceShape} | Hair {character.appearance.hairType}/{character.appearance.hairLength}";
             }
         }
     }

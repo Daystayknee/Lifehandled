@@ -145,6 +145,25 @@ Build:
 - face/body/hair/clothing data assets
 - preset-based assembly
 
+### Phase 3 — Content expansion
+Add:
+- more foods
+- more clothing
+- more NPC archetypes
+- more animals
+- more zones
+- more culture tags
+- more recipes
+
+### Phase 4 — Visual polish
+Add:
+- anime × semi-real portraits
+- scrapbook panel styling
+- card UI
+- transitions
+- icons
+- weather overlays
+
 ## Incremental implementation order (architecture-safe)
 
 ### Phase A — Dashboard foundation
