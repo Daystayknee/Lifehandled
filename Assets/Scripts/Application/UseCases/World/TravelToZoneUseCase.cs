@@ -82,14 +82,37 @@ namespace Lifehandled.Application.UseCases.World
 
             var fishingSkill = context.progression?.GetSkillLevel("fishing") ?? 1;
             var survivalSkill = context.progression?.GetSkillLevel("survival") ?? 1;
-            foreach (var def in PrototypeWorldContentCatalog.AnimalDefinitions.Where(a => resources.Contains(a.animalId)))
+            var hour = context.hourOfDay;
+            var month = context.monthOfYear;
+            foreach (var def in PrototypeWorldContentCatalog.AnimalDefinitions.Where(a => resources.Contains(a.animalId) || resources.Contains($"animal:{a.animalId}")))
             {
                 var encounterScore = def.encounterWeight + (survivalSkill * 0.03f) + (def.animalId == "fish" ? fishingSkill * 0.04f : 0f);
+
+                // Batch 3: time/weather/seasonal migration-style modifiers.
+                if (def.animalId == "fish")
+                {
+                    if (context.weather == WeatherType.Rain) encounterScore += 0.12f;
+                    if (context.weather == WeatherType.Storm) encounterScore -= 0.1f;
+                    if (hour < 6f || hour >= 20f) encounterScore -= 0.08f;
+                    if (month is >= 4 and <= 8) encounterScore += 0.06f;
+                }
+                else if (def.animalId == "deer" || def.animalId == "rabbit")
+                {
+                    if (hour < 7f || hour >= 18f) encounterScore += 0.08f;
+                    if (context.weather == WeatherType.Storm) encounterScore -= 0.15f;
+                    if (month is >= 9 and <= 11) encounterScore += 0.07f; // migration season proxy
+                }
+                else if (def.animalId == "bird")
+                {
+                    if (hour >= 5f && hour <= 11f) encounterScore += 0.1f;
+                    if (context.weather == WeatherType.Storm) encounterScore -= 0.18f;
+                }
+
                 if (encounterScore >= 0.75f)
                 {
                     context.inventory.TryAddWithCapacity(def.outputItemId, 1, storageCapacity);
                     context.progression?.GainSkillXp(def.animalId == "fish" ? "fishing" : "survival", 3f);
-                    effects.Append($"Encountered {def.animalId} and gained {def.outputItemId}. ");
+                    effects.Append($"Encountered {def.animalId} (score {encounterScore:0.00}) and gained {def.outputItemId}. ");
                     break;
                 }
             }

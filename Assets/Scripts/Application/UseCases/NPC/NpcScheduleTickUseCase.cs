@@ -55,18 +55,20 @@ namespace Lifehandled.Application.UseCases.NPC
                 }
 
                 ApplySocialEventScheduleModifiers(schedule, todayEvent, hour);
+                ApplyRoutineVariationByCalendarAndWeather(context, npc, schedule, hour);
+                ApplyPreferenceDrivenActions(npc, schedule, hour);
 
-                if (npc.profile.socialTraits.Contains(Domain.Common.SocialTraitType.Introverted) && schedule.currentBlock == NpcScheduleBlock.Social)
+                if (npc.profile.socialTraits.Contains(SocialTraitType.Introverted) && schedule.currentBlock == NpcScheduleBlock.Social)
                 {
                     schedule.isAvailableForTalk = false;
                 }
 
-                TickNpcNeedsAndMood(npc, context.weather);
+                TickNpcNeedsAndMood(npc, context.weather, todayEvent, context.isWeekend, context.activeHolidayId);
                 ApplyHobbyTick(npc);
             }
         }
 
-        private static void TickNpcNeedsAndMood(NpcRuntimeState npc, WeatherType weather)
+        private static void TickNpcNeedsAndMood(NpcRuntimeState npc, WeatherType weather, SocialEventType? todayEvent, bool isWeekend, string activeHolidayId)
         {
             var needs = npc.profile.needs;
             needs.hunger = Clamp(needs.hunger + 0.3f);
@@ -77,13 +79,92 @@ namespace Lifehandled.Application.UseCases.NPC
             if (needs.energy < 30f) moodDelta -= 0.2f;
             if (needs.hunger > 70f) moodDelta -= 0.2f;
             if (weather == WeatherType.Storm) moodDelta -= 0.1f;
+            if (isWeekend) moodDelta += 0.06f;
+            if (!string.IsNullOrWhiteSpace(activeHolidayId) && activeHolidayId != "none") moodDelta += 0.1f;
+
+            if (todayEvent == SocialEventType.Protest || todayEvent == SocialEventType.Emergency)
+            {
+                moodDelta -= 0.12f;
+            }
+            else if (todayEvent == SocialEventType.Party || todayEvent == SocialEventType.Festival || todayEvent == SocialEventType.BlockParty)
+            {
+                moodDelta += 0.12f;
+            }
 
             if (npc.profile.personalityTraits.Contains(PersonalityTraitType.Irritable)) moodDelta -= 0.1f;
             if (npc.profile.personalityTraits.Contains(PersonalityTraitType.Kind)) moodDelta += 0.05f;
-            if (npc.profile.emotionalTraits.Contains(Domain.Common.EmotionalTraitType.Optimistic)) moodDelta += 0.05f;
-            if (npc.profile.emotionalTraits.Contains(Domain.Common.EmotionalTraitType.Anxious)) moodDelta -= 0.08f;
+            if (npc.profile.emotionalTraits.Contains(EmotionalTraitType.Optimistic)) moodDelta += 0.05f;
+            if (npc.profile.emotionalTraits.Contains(EmotionalTraitType.Anxious)) moodDelta -= 0.08f;
 
             npc.profile.mood = Clamp(npc.profile.mood + moodDelta);
+        }
+
+        private static void ApplyRoutineVariationByCalendarAndWeather(GameSessionContext context, NpcRuntimeState npc, NpcSchedule schedule, float hour)
+        {
+            if (context.weather == WeatherType.Storm)
+            {
+                // Severe weather keeps most NPCs indoors.
+                if (schedule.currentBlock == NpcScheduleBlock.Errands || schedule.currentBlock == NpcScheduleBlock.Social)
+                {
+                    schedule.currentBlock = NpcScheduleBlock.Home;
+                    schedule.isAvailableForTalk = false;
+                }
+            }
+
+            if (context.isWeekend && hour >= 10f && hour < 21f && schedule.currentBlock == NpcScheduleBlock.Work)
+            {
+                // Weekend variation for non-essential workers.
+                if (npc.profile.occupation?.category != OccupationCategoryType.Service)
+                {
+                    schedule.currentBlock = NpcScheduleBlock.Social;
+                    schedule.isAvailableForTalk = true;
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(context.activeHolidayId) && context.activeHolidayId != "none" && hour >= 11f && hour < 22f)
+            {
+                if (schedule.currentBlock != NpcScheduleBlock.Sleep)
+                {
+                    schedule.currentBlock = NpcScheduleBlock.Social;
+                    schedule.isAvailableForTalk = true;
+                }
+            }
+        }
+
+        private static void ApplyPreferenceDrivenActions(NpcRuntimeState npc, NpcSchedule schedule, float hour)
+        {
+            var prefs = npc.profile.preferences;
+            if (prefs == null)
+            {
+                return;
+            }
+
+            if (schedule.currentBlock == NpcScheduleBlock.Home && hour >= 18f && hour < 21f)
+            {
+                if (prefs.favoriteActivityIds.Contains("cooking") || prefs.hobbyIds.Contains("baking"))
+                {
+                    npc.profile.needs.hunger = Clamp(npc.profile.needs.hunger - 0.2f);
+                    npc.profile.mood = Clamp(npc.profile.mood + 0.08f);
+                }
+            }
+
+            if (schedule.currentBlock == NpcScheduleBlock.Social && prefs.hobbyIds.Contains("gaming"))
+            {
+                npc.profile.needs.social = Clamp(npc.profile.needs.social + 0.12f);
+            }
+
+            if (schedule.currentBlock == NpcScheduleBlock.Errands && prefs.favoriteActivityIds.Contains("market"))
+            {
+                schedule.isAvailableForTalk = true;
+                npc.profile.mood = Clamp(npc.profile.mood + 0.06f);
+            }
+
+            if (prefs.hobbyIds.Contains("fishing") && hour >= 5f && hour < 9f)
+            {
+                // Early morning preference-driven routine variation.
+                schedule.currentBlock = NpcScheduleBlock.Errands;
+                schedule.isAvailableForTalk = true;
+            }
         }
 
         private static float Clamp(float value)
@@ -142,6 +223,16 @@ namespace Lifehandled.Application.UseCases.NPC
                 "funeral" => SocialEventType.Funeral,
                 "protest" => SocialEventType.Protest,
                 "emergency" => SocialEventType.Emergency,
+                "concert" => SocialEventType.Concert,
+                "sports_tournament" => SocialEventType.SportsTournament,
+                "book_fair" => SocialEventType.BookFair,
+                "art_show" => SocialEventType.ArtShow,
+                "harvest_fair" => SocialEventType.HarvestFair,
+                "science_expo" => SocialEventType.ScienceExpo,
+                "charity_drive" => SocialEventType.CharityDrive,
+                "block_party" => SocialEventType.BlockParty,
+                "talent_show" => SocialEventType.TalentShow,
+                "night_market" => SocialEventType.NightMarket,
                 _ => null
             };
         }
@@ -158,6 +249,9 @@ namespace Lifehandled.Application.UseCases.NPC
                 case SocialEventType.Party:
                 case SocialEventType.Festival:
                 case SocialEventType.Wedding:
+                case SocialEventType.BlockParty:
+                case SocialEventType.TalentShow:
+                case SocialEventType.Concert:
                     if (hour >= 18f && hour < 22f)
                     {
                         schedule.currentBlock = NpcScheduleBlock.Social;
@@ -166,7 +260,10 @@ namespace Lifehandled.Application.UseCases.NPC
                     break;
 
                 case SocialEventType.Market:
-                    if (hour >= 10f && hour < 16f)
+                case SocialEventType.NightMarket:
+                case SocialEventType.BookFair:
+                case SocialEventType.ArtShow:
+                    if (hour >= 10f && hour < 20f)
                     {
                         schedule.currentBlock = NpcScheduleBlock.Errands;
                         schedule.isAvailableForTalk = true;

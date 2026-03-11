@@ -42,6 +42,7 @@ namespace Lifehandled.Application.UseCases.NPC
             var negotiationLevel = context.progression?.GetSkillLevel("negotiation") ?? 1;
             var charismaLevel = context.progression?.GetSkillLevel("charisma") ?? 1;
 
+            var rumorBaseImpact = 0f;
             switch (eventType)
             {
                 case DramaEventType.HelpedNpc:
@@ -52,6 +53,7 @@ namespace Lifehandled.Application.UseCases.NPC
                     context.socialReputation = Clamp(context.socialReputation + 2f);
                     AddMemory(context, npc, "Help", "You helped them today.");
                     message = $"You helped {npc.profile.displayName}. Trust and reputation improved.";
+                    rumorBaseImpact = -1f;
                     break;
 
                 case DramaEventType.InsultedNpc:
@@ -63,7 +65,7 @@ namespace Lifehandled.Application.UseCases.NPC
                     context.familyTension = Clamp(context.familyTension + 2f);
                     context.socialReputation = Clamp(context.socialReputation - 1f);
                     AddMemory(context, npc, "Insult", "You insulted them in public.");
-                    SpreadRumor(context, npc, "Insult rumor spread.");
+                    rumorBaseImpact = 3f;
                     message = $"{npc.profile.displayName} took offense. Rivalry increased.";
                     break;
 
@@ -76,7 +78,7 @@ namespace Lifehandled.Application.UseCases.NPC
                     drama.rumorBelief = Clamp(drama.rumorBelief + 10f);
                     context.socialReputation = Clamp(context.socialReputation - 6f);
                     AddMemory(context, npc, "Secret", "They remember you stole from the store.");
-                    SpreadRumor(context, npc, "Theft rumor spread.");
+                    rumorBaseImpact = 6f;
                     message = "Your theft became a rumor. Reputation dropped.";
                     break;
 
@@ -86,7 +88,7 @@ namespace Lifehandled.Application.UseCases.NPC
                     rel.trust = Clamp(rel.trust - 2f);
                     context.socialReputation = Clamp(context.socialReputation - 1f);
                     AddMemory(context, npc, "Gossip", "You gossiped about someone.");
-                    SpreadRumor(context, npc, "Gossip spread.");
+                    rumorBaseImpact = 4f;
                     message = "Gossip spreads quickly in town.";
                     break;
 
@@ -114,6 +116,13 @@ namespace Lifehandled.Application.UseCases.NPC
             drama.familyTensionWithPlayer = Clamp(drama.familyTensionWithPlayer - deescalation);
             context.familyTension = Clamp(context.familyTension - (deescalation * 0.5f));
 
+            var rumorSpreadCount = SpreadRumor(context, npc, rumorBaseImpact, $"{eventType} rumor spread.");
+            if (rumorSpreadCount > 0)
+            {
+                message += $" Rumor reached {rumorSpreadCount} NPCs.";
+            }
+
+            RecomputeGlobalReputationFromNpcBeliefs(context);
             npc.currentReactionHint = message;
             return true;
         }
@@ -134,26 +143,58 @@ namespace Lifehandled.Application.UseCases.NPC
             }
         }
 
-        private static void SpreadRumor(GameSessionContext context, NpcRuntimeState sourceNpc, string rumorText)
+        private static int SpreadRumor(GameSessionContext context, NpcRuntimeState sourceNpc, float reputationImpact, string rumorText)
         {
-            var target = context.npcs.FirstOrDefault(n => n.profile.npcId != sourceNpc.profile.npcId);
-            if (target == null)
+            var targets = context.npcs
+                .Where(n => n.profile.npcId != sourceNpc.profile.npcId)
+                .Take(4)
+                .ToList();
+
+            if (targets.Count == 0)
+            {
+                return 0;
+            }
+
+            var gossipHeatStep = 5f;
+            var rumorBeliefStep = 7f;
+            var spreadFactor = 1f;
+            var spreadCount = 0;
+
+            foreach (var target in targets)
+            {
+                target.profile.drama ??= new NpcDramaState();
+                target.profile.drama.gossipHeat = Clamp(target.profile.drama.gossipHeat + (gossipHeatStep * spreadFactor));
+                target.profile.drama.rumorBelief = Clamp(target.profile.drama.rumorBelief + (rumorBeliefStep * spreadFactor));
+                target.profile.drama.socialReputationOfPlayer = Clamp(target.profile.drama.socialReputationOfPlayer - (reputationImpact * spreadFactor));
+
+                target.profile.memory.Add(new NpcMemoryEntry
+                {
+                    day = context.currentDay,
+                    hour = context.hourOfDay,
+                    interactionType = "Rumor",
+                    outcome = rumorText
+                });
+                if (target.profile.memory.Count > 30)
+                {
+                    target.profile.memory.RemoveAt(0);
+                }
+
+                spreadCount++;
+                spreadFactor *= 0.72f;
+            }
+
+            return spreadCount;
+        }
+
+        private static void RecomputeGlobalReputationFromNpcBeliefs(GameSessionContext context)
+        {
+            if (context.npcs == null || context.npcs.Count == 0)
             {
                 return;
             }
 
-            target.profile.drama ??= new NpcDramaState();
-            target.profile.drama.gossipHeat = Clamp(target.profile.drama.gossipHeat + 5f);
-            target.profile.drama.rumorBelief = Clamp(target.profile.drama.rumorBelief + 7f);
-            target.profile.drama.socialReputationOfPlayer = Clamp(target.profile.drama.socialReputationOfPlayer - 2f);
-
-            target.profile.memory.Add(new NpcMemoryEntry
-            {
-                day = context.currentDay,
-                hour = context.hourOfDay,
-                interactionType = "Rumor",
-                outcome = rumorText
-            });
+            var avgNpcRep = context.npcs.Average(n => n.profile.drama?.socialReputationOfPlayer ?? 50f);
+            context.socialReputation = Clamp((context.socialReputation * 0.65f) + (avgNpcRep * 0.35f));
         }
 
         private static float Clamp(float value)
