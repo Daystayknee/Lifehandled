@@ -13,18 +13,22 @@ namespace Lifehandled.Presentation.Pure2D
         [SerializeField] private Text notificationText;
         [SerializeField] private float cardLifetimeSeconds = 4f;
         [SerializeField] private float pulseAmplitude = 0.035f;
+        [SerializeField] private float slideDistance = 42f;
+        [SerializeField] private float slideSpeed = 180f;
 
         private readonly Queue<string> _queue = new();
         private string _lastWorldEvent = string.Empty;
         private string _lastNpcReaction = string.Empty;
         private float _timeRemaining;
         private Vector3 _baseScale = Vector3.one;
+        private Vector2 _basePos;
 
         private void Awake()
         {
             if (notificationText != null)
             {
                 _baseScale = notificationText.rectTransform.localScale;
+                _basePos = notificationText.rectTransform.anchoredPosition;
                 notificationText.text = string.Empty;
             }
         }
@@ -53,7 +57,12 @@ namespace Lifehandled.Presentation.Pure2D
             if (!string.IsNullOrWhiteSpace(context.lastNpcReaction) && context.lastNpcReaction != _lastNpcReaction)
             {
                 _lastNpcReaction = context.lastNpcReaction;
-                _queue.Enqueue($"💬 {context.lastNpcReaction}");
+                var icon = context.lastNpcReaction.Contains("good", System.StringComparison.OrdinalIgnoreCase)
+                           || context.lastNpcReaction.Contains("help", System.StringComparison.OrdinalIgnoreCase)
+                           || context.lastNpcReaction.Contains("love", System.StringComparison.OrdinalIgnoreCase)
+                    ? "❤️"
+                    : "💬";
+                _queue.Enqueue($"{icon} {context.lastNpcReaction}");
             }
         }
 
@@ -68,10 +77,17 @@ namespace Lifehandled.Presentation.Pure2D
             var pulse = 1f + (Mathf.Sin(Time.unscaledTime * 7f) * pulseAmplitude);
             notificationText.rectTransform.localScale = _baseScale * pulse;
 
+            var targetPos = _basePos;
+            notificationText.rectTransform.anchoredPosition = Vector2.MoveTowards(
+                notificationText.rectTransform.anchoredPosition,
+                targetPos,
+                slideSpeed * Time.unscaledDeltaTime);
+
             if (_timeRemaining <= 0f)
             {
                 notificationText.text = string.Empty;
                 notificationText.rectTransform.localScale = _baseScale;
+                notificationText.rectTransform.anchoredPosition = _basePos;
             }
         }
 
@@ -83,6 +99,7 @@ namespace Lifehandled.Presentation.Pure2D
             }
 
             notificationText.text = _queue.Dequeue();
+            notificationText.rectTransform.anchoredPosition = _basePos + new Vector2(0f, slideDistance);
             _timeRemaining = Mathf.Max(1f, cardLifetimeSeconds);
         }
     }

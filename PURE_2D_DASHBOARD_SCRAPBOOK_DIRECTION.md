@@ -257,3 +257,28 @@ Deliver a focused **Visual Prototype** containing:
 3. journal feed
 4. map travel UI
 5. event notification cards
+
+
+## Continue-building backlog (post Visual Prototype)
+
+To keep momentum toward a deeper life sim survival RPG loop, prioritize:
+
+1. **Feed-driven consequences**
+   - Tie journal post categories to reputation deltas and NPC memory tags.
+   - Add post reactions (likes/support/disapproval) from archetype groups.
+
+2. **Recipe mastery loop**
+   - Track recipe discovery and quality stars.
+   - Add weather/season cuisine bonuses and culture-tag food preferences.
+
+3. **Style-to-system bridge**
+   - Add clothing style tags (streetwear, formal, cozy, athletic) and make NPC reactions reference them.
+   - Add portrait expression variants (neutral/happy/tired/stressed) driven by runtime needs.
+
+4. **Motion pass v2**
+   - Add subtle card-stack entrance sequencing and dismissal easing.
+   - Add weather overlay transitions between conditions.
+
+5. **UI readability pass**
+   - Apply typography theme assets in scene prefabs (heading/body/note groups).
+   - Keep icon language consistent across dashboard/feed/map/notifications.
