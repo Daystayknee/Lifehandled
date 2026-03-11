@@ -6,13 +6,13 @@ using UnityEngine.UI;
 namespace Lifehandled.Presentation.Pure2D
 {
     /// <summary>
-    /// Phase 1 pure 2D portrait panel.
-    /// Hosts a layered renderer and summary text for the selected character.
+    /// Portrait panel for visual-novel-like anime × semi-real character framing.
     /// </summary>
     public class Pure2DPortraitPanelController : MonoBehaviour
     {
         [SerializeField] private LayeredPortraitRenderer portraitRenderer;
         [SerializeField] private Text summaryText;
+        [SerializeField] private Text styleNoteText;
         [SerializeField] private bool showPlayerCharacter = true;
 
         private void Update()
@@ -41,7 +41,13 @@ namespace Lifehandled.Presentation.Pure2D
 
             if (summaryText != null)
             {
-                summaryText.text = $"{character.displayName} | Style anime × semi-real | Face {character.appearance.faceShape} | Hair {character.appearance.hairType}/{character.appearance.hairLength}";
+                summaryText.text =
+                    $"{character.displayName}\nMood {context?.playerCharacter?.needsStatus?.mood ?? 50f:0}  •  Energy {context?.playerCharacter?.needsStatus?.energy ?? 50f:0}  •  Hunger {context?.playerCharacter?.needsStatus?.hunger ?? 50f:0}";
+            }
+
+            if (styleNoteText != null)
+            {
+                styleNoteText.text = "Style: anime-inspired eyes + natural noses + soft shading + realistic skin tones. Avoid chibi/hyper-real extremes.";
             }
         }
     }

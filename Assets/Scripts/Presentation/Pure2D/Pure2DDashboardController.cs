@@ -5,8 +5,7 @@ using UnityEngine.UI;
 namespace Lifehandled.Presentation.Pure2D
 {
     /// <summary>
-    /// Phase 1 pure 2D dashboard foundation.
-    /// Central life-control view for top-level session visibility.
+    /// Cozy simulation dashboard with clean icon-first stats.
     /// </summary>
     public class Pure2DDashboardController : MonoBehaviour
     {
@@ -39,10 +38,10 @@ namespace Lifehandled.Presentation.Pure2D
             {
                 SetText(playerNameText, "Player: (none)");
                 SetText(zoneText, "Zone: -");
-                SetText(timeWeatherText, "Time: -");
+                SetText(timeWeatherText, "Weather: -");
                 if (weatherIconImage != null) weatherIconImage.enabled = false;
-                SetText(needsText, "Needs: -");
-                SetText(moneyText, "Wallet: -");
+                SetText(needsText, "🍞 -  ⚡ -  💬 -");
+                SetText(moneyText, "💰 -");
                 SetText(householdText, "Household: -");
                 SetText(reputationText, "Reputation: -");
                 SetText(worldEventText, "World: -");
@@ -53,18 +52,20 @@ namespace Lifehandled.Presentation.Pure2D
 
             var needs = context.playerCharacter.needsStatus ?? new NeedsStatus();
 
-            SetText(playerNameText, $"{context.playerCharacter.data.displayName}");
-            SetText(zoneText, $"Zone: {context.currentZone}");
+            SetText(playerNameText, context.playerCharacter.data.displayName);
+            SetText(zoneText, $"📍 {context.currentZone}");
             SetText(timeWeatherText,
-                $"🌤 Day {context.currentDay} ({context.dayOfWeekName}) {context.monthName}-{context.dayOfMonth:00} | {context.hourOfDay:00.0}h | {context.weather}");
+                $"🌦 Day {context.currentDay} ({context.dayOfWeekName}) {context.monthName}-{context.dayOfMonth:00}  •  {context.hourOfDay:00.0}h  •  {context.weather}");
             ApplyWeatherIcon(context.weather);
+
             SetText(needsText,
-                $"H:{needs.hunger:0} T:{needs.thirst:0} E:{needs.energy:0} S:{needs.stress:0} M:{needs.mood:0}");
-            SetText(moneyText, $"Wallet: ${context.wallet}");
+                $"🍞 {needs.hunger:0}   ⚡ {needs.energy:0}   💬 {context.talkCountToday:0}   🧠 {needs.stress:0}");
+            SetText(moneyText, $"💰 ${context.wallet}");
             SetText(householdText,
-                $"Members: {context.householdMembers.Count} | Tension: {context.familyTension:0} | Home: {(context.home?.isHomeOwned == true ? "Owned" : "Rent")}");
+                $"🏠 Members {context.householdMembers.Count}  •  Tension {context.familyTension:0}  •  {(context.home?.isHomeOwned == true ? "Owned" : "Rent")}");
             SetText(reputationText,
-                $"SocialRep: {context.socialReputation:0} | Holiday: {(context.activeHolidayId == "none" ? "none" : context.activeHolidayId)}");
+                $"⭐ Social {context.socialReputation:0}  •  Holiday {(context.activeHolidayId == "none" ? "none" : context.activeHolidayId)}");
+
             SetText(worldEventText, $"🗞 {context.lastWorldEvent}");
             SetText(npcReactionText, $"💬 {context.lastNpcReaction}");
             SetText(economyText, $"💸 {context.lastEconomyEvent}");

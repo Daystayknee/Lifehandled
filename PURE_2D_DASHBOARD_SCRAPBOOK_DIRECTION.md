@@ -205,3 +205,55 @@ The direction is successful when a player can:
 5. and find the day’s story reflected in the scrapbook feed.
 
 This checkpoint should be treated as the first complete vertical UX loop for the pure 2D product identity.
+
+
+## Visual Prototype Style Guide
+
+### Social media feed style
+- The life journal should read like stacked posts, e.g.:
+  - `🌧️ Storm Today`
+  - `Maya posted: "The rain destroyed the crops 😭"`
+  - `You: Cooked fish stew (+mood)`
+  - `Town Hall: Festival tomorrow 🎉`
+- Cards stack vertically and scrolling should feel like a life timeline.
+
+### Portrait style (anime × semi-real)
+- Favor anime-inspired eyes, natural nose shapes, soft shading, realistic skin tones.
+- Avoid super-chibi proportions and hyper-real rendering.
+- Target: visual-novel portrait readability with modern illustration finish.
+
+### Clothing direction
+- Modern casual fashion baseline:
+  - oversized sweaters, denim jackets, streetwear, sneakers, casual dresses, athletic wear, cozy lounge clothing.
+- NPC fashion should communicate personality and routine context.
+
+### Icon style
+- Use minimal, consistent line-icon language.
+- Starter icon mapping:
+  - Hunger `🍞`
+  - Energy `⚡`
+  - Social `💬`
+  - Money `💰`
+  - Weather `🌦`
+
+### Motion design
+- Prefer subtle, smooth micro-interactions:
+  - cards slide in
+  - notification cards pop
+  - hearts/reaction pulses
+  - rain overlays fade
+  - NPC reaction emphasis
+- Keep animation calm, never flashy.
+
+### Fonts
+- Heading font candidates: Inter / Poppins / Nunito.
+- Body font candidates: Inter / Source Sans.
+- Optional handwritten accent font for occasional scrapbook note strips only.
+
+### Next milestone after style alignment
+Deliver a focused **Visual Prototype** containing:
+1. dashboard screen
+2. portrait system
+3. journal feed
+4. map travel UI
+5. event notification cards

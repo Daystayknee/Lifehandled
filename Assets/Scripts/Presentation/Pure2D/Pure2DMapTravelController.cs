@@ -7,8 +7,7 @@ using UnityEngine.UI;
 namespace Lifehandled.Presentation.Pure2D
 {
     /// <summary>
-    /// Phase 1 pure 2D map/travel foundation.
-    /// Connect this to node buttons for zone-based navigation.
+    /// Minimal icon-map travel view.
     /// </summary>
     public class Pure2DMapTravelController : MonoBehaviour
     {
@@ -18,48 +17,56 @@ namespace Lifehandled.Presentation.Pure2D
         [SerializeField] private Button storeButton;
         [SerializeField] private Button forestButton;
         [SerializeField] private Button lakeButton;
+        [SerializeField] private Button clinicButton;
 
         [SerializeField] private Text mapStatusText;
+        [SerializeField] private Text mapLegendText;
 
         private readonly TravelToZoneUseCase _travelToZoneUseCase = new();
 
         private void Awake()
         {
-            Bind(homeButton, ZoneType.Home);
-            Bind(townButton, ZoneType.TownCenter);
-            Bind(storeButton, ZoneType.GasStation);
-            Bind(forestButton, ZoneType.Forest);
-            Bind(lakeButton, ZoneType.Lake);
+            Bind(homeButton, ZoneType.Home, "🏠 Home");
+            Bind(townButton, ZoneType.TownCenter, "🏙 Town");
+            Bind(storeButton, ZoneType.Store, "🏪 Store");
+            Bind(forestButton, ZoneType.Forest, "🌲 Forest");
+            Bind(lakeButton, ZoneType.Lake, "🏞 Lake");
+            Bind(clinicButton, ZoneType.Clinic, "🏥 Clinic");
+
+            if (mapLegendText != null)
+            {
+                mapLegendText.text = "Town Map\n🏠 Home  🏪 Store  🌲 Forest  🏞 Lake  🏥 Clinic";
+            }
         }
 
-        private void Bind(Button button, ZoneType zone)
+        private void Bind(Button button, ZoneType zone, string label)
         {
             if (button == null)
             {
                 return;
             }
 
-            button.onClick.AddListener(() => Travel(zone));
+            button.onClick.AddListener(() => Travel(zone, label));
         }
 
-        public void Travel(ZoneType zone)
+        private void Travel(ZoneType zone, string label)
         {
             var context = SessionContextRegistry.Current;
             var ok = _travelToZoneUseCase.Execute(context, zone, out var message);
-            SetStatus(ok ? $"Travel OK: {message}" : $"Travel WARN: {message}");
+            SetStatus(ok ? $"{label} → {message}" : $"Travel warning: {message}");
         }
 
         private void Update()
         {
             var context = SessionContextRegistry.Current;
-            if (context == null)
+            if (context == null || mapStatusText == null)
             {
                 return;
             }
 
-            if (mapStatusText != null && string.IsNullOrWhiteSpace(mapStatusText.text))
+            if (string.IsNullOrWhiteSpace(mapStatusText.text))
             {
-                mapStatusText.text = $"Map ready. Current node: {context.currentZone}";
+                mapStatusText.text = $"Current location: {context.currentZone}";
             }
         }
 
